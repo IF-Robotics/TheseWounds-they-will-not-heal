@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.other;
 
+import static java.lang.Double.NaN;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import java.util.function.DoubleSupplier;
@@ -9,7 +11,6 @@ public class Globals {
 //intake subsystem
     //intaking
     public static int pitchWhenIntake = 0;
-    public static int[] pitchesWhenIntake = {0/*normal*/, 105, 210/*OrthogonalIntake*/, 315};
     public static int rollWhenIntake = -190;
     public static int pitchLastLeftAuto = 60;
     public static int rollLastLeftAuto = -190;
@@ -23,6 +24,7 @@ public class Globals {
     //claw poses
     public static double clawOpen = 0.7;
     public static double clawExtraOpen = .8;
+    public static double clawHalfClose = 0;
     public static double clawClose = .25;
 
 
@@ -108,6 +110,14 @@ public class Globals {
     //endstop
     public static double endstopUp = .463;
     public static double endstopDown = 1;
+
+    //defensePad
+    public static double defensePadDown = 0;
+    public static double defensePadUp = 0;
+
+    //dt pto
+    public static double dtPTOEngaged = 0;
+    public static double dtPTODisengaged = 0;
 
     //arm when climbing
     //climbing to first rung

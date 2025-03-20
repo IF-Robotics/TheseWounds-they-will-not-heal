@@ -21,6 +21,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -34,15 +35,10 @@ import java.util.function.BooleanSupplier;
 public class DriveSubsystem extends SubsystemBase {
 
     private MotorEx FR, FL, BR, BL;
+    private Servo defensePad, ptoServo;
 
     private double y;
     private double x;
-    private double rx;
-    private double denominator;
-    private double frontLeftPower;
-    private double backLeftPower;
-    private double frontRightPower;
-    private double backRightPower;
     private double power = 1;
 
     private Telemetry telemetry;
@@ -94,11 +90,13 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     //constructor for teleop
-    public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, Telemetry telemtry) {
+    public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, Servo defensePad, Servo ptoServo, Telemetry telemtry) {
         this.FR = FR;
         this.FL = FL;
         this.BR = BR;
         this.BL = BL;
+        this.defensePad = defensePad;
+        this.ptoServo = ptoServo;
         this.telemetry = telemtry;
     }
 
@@ -316,6 +314,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     public double getAutoDriveError(){
         return translationalError;
+    }
+
+    public void engagePto(boolean engage){
+        if(engage){
+            ptoServo.setPosition(dtPTOEngaged);
+        } else
+            ptoServo.setPosition(dtPTODisengaged);
     }
 
     @Override

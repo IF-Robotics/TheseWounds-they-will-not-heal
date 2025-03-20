@@ -23,8 +23,8 @@ import java.util.LinkedList;
 @Config
 public class ArmSubsystem extends SubsystemBase {
 
-    private MotorEx arm, slideL;
-    private MotorGroup slide;
+    private MotorEx slideL;
+    private MotorGroup slide, arm;
     private Servo endStop;
     private AnalogInput armEncoder;
     private Telemetry telemetry;
@@ -48,18 +48,18 @@ public class ArmSubsystem extends SubsystemBase {
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
     public static double slideKP = .2*1.5, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
     private PIDController slideController;
-    private final double ticksPerIn = (2786/32.75)*(31.967/52.1537);
+    private final double ticksPerIn = /*TODO: this math is incorrect (do it empirically instead) */(28/*(28/rev)*/)/(.1428571429/*GR*/)/(Math.PI*48/*pulleyDiamter*/);
     private int slideTicks = 1;
     private double slidePower = 0;
     private double slideExtention = 7.75;
-    public static double slideWristOffset = 7.75;
-    public static double setSlideTarget = 7.75;
+    public static double slideWristOffset = 9; //(in)
+    public static double setSlideTarget = 9;
     private double slideError = 0;
 
     //arm coordinates
     private double slideTargetIn;
     private double armTargetAngle;
-    private double armHeight = (24.5 + 24 + 6*24) / 25.4; //7.578
+    private double armHeight = 5.5;
     private double targetX = armFoldX;
     private double targetY = armFoldY;
 
@@ -74,19 +74,16 @@ public class ArmSubsystem extends SubsystemBase {
     private LinkedList<TimeStampedPosition> positionHistory = new LinkedList<>();
     private static final long VELOCITY_TIME_FRAME_MS = 100; // Time frame in milliseconds
 
-    //endstop
-    private Endstop endstop;
-    public enum Endstop{
-        UP,
-        DOWN
-    }
+    //nautilus
+    private InterpLUT nautilus = new InterpLUT();   //nautilus theta to arm theta
+
 
     //last command store
     Command currentCommand;
     Command lastCommand;
 
     //constructor
-    public ArmSubsystem(MotorEx arm, MotorEx slideL, MotorGroup slide, Servo endStop, AnalogInput armEncoder, Telemetry telemetry) {
+    public ArmSubsystem(MotorGroup arm, MotorEx slideL, MotorGroup slide, Servo endStop, AnalogInput armEncoder, Telemetry telemetry) {
         this.arm = arm;
         this.slide = slide;
         this.slideL = slideL;
@@ -95,7 +92,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
         wallActive = false;
 
-
+//TODO: tune the slide gain scheduling
         //Adding each val with a key
         slideKgLut.add(-999999, 0.135);
         slideKgLut.add(7, 0.135);
@@ -104,6 +101,13 @@ public class ArmSubsystem extends SubsystemBase {
         slideKgLut.add(99999999, .25);
         //generating final equation
         slideKgLut.createLUT();
+
+        //nautilus lut
+        nautilus.add(-999999,0);
+        nautilus.add(0,0);
+        nautilus.add(30,360);
+        nautilus.add(999999,360);
+        nautilus.createLUT();
     }
 
     public void manualArm(double armPower, double slidePower){
@@ -142,12 +146,9 @@ public class ArmSubsystem extends SubsystemBase {
         setArmCoordinates(x, targetY);
     }
 
-    public void setEndstop(Endstop endstop){
-        if(endstop == Endstop.UP){
-            endStop.setPosition(endstopUp);
-        } else if (endstop == Endstop.DOWN){
-            endStop.setPosition(endstopDown);
-        }
+    //set nautilus
+    public void setNautilus(double theta){
+        setArm(nautilus.get(theta));
     }
 
     public void setArmP(double p){

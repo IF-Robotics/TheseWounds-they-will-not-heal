@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.subSystems;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -11,24 +13,23 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class IntakeSubsystem extends SubsystemBase {
 
-    private ServoEx intake;
-    private ServoEx diffyLeft, diffyRight;
+    private Servo intake, diffyLeft, diffyRight;
 
     private Telemetry telemetry;
 
     private double pitchAngle;
     private double rollAngle;
 
-    public static int pitchAngleOffset = 378;
-    public static int rollAngleOffset = -45;
+    public static int pitchAngleOffset = 0;
+    public static int rollAngleOffset = 0;
 
     //the value in the parentheses is our desired angle range in degrees
-    public static double diffyScalar = 360/(350) * 355/255/*axon programming software is scaled to 255 degress max*/;
+    public static double diffyScalar = (240/255 * 355) ; //servoRange *
 
     //intake rotation
     private int intakePitchAngle = 0;
 
-    public IntakeSubsystem(ServoEx intake, ServoEx diffyLeft, ServoEx diffyRight, Telemetry telemetry) {
+    public IntakeSubsystem(Servo intake, Servo diffyLeft, Servo diffyRight, Telemetry telemetry) {
         this.intake = intake;
         this.diffyLeft = diffyLeft;
         this.diffyRight = diffyRight;
@@ -41,6 +42,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void closeClaw (){
         intake.setPosition(clawClose);
+    }
+
+    public void halfCloseClaw() {
+        intake.setPosition(clawHalfClose);
     }
 
     public void clawExtraOpen () {
@@ -56,8 +61,8 @@ public class IntakeSubsystem extends SubsystemBase {
         //accounting for the fact that we are using 2:1 bevel gears
         pitchAngle/= 2;
 
-        diffyLeft.turnToAngle((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
-        diffyRight.turnToAngle((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+        diffyLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+        diffyRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
     }
 
     public void setDiffy(double pitchAngle){
@@ -66,10 +71,10 @@ public class IntakeSubsystem extends SubsystemBase {
         //pitch is like the wrist and roll is like the twist             if that makes any sense at all
 
         //accounting for the fact that we are using 2:1 bevel gears
-        pitchAngle/= 2;
+        pitchAngle/= 52/18;
 
-        diffyLeft.turnToAngle((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
-        diffyRight.turnToAngle((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+        diffyLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+        diffyRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
     }
 
 
@@ -87,16 +92,16 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         switch (intakePitchAngle){
             case 0:
-                setDiffy(pitchesWhenIntake[0]);
+                setDiffy(0);
                 break;
             case 45:
-                setDiffy(pitchesWhenIntake[1]);
+                setDiffy(45);
                 break;
             case 90:
-                setDiffy(pitchesWhenIntake[2]);
+                setDiffy(90);
                 break;
             case 135:
-                setDiffy(pitchesWhenIntake[3]);
+                setDiffy(135);
                 break;
         }
     }

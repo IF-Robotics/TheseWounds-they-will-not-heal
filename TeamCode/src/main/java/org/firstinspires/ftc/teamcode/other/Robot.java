@@ -51,6 +51,7 @@ import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
 
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 
 @Config
@@ -104,10 +105,9 @@ public abstract class Robot extends CommandOpMode {
     public static double pitch = 0, roll = 0;
 
     //hardware
-    public MotorEx BL, BR, FL, FR, arm, slideLeft, slideRight, slideNew;
-    public MotorGroup slide;
-    public ServoEx diffyLeft, diffyRight, claw;
-    public Servo endStop;
+    public MotorEx BL, BR, FL, FR, armLeft, armRight, slideLeft, slideRight;
+    public MotorGroup slide, arm;
+    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, ptoServo;
     public AnalogInput armEncoder;
     public GoBildaPinpointDriver pinpoint;
     private MecanumDrive mecanumDrive;
@@ -119,6 +119,7 @@ public abstract class Robot extends CommandOpMode {
     //subsystems
     public DriveSubsystem driveSubsystem;
     public ArmSubsystem armSubsystem;
+    public SecondaryArmSubsystem secondaryArmSubsystem;
     public IntakeSubsystem intakeSubsystem;
     public VisionSubsystem visionSubsystem;
     public ColorSubsystem colorSubsystem;
@@ -184,6 +185,9 @@ public abstract class Robot extends CommandOpMode {
         FR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        //dt servos
+        defensePad = hardwareMap.get(Servo.class, "defensePad");
+        ptoServo = hardwareMap.get(Servo.class, "pto");
 
 //        FR.setInverted(true);
 //        BR.setInverted(true);
@@ -202,29 +206,31 @@ public abstract class Robot extends CommandOpMode {
         register(driveSubsystem);
 
         //arm
-        arm = new MotorEx(hardwareMap, "arm", Motor.GoBILDA.RPM_30);
+        armLeft = new MotorEx(hardwareMap, "armLeft");
+        armRight = new MotorEx(hardwareMap, "armRight");
         slideLeft = new MotorEx(hardwareMap, "slideL");
         slideRight = new MotorEx(hardwareMap, "slideR");
-        slideNew = new MotorEx(hardwareMap, "slideNew");
         armEncoder = hardwareMap.get(AnalogInput.class, "armEncoder");
-        endStop = hardwareMap.get(Servo.class, "backstop");
-        arm.setRunMode(Motor.RunMode.RawPower);
+        nautilus = hardwareMap.get(Servo.class, "nautilus");
+        armLeft.setRunMode(Motor.RunMode.RawPower);
+        armRight.setRunMode(Motor.RunMode.RawPower);
         slideLeft.setRunMode(Motor.RunMode.RawPower);
         slideRight.setRunMode(Motor.RunMode.RawPower);
         slideLeft.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideLeft.setInverted(true);
         slideRight.setInverted(true);
-        slideNew.setInverted(true);
-        arm.setInverted(false);
+        armRight.setInverted(false);
 
-        slide = new MotorGroup(slideLeft, slideRight, slideNew);
+        slide = new MotorGroup(slideLeft, slideRight);
+        arm = new MotorGroup(armLeft, armRight);
 
-        armSubsystem = new ArmSubsystem(arm, slideRight, slide, endStop, armEncoder, telemetry);
+        //armSubsystem
+        armSubsystem = new ArmSubsystem(arm, slideRight, slide, nautilus, armEncoder, telemetry);
         register(armSubsystem);
 
-        //sensor
 
+        //sensor
         sensor = hardwareMap.get(RevColorSensorV3.class, "Color");
 
         colorSubsystem = new ColorSubsystem(hardwareMap, telemetry);
@@ -232,12 +238,16 @@ public abstract class Robot extends CommandOpMode {
 
 
         //intake
-        claw = new SimpleServo(hardwareMap, "claw", 0, 180, AngleUnit.DEGREES);
-        diffyLeft =  new SimpleServo(hardwareMap, "diffyLeft", 0, 360, AngleUnit.DEGREES);
-        diffyRight =  new SimpleServo(hardwareMap, "diffyRight", 0, 360, AngleUnit.DEGREES);
+        claw = hardwareMap.get(Servo.class, "claw");
+        diffyLeft = hardwareMap.get(Servo.class, "diffyLeft");
+        diffyRight = hardwareMap.get(Servo.class, "diffyRight");
 
         intakeSubsystem = new IntakeSubsystem(claw, diffyLeft, diffyRight, telemetry);
         register(intakeSubsystem);
+
+        //secondaryArmSubsystem
+        secondaryArmSubsystem = new SecondaryArmSubsystem(secondaryArmLeft, secondaryArmRight, telemetry);
+        register(secondaryArmSubsystem);
 
         //vision
         visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), hardwareMap.get(Servo.class, "light"), telemetry);
@@ -389,7 +399,7 @@ public abstract class Robot extends CommandOpMode {
         backwards is a negative number.
          */
 
-       pinpoint.setOffsets(0, -83.95); //these are tuned for 3110-0002-0001 Product Insight #1
+       pinpoint.setOffsets(-2.9, 6.4); //these are tuned for 3110-0002-0001 Product Insight #1
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
