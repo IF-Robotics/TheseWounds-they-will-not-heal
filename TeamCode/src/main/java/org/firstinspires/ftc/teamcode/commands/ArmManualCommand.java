@@ -26,9 +26,7 @@ public class ArmManualCommand extends CommandBase {
     @Override
     public void initialize() {
         manualArm = true;
-        manualSlides = true;
-        new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)).schedule();
-    }
+        manualSlides = true;}
 
     @Override
     public void execute() {
@@ -36,9 +34,7 @@ public class ArmManualCommand extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted){
-        new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.UP)).schedule();
-        manualArm = false;
+    public void end(boolean interrupted){manualArm = false;
         manualSlides = false;
     }
 

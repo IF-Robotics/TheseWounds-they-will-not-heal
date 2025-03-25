@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
     //arm PIDF
     public static double kParm = 0.05, kIarm = 0, kDarm = 0.01, kFarm = 2, kGarm = 2;
     public static double armWeakKP = 0.01;
-    public static double armAngleOffset = -178.5/*-39*/;
+    public static double armAngleOffset = -102;
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
     private double ff;
@@ -48,11 +48,11 @@ public class ArmSubsystem extends SubsystemBase {
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
     public static double slideKP = .2*1.5, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
     private PIDController slideController;
-    private final double ticksPerIn = /*TODO: this math is incorrect (do it empirically instead) */(28/*(28/rev)*/)/(.1428571429/*GR*/)/(Math.PI*48/*pulleyDiamter*/);
+    private final double ticksPerIn = 738/30.5; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides
     private int slideTicks = 1;
     private double slidePower = 0;
-    private double slideExtention = 7.75;
-    public static double slideWristOffset = 9; //(in)
+    private double slideExtention = 9;
+    public static double slideWristOffset = 9  ; //(in)
     public static double setSlideTarget = 9;
     private double slideError = 0;
 
@@ -287,7 +287,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         //read
         slideTicks = slideL.getCurrentPosition();
-        rawAngle = armEncoder.getVoltage()/3.3 * 360;
+        rawAngle = 360 - (armEncoder.getVoltage()/3.3 * 360);
         correctedAngle = rawAngle + armAngleOffset;
 
         //calculate slide extension

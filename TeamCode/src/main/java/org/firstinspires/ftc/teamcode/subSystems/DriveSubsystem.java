@@ -29,11 +29,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.runner.Drawing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.BooleanSupplier;
 
 public class DriveSubsystem extends SubsystemBase {
 
+    private static final Logger log = LoggerFactory.getLogger(DriveSubsystem.class);
     private MotorEx FR, FL, BR, BL;
     private Servo defensePad, ptoServo;
 
@@ -289,6 +292,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void resetPinpointIMU(){
+        Log.i("resetPinPointIMU", "true");
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, currentPos.getX(), currentPos.getY(), AngleUnit.DEGREES, 0));
     }
 

@@ -189,8 +189,10 @@ public abstract class Robot extends CommandOpMode {
         defensePad = hardwareMap.get(Servo.class, "defensePad");
         ptoServo = hardwareMap.get(Servo.class, "pto");
 
-//        FR.setInverted(true);
-//        BR.setInverted(true);
+        FR.setInverted(false);
+        BR.setInverted(false);
+        FL.setInverted(false);
+        BL.setInverted(false);
 
         mecanumDrive = new MecanumDrive(FL, FR, BL, BR);
         gyro = hardwareMap.get(IMU.class, "imu");
@@ -219,8 +221,9 @@ public abstract class Robot extends CommandOpMode {
         slideLeft.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideLeft.setInverted(true);
-        slideRight.setInverted(true);
-        armRight.setInverted(false);
+        slideRight.setInverted(false);
+        armLeft.setInverted(false);
+        armRight.setInverted(true);
 
         slide = new MotorGroup(slideLeft, slideRight);
         arm = new MotorGroup(armLeft, armRight);
@@ -231,7 +234,7 @@ public abstract class Robot extends CommandOpMode {
 
 
         //sensor
-        sensor = hardwareMap.get(RevColorSensorV3.class, "Color");
+        sensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
         colorSubsystem = new ColorSubsystem(hardwareMap, telemetry);
         register(colorSubsystem);
@@ -246,6 +249,9 @@ public abstract class Robot extends CommandOpMode {
         register(intakeSubsystem);
 
         //secondaryArmSubsystem
+        secondaryArmLeft = hardwareMap.get(Servo.class, "secondaryArmLeft");
+        secondaryArmRight = hardwareMap.get(Servo.class, "secondaryArmRight");
+
         secondaryArmSubsystem = new SecondaryArmSubsystem(secondaryArmLeft, secondaryArmRight, telemetry);
         register(secondaryArmSubsystem);
 
@@ -269,7 +275,6 @@ public abstract class Robot extends CommandOpMode {
         new ArmCoordinatesCommand(armSubsystem, armFoldX, armFoldY).schedule(true);
         
         CommandScheduler.getInstance().schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, 250));
-        schedule(new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.UP)));
     }
 
     @Override

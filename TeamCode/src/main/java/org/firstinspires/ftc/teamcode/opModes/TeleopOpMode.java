@@ -218,9 +218,7 @@ public class TeleopOpMode extends Robot {
 
         //climbing
         bRight2.whenPressed(new ParallelCommandGroup(
-                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchFrontHighChamber, rollFrontHighChamber),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
-                armPositionToClimb));
+                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchFrontHighChamber, rollFrontHighChamber), armPositionToClimb));
         bRight2.whenReleased(new ClimbLevel3(armSubsystem, intakeSubsystem, gyro));
 
         //testing

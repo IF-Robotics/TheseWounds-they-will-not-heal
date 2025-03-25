@@ -23,16 +23,11 @@ public class ClimbLevel3 extends SequentialCommandGroup {
     public ClimbLevel3(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, IMU gyro){
         addCommands(
                 //move endstop out of the way
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
-
                 //move intake out of the way
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchFrontHighChamber, rollFrontHighChamber),
 
                 //Climb to first rung
                 new ArmManualCommand(armSubsystem, () -> 1, () -> -1).withTimeout(2000),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
-
                 //Climb to second rung
                 new InstantCommand(() -> armSubsystem.setArmP(climbingArmP)),
                 //rotate arm up to second rung
@@ -63,11 +58,7 @@ public class ClimbLevel3 extends SequentialCommandGroup {
                 new InstantCommand(() -> armSubsystem.setArmP(.1)),
                 new InstantCommand(() -> armSubsystem.setSlideP(.1)),
                 new ArmManualCommand(armSubsystem, () -> 1, () -> -1).withTimeout(800),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
                 new ArmManualCommand(armSubsystem, () -> 1, () -> -.5).withTimeout(2000),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
-                new InstantCommand(() -> armSubsystem.setEndstop(ArmSubsystem.Endstop.DOWN)),
                 new ArmCoordinatesCommand(armSubsystem, armFoldX, armFoldY)
 
                 //Yay! We did a level 3 climb!!!!!!!

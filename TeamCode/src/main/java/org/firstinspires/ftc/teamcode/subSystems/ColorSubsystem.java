@@ -31,7 +31,7 @@ public class ColorSubsystem extends SubsystemBase {
     }
 
     public ColorSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.colorSensor = hardwareMap.get(RevColorSensorV3.class, "Color");
+        this.colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
         this.i2c=colorSensor.getDeviceClient();
         this.i2c.enableWriteCoalescing(true);
 //        this.analog0 = hardwareMap.get(AnalogInput.class, "analog0");
