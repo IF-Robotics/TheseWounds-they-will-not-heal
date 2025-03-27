@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;

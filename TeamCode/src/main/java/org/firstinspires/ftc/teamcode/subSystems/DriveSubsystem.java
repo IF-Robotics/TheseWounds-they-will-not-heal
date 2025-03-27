@@ -36,7 +36,7 @@ import java.util.function.BooleanSupplier;
 
 public class DriveSubsystem extends SubsystemBase {
 
-    private static final Logger log = LoggerFactory.getLogger(DriveSubsystem.class);
+//    private static final Logger log = LoggerFactory.getLogger(DriveSubsystem.class);
     private MotorEx FR, FL, BR, BL;
     private Servo defensePad, ptoServo;
 

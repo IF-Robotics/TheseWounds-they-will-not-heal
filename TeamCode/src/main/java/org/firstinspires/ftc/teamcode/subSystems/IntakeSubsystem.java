@@ -26,7 +26,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public static int rollAngleOffset = 0;
 
     //the value in the parentheses is our desired angle range in degrees
-    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
+//    private double diffyScalar = ((245.0/255.0 * 355.0/360.0)/360); //servoRange *
+//    private double diffyScalar = (255/245.0) * (360.0/355.0)/360.0;
+    private double diffyScalar = 1.0/355.0 * 1.2;
 
     //intake rotation
     private int intakePitchAngle = 0;
@@ -55,8 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setDiffy(double pitchAngle, double rollAngle){
-        //accounting for the fact that we are using 2:1 bevel gears
-        pitchAngle/= 52/18;
+        rollAngle/= 52/18.0;
 
         this.pitchAngle = pitchAngle;
         this.rollAngle = rollAngle;
@@ -67,8 +68,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setDiffy(double pitchAngle){
-        //accounting for the fact that we are using 2:1 bevel gears
-        pitchAngle/= 52/18;
 
         this.pitchAngle = pitchAngle;
 
@@ -78,9 +77,18 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void powerDiffyServos(){
-        diffyLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar + .5);
-        diffyRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar + .5);
+        double leftInput = (  -(pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)  * diffyScalar + .5);
+        double rightInput = (  (pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)  * diffyScalar + .5);
+        diffyLeft.setPosition(leftInput);
+        diffyRight.setPosition(rightInput);
         Log.i("diffyServosSet", "true");
+        Log.i("diffyServosScalar", String.valueOf(diffyScalar));
+        Log.i("diffyServosLeft", String.valueOf(leftInput));
+        Log.i("diffyServosRight", String.valueOf(rightInput));
+        Log.i("diffyServosPitch", String.valueOf(pitchAngle));
+        Log.i("diffyServosRoll", String.valueOf(rollAngle));
+
+
     }
 
 

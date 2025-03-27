@@ -223,9 +223,9 @@ public class TeleopOpMode extends Robot {
 
         //testing
         start1.whenPressed(new ParallelCommandGroup(
-                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, 100),
-                new InstantCommand(() -> secondaryArmSubsystem.setDiffy(secondaryArmPitch, 100))
-            )
+                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, 0, 90),
+                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(10, 0))
+                )
         );
         start2.whenPressed(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket));
         start2.whenPressed(new ArmManualCommand(armSubsystem, m_driverOp::getRightY, m_driverOp::getLeftY));
