@@ -59,36 +59,17 @@ public abstract class Robot extends CommandOpMode {
 
     //commands
     public static TeleDriveCommand teleDriveCommand;
-    public static ArmCommand armCommand;
-    public static SlideCommand slideCommand;
-    public static ArmCoordinatesCommand armCoordinatesCommand;
-    public static ArmManualCommand armManualCommand;
-    public static ArmCoordinatesCommand armHomeCommand;
     public static ArmCoordinatesCommand armHighBasketCommand;
     public static ArmCoordinatesCommand armBackCommand;
-    public static ArmCoordinatesCommand armInSubCommand;
     public static ArmCoordinatesCommand armWhenIntakeWallCommand;
     public static ArmCoordinatesCommand armWhenCloseIntakeCommand;
-    public static ArmCoordinatesCommand armWhenHighChamberCommand;
-    public static ArmCoordinatesCommand armFrontHighChamberCommand;
     public static ArmCoordinatesCommand armPositionToClimb;
     public static ArmCoordinatesCommand armLeftAutoParkCommand;
-    public static ArmCoordinatesCommand armAutoRightCommand;
-    public static IntakeCommand setIntakeCommand;
-    public static IntakeCommand intakeWhenArmBackCommand;
     public static IntakeCommand intakeWhenHighBasketCommand;
-    public static IntakeCommand outakeWhenHighBasketCommand;
-    public static IntakeCommand outakeReadyCommand;
-    public static IntakeCommand intakeWhenArmHomeCommand;
-    public static IntakeCommand intakeCommand;
-    public static IntakeCommand intakeWhenHighChamberCommand;
     public static IntakeCommand intakeCloseCommand;
     public static IntakeCommand intakeWallCommand;
-    public static IntakeCommand intakeFrontHighChamberCommand;
     public static IntakeCommand intakeLastLeftAutoCommand;
     public static IntakeCommand intakeRightFrontHighChamberCommand;
-    public static IntakeCommand intakeAutoRightCommand;
-    public static IntakeCommand intakeAutoRightGrabCommand;
 
 
 
@@ -102,7 +83,7 @@ public abstract class Robot extends CommandOpMode {
 
     //test statics
     public static double x = 0, y = 0;
-    public static double pitch = 0, roll = 0;
+    public static double pitch = 0, roll = 0, secondaryArmYaw = 0, secondaryArmPitch = 0;
 
     //hardware
     public MotorEx BL, BR, FL, FR, armLeft, armRight, slideLeft, slideRight;
@@ -189,10 +170,10 @@ public abstract class Robot extends CommandOpMode {
         defensePad = hardwareMap.get(Servo.class, "defensePad");
         ptoServo = hardwareMap.get(Servo.class, "pto");
 
-        FR.setInverted(false);
-        BR.setInverted(false);
-        FL.setInverted(false);
-        BL.setInverted(false);
+        FR.setInverted(true);
+        BR.setInverted(true);
+        FL.setInverted(true);
+        BL.setInverted(true);
 
         mecanumDrive = new MecanumDrive(FL, FR, BL, BR);
         gyro = hardwareMap.get(IMU.class, "imu");
@@ -256,8 +237,8 @@ public abstract class Robot extends CommandOpMode {
         register(secondaryArmSubsystem);
 
         //vision
-        visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), hardwareMap.get(Servo.class, "light"), telemetry);
-        register(visionSubsystem);
+        //visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), hardwareMap.get(Servo.class, "light"), telemetry);
+        //register(visionSubsystem);
 
         m_driver = new GamepadEx(gamepad1);
         m_driverOp = new GamepadEx(gamepad2);
@@ -273,8 +254,7 @@ public abstract class Robot extends CommandOpMode {
         telemetry.update();
 
         new ArmCoordinatesCommand(armSubsystem, armFoldX, armFoldY).schedule(true);
-        
-        CommandScheduler.getInstance().schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, 250));
+
     }
 
     @Override
@@ -295,12 +275,6 @@ public abstract class Robot extends CommandOpMode {
             voltageCompensation = batteryVoltage/nominalVoltage;
         }
 
-
-        if (gamepad1.start){
-            schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, roll));
-        }
-
-
         //other telemetry
         telemetry.addData("manual", manualArm);
         //loopTime
@@ -314,31 +288,18 @@ public abstract class Robot extends CommandOpMode {
     public void configureCommands(){
         teleDriveCommand = new TeleDriveCommand(driveSubsystem, m_driver, true, 10, m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX);
 
-        //ARM
-        armCommand = new ArmCommand(armSubsystem, m_driverOp::getLeftY);
-        slideCommand = new SlideCommand(armSubsystem, m_driverOp::getRightY);
-        armCoordinatesCommand = new ArmCoordinatesCommand(armSubsystem, x, y);
         //home poses
-        armHomeCommand = new ArmCoordinatesCommand(armSubsystem, armHomeX, armHomeY);
         armBackCommand = new ArmCoordinatesCommand(armSubsystem, armBackX, armBackY);
         //scoring
-        armFrontHighChamberCommand = new ArmCoordinatesCommand(armSubsystem, armFrontHighChamberX, armFrontHighChamberY);
         armHighBasketCommand = new ArmCoordinatesCommand(armSubsystem, armHighBasketX, armHighBasketY);
-        //teleop high chamber
-        armWhenHighChamberCommand = new ArmCoordinatesCommand(armSubsystem, armHighChamberX, armHighChamberY);
 
         //intaking
-        //intake from sub
-        //armWhenIntakeCommand = new ArmCoordinatesCommand(armSubsystem, armReadySubIntakeX, armReadySubIntakeY);
-        armInSubCommand = new ArmCoordinatesCommand(armSubsystem, armReadySubIntakeX, armInSubIntakeY);
         //intake from closer
         armWhenCloseIntakeCommand = new ArmCoordinatesCommand(armSubsystem, armCloseIntakeX, armCloseIntakeY);
         //intaking from the wall
         armWhenIntakeWallCommand = new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY);
         //arm auto parking
         armLeftAutoParkCommand = new ArmCoordinatesCommand(armSubsystem, armParkLeftAutoX, armParkLeftAutoY);
-        // arm for auto right spcimen pick up
-        armAutoRightCommand = new ArmCoordinatesCommand(armSubsystem, armAutoRightX, armAutoRightY);
         //drop command
         dropOffCommandOp2 = new DropOffCommand(armSubsystem, intakeSubsystem);
 
@@ -346,35 +307,20 @@ public abstract class Robot extends CommandOpMode {
 
 
         //climbing
-        armManualCommand = new ArmManualCommand(armSubsystem, m_driverOp::getRightY, m_driverOp::getLeftY);
         armPositionToClimb = new ArmCoordinatesCommand(armSubsystem, armPositionToClimbX, armPositionToClimbY);
-
-        //INTAKE
-        setIntakeCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, roll);
 
 
         //scoring
         intakeWhenHighBasketCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket);
-        intakeWhenHighChamberCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenHighChamber, rollWhenHighChamber);
-        intakeFrontHighChamberCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchFrontHighChamber, rollFrontHighChamber);
         intakeRightFrontHighChamberCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchFrontRightHighChamber, rollFrontRightHighChamber);
         //intakeRightScoreFrontHighChamberCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchPlaceFrontHighRightChamber, rollPlaceFrontHighRightChamber);
         //intaking
         intakeLastLeftAutoCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchLastLeftAuto, rollLastLeftAuto);
-        //intakeReadyCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchWhenIntake, rollWhenIntake);
-        outakeReadyCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchWhenIntake, rollWhenIntake);
 
         intakeWallCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall);
 
         intakeCloseCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchWhenIntake, rollWhenIntake);
 
-        // intake the left spike on right auto
-        intakeAutoRightCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchRightAutoSpecimen, rollRightAutoSpecimen);
-        intakeAutoRightGrabCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchRightAutoSpecimen, rollRightAutoSpecimen);
-        //home poses
-        intakeWhenArmHomeCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, rollWhenArmHome);
-        intakeWhenArmBackCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchWhenBasket, rollWhenArmBack);
-        intakeCommand = new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, 0, rollWhenIntake);
 
         //command groups
         retractAfterIntake = new RetractAfterIntake(armSubsystem, intakeSubsystem, colorSubsystem);

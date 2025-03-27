@@ -222,7 +222,11 @@ public class TeleopOpMode extends Robot {
         bRight2.whenReleased(new ClimbLevel3(armSubsystem, intakeSubsystem, gyro));
 
         //testing
-        start1.whenPressed(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, roll));
+        start1.whenPressed(new ParallelCommandGroup(
+                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, 100),
+                new InstantCommand(() -> secondaryArmSubsystem.setDiffy(secondaryArmPitch, 100))
+            )
+        );
         start2.whenPressed(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket));
         start2.whenPressed(new ArmManualCommand(armSubsystem, m_driverOp::getRightY, m_driverOp::getLeftY));
 

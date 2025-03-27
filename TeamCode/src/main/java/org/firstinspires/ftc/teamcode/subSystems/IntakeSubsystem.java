@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
@@ -24,7 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public static int rollAngleOffset = 0;
 
     //the value in the parentheses is our desired angle range in degrees
-    public static double diffyScalar = (240/255 * 355) ; //servoRange *
+    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
 
     //intake rotation
     private int intakePitchAngle = 0;
@@ -53,28 +55,32 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setDiffy(double pitchAngle, double rollAngle){
+        //accounting for the fact that we are using 2:1 bevel gears
+        pitchAngle/= 52/18;
+
         this.pitchAngle = pitchAngle;
         this.rollAngle = rollAngle;
 
         //pitch is like the wrist and roll is like the twist             if that makes any sense at all
 
-        //accounting for the fact that we are using 2:1 bevel gears
-        pitchAngle/= 2;
-
-        diffyLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
-        diffyRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+        powerDiffyServos();
     }
 
     public void setDiffy(double pitchAngle){
+        //accounting for the fact that we are using 2:1 bevel gears
+        pitchAngle/= 52/18;
+
         this.pitchAngle = pitchAngle;
 
         //pitch is like the wrist and roll is like the twist             if that makes any sense at all
 
-        //accounting for the fact that we are using 2:1 bevel gears
-        pitchAngle/= 52/18;
+        powerDiffyServos();
+    }
 
-        diffyLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
-        diffyRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+    public void powerDiffyServos(){
+        diffyLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar + .5);
+        diffyRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar + .5);
+        Log.i("diffyServosSet", "true");
     }
 
 
@@ -111,6 +117,9 @@ public class IntakeSubsystem extends SubsystemBase {
         telemetry.addData("pitchAngle", pitchAngle);
         telemetry.addData("rollAngle", rollAngle);
         telemetry.addData("clawPos", intake.getPosition());
+
+        Log.i("diffyLeftServoPos", String.valueOf(diffyLeft.getPosition()));
+        Log.i("diffyRightServoPos", String.valueOf(diffyRight.getPosition()));
     }
 
 }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subSystems;
 
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,16 +17,14 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     private Telemetry telemetry;
 
     private double pitchAngle;
-    private double rollAngle;
+    private double yawAngle;
 
-    public static int pitchAngleOffset = 0;
-    public static int rollAngleOffset = 0;
+    public static int secondaryPitchAngleOffset = 0;
+    public static int secondaryYawAngleOffset = 0;
 
     //the value in the parentheses is our desired angle range in degrees
-    public static double diffyScalar = (240/255 * 355) ; //servoRange *
+    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
 
-    //intake rotation
-    private int intakePitchAngle = 0;
 
     public SecondaryArmSubsystem(Servo secondaryArmLeft, Servo secondaryArmRight, Telemetry telemetry) {
         this.secondaryArmLeft = secondaryArmLeft;
@@ -32,14 +32,16 @@ public class SecondaryArmSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
     }
 
-    public void setDiffy(double pitchAngle, double rollAngle){
+    public void setDiffy(double pitchAngle, double yawAngle){
         this.pitchAngle = pitchAngle;
-        this.rollAngle = rollAngle;
+        this.yawAngle = yawAngle;
 
         //accounting for the fact that we are using bevel gears with  GR
         pitchAngle/= 52/18;
 
         powerServos();
+        secondaryArmLeft.setPosition((((pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar +.5);
+        secondaryArmRight.setPosition((((pitchAngle + secondaryPitchAngleOffset) + (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar + .5);
     }
 
     public void setDiffyPitch(double pitchAngle){
@@ -52,7 +54,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     }
 
     public void setDiffyRoll(double rollAngle){
-        this.rollAngle = rollAngle;
+        this.yawAngle = rollAngle;
 
         //accounting for the fact that we are using bevel gears with  GR
         pitchAngle/= 52/18;
@@ -61,17 +63,17 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     }
 
     public void powerServos(){
-        secondaryArmLeft.setPosition((((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
-        secondaryArmRight.setPosition((((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)) / 2) * diffyScalar);
+        secondaryArmLeft.setPosition((((pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar +.5);
+        secondaryArmRight.setPosition((((pitchAngle + secondaryPitchAngleOffset) + (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar + .5);
+        Log.i("secondaryArmServosSet", "true");
     }
 
-
-
-
-    @Override
     public void periodic() {
         telemetry.addData("secondaryArmPitchAngle", pitchAngle);
-        telemetry.addData("secondaryArmRollAngle", rollAngle);
+        telemetry.addData("secondaryArmRollAngle", yawAngle);
+
+        Log.i("secondaryArmLeftServoPos", String.valueOf(secondaryArmLeft.getPosition()));
+        Log.i("secondaryArmRightServoPos", String.valueOf(secondaryArmRight.getPosition()));
     }
 
 }
