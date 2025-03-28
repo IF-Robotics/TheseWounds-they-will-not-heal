@@ -19,10 +19,11 @@ import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 
 public class SampleSubAuto extends SequentialCommandGroup {
-    public SampleSubAuto(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem, ColorSubsystem colorSubsystem, Pose2d intakePose) {
+    public SampleSubAuto(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, VisionSubsystem visionSubsystem, ColorSubsystem colorSubsystem, Pose2d intakePose) {
 
         addCommands(
                 new DriveToPointCommand(driveSubsystem, new Pose2d(-52, 3, Rotation2d.fromDegrees(-90)),2, 7).withTimeout(1000),
@@ -31,7 +32,7 @@ public class SampleSubAuto extends SequentialCommandGroup {
                     new WaitCommand(800)
                         .interruptOn(()->driveSubsystem.getAutoDriveError()<5)
                         .andThen(new InstantCommand(() -> intakeSubsystem.setDiffy(0,-50)))
-                        .andThen(new IntakeSub(armSubsystem, intakeSubsystem))
+                        .andThen(new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem))
                 ),
                 new WaitCommand(800).interruptOn(()->armSubsystem.getCurrentX()>armReadySubIntakeX-0.4),
                 new ParallelDeadlineGroup(

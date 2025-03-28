@@ -4,10 +4,12 @@ package org.firstinspires.ftc.teamcode.subSystems;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 
 @Config
 public class SecondaryArmSubsystem extends SubsystemBase {
@@ -57,8 +59,8 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     }
 
     public void powerServos(){
-        double leftInput = (  -(pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset)  * diffyScalar + .5);
-        double rightInput = (  (pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset)  * diffyScalar + .5);
+        double leftInput = (((pitchAngle + secondaryPitchAngleOffset) + (yawAngle + secondaryYawAngleOffset))  * diffyScalar + .5);
+        double rightInput = (((pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset))  * diffyScalar + .5);
         secondaryArmLeft.setPosition(leftInput);
         secondaryArmRight.setPosition(rightInput);
 //        secondaryArmLeft.setPosition((((pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar +.5);
@@ -72,6 +74,10 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
         Log.i("secondaryArmLeftServoPos", String.valueOf(secondaryArmLeft.getPosition()));
         Log.i("secondaryArmRightServoPos", String.valueOf(secondaryArmRight.getPosition()));
+    }
+
+    public Command intakeSub(){
+        return new SecondaryArmCommand(this, 0, 0);
     }
 
 }

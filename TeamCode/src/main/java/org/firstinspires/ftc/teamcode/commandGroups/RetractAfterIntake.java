@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 
 public class RetractAfterIntake extends SequentialCommandGroup{
@@ -65,10 +66,10 @@ public class RetractAfterIntake extends SequentialCommandGroup{
     }
 
     //Im overloading it, the boolean has no impacgt, who gaf anymore
-    public RetractAfterIntake(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ColorSubsystem colorSubsystem, boolean isAuto){
+    public RetractAfterIntake(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ColorSubsystem colorSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         Command dropOppositeAllianceSample = new ConditionalCommand(
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, 0, 0)
-                        .andThen(new InstantCommand(()->cancelAndReextend(intakeSubsystem, armSubsystem))),
+                        .andThen(new InstantCommand(()->cancelAndReextend(intakeSubsystem, armSubsystem, secondaryArmSubsystem))),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, 0),
                 ()->colorSubsystem.holdingOppositeColor()
         );
@@ -91,9 +92,9 @@ public class RetractAfterIntake extends SequentialCommandGroup{
         addRequirements(armSubsystem, intakeSubsystem);
     }
 
-    public void cancelAndReextend(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem){
+    public void cancelAndReextend(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         this.cancel();
-        CommandScheduler.getInstance().schedule(new IntakeSub(armSubsystem, intakeSubsystem));
+        CommandScheduler.getInstance().schedule(new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
     }
 
 }

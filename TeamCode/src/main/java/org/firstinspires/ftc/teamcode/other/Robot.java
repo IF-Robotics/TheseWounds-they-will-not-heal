@@ -225,6 +225,7 @@ public abstract class Robot extends CommandOpMode {
         claw = hardwareMap.get(Servo.class, "claw");
         diffyLeft = hardwareMap.get(Servo.class, "diffyLeft");
         diffyRight = hardwareMap.get(Servo.class, "diffyRight");
+        diffyLeft.setDirection(Servo.Direction.REVERSE);
 
         intakeSubsystem = new IntakeSubsystem(claw, diffyLeft, diffyRight, telemetry);
         register(intakeSubsystem);
@@ -232,6 +233,7 @@ public abstract class Robot extends CommandOpMode {
         //secondaryArmSubsystem
         secondaryArmLeft = hardwareMap.get(Servo.class, "secondaryArmLeft");
         secondaryArmRight = hardwareMap.get(Servo.class, "secondaryArmRight");
+        secondaryArmLeft.setDirection(Servo.Direction.REVERSE);
 
         secondaryArmSubsystem = new SecondaryArmSubsystem(secondaryArmLeft, secondaryArmRight, telemetry);
         register(secondaryArmSubsystem);

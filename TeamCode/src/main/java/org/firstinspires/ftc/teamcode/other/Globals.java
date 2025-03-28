@@ -10,8 +10,8 @@ import java.util.function.DoubleSupplier;
 public class Globals {
 //intake subsystem
     //intaking
-    public static int pitchWhenIntake = 0;
-    public static int rollWhenIntake = -190;
+    public static int pitchWhenIntake = -90;
+    public static int rollWhenIntake = -0;
     public static int pitchLastLeftAuto = 60;
     public static int rollLastLeftAuto = -190;
     //intake from the wall

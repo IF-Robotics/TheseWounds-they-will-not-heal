@@ -92,7 +92,7 @@ public class sixSpecAuto extends AutoBase {
                 ).withTimeout(500),
                 new InstantCommand(() -> intakeSubsystem.setDiffy(0,-50)),
                 new ParallelCommandGroup(
-                    new IntakeSub(armSubsystem, intakeSubsystem),
+                    new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                     new DriveToPointDoubleSupplierCommand(driveSubsystem, ()->subX+3, ()->-46.5 + subY, firstHighChamberRight.getRotation(), 5, 5)
                 ),
                 new WaitCommand(800).interruptOn(()->armSubsystem.getCurrentX()>armReadySubIntakeX-0.75),

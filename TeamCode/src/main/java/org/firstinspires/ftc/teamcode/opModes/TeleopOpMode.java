@@ -113,10 +113,10 @@ public class TeleopOpMode extends Robot {
         //sub intake
         dUp1.whenPressed(new ConditionalCommand(
                 new ConditionalCommand(
-                        new IntakeSub(armSubsystem, intakeSubsystem),
+                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                         new SequentialCommandGroup(
                                 new WaitForArmCommand(armSubsystem, 0, 5, true),
-                                new IntakeSub(armSubsystem, intakeSubsystem)
+                                new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
                         ),
                         () -> (armSubsystem.getArmAngle() < 5 && armSubsystem.getCurrentY() < 20)
                 ),
@@ -124,7 +124,7 @@ public class TeleopOpMode extends Robot {
                 () -> armSubsystem.getCurrentY() < 30
 
                 ));
-        dUp2.whenPressed(new IntakeSub(armSubsystem, intakeSubsystem));
+        dUp2.whenPressed(new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
 
 
 
@@ -211,7 +211,7 @@ public class TeleopOpMode extends Robot {
         //retract after scoring in the baskets
         cross1.whenPressed(new SequentialCommandGroup(
                 new RetractFromBasket(driveSubsystem, armSubsystem, intakeSubsystem),
-                new IntakeSub(armSubsystem, intakeSubsystem).alongWith(new TeleDriveCommand(driveSubsystem, m_driver, true, 10, m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX))
+                new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem).alongWith(new TeleDriveCommand(driveSubsystem, m_driver, true, 10, m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX))
                 )
         );
         cross2.whenPressed(new RetractFromBasket(driveSubsystem, armSubsystem, intakeSubsystem));
@@ -222,11 +222,6 @@ public class TeleopOpMode extends Robot {
         bRight2.whenReleased(new ClimbLevel3(armSubsystem, intakeSubsystem, gyro));
 
         //testing
-        start1.whenPressed(new ParallelCommandGroup(
-                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, 0, 90),
-                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(10, 0))
-                )
-        );
         start2.whenPressed(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket));
         start2.whenPressed(new ArmManualCommand(armSubsystem, m_driverOp::getRightY, m_driverOp::getLeftY));
 
@@ -254,6 +249,13 @@ public class TeleopOpMode extends Robot {
             schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, rollWhenBasket));
             schedule(new WaitForSlideCommand(armSubsystem, 8, 10));
             schedule(new InstantCommand(() -> armSubsystem.setArm(45)));
+        }
+
+        if(gamepad1.start){
+            schedule(new ParallelCommandGroup(
+                    new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, roll),
+                    new InstantCommand(() -> secondaryArmSubsystem.setDiffy(secondaryArmPitch, secondaryArmYaw))
+            ));
         }
 
         //extend after dropOff

@@ -67,18 +67,21 @@ public class IntakeSubsystem extends SubsystemBase {
         powerDiffyServos();
     }
 
-    public void setDiffy(double pitchAngle){
+    public void setDiffy(double rollAngle){
+        rollAngle/= 52/18.0;
 
-        this.pitchAngle = pitchAngle;
+        this.rollAngle = rollAngle;
 
         //pitch is like the wrist and roll is like the twist             if that makes any sense at all
 
         powerDiffyServos();
     }
 
+
+
     public void powerDiffyServos(){
-        double leftInput = (  -(pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)  * diffyScalar + .5);
-        double rightInput = (  (pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset)  * diffyScalar + .5);
+        double leftInput = (  ((pitchAngle + pitchAngleOffset) - (rollAngle + rollAngleOffset))  * diffyScalar + .5);
+        double rightInput = (  ((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset))  * diffyScalar + .5);
         diffyLeft.setPosition(leftInput);
         diffyRight.setPosition(rightInput);
         Log.i("diffyServosSet", "true");
