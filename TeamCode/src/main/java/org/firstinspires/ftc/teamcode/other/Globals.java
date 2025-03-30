@@ -22,16 +22,16 @@ public class Globals {
     public static int rollRightAutoSpecimen = -190;
 
     //claw poses
-    public static double clawOpen = 0.7;
-    public static double clawExtraOpen = .8;
-    public static double clawHalfClose = 0;
-    public static double clawClose = .25;
+    public static double clawOpen = 0.35;
+    public static double clawExtraOpen = .275;
+    public static double clawHalfClose = .5;
+    public static double clawClose = .575;
 
 
     //scoring
     //basket
-    public static int pitchWhenBasket = pitchIntakeWall;
-    public static int rollWhenBasket = 130;
+    public static int pitchWhenBasket = 70;
+    public static int rollWhenBasket = 0;
 
     public static double pitchWhenHighChamber = 0;
     public static double rollWhenHighChamber = -20;
@@ -71,7 +71,7 @@ public class Globals {
     public static double armBackY = 17;
     //arm high basket
     public static double armHighBasketX = -2;
-    public static double  armHighBasketY = 45;
+    public static double  armHighBasketY = 40  ;
     //arm when front high chamber
     public static double armFrontHighChamberX = 20;
     public static double armFrontHighChamberY = 17.6;
@@ -84,9 +84,9 @@ public class Globals {
 
     //arm when intaking from sub
     public static double armAutoSpikeX = 23;
-    public static double armReadySubIntakeX = 27;
+    public static double armReadySubIntakeX = 29;
     public static double armSubIntakeY = 3;
-    public static double armReadySubIntakeY = 8;
+    public static double armReadySubIntakeY = 10;
     public static double armInSubIntakeY = 5;
     //arm when close (distance) intake
     public static double armCloseIntakeX = 15;

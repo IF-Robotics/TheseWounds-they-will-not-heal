@@ -62,7 +62,7 @@ public class zeroPlusFourAuto extends Robot {
                 new WaitCommand(200),
 
                 //cycle the spikemarks
-                new CycleLeftSpikeMarksFast(driveSubsystem, intakeSubsystem, armSubsystem),
+                new CycleLeftSpikeMarksFast(driveSubsystem, intakeSubsystem, armSubsystem, secondaryArmSubsystem),
 
                 // park
                 //move arm up

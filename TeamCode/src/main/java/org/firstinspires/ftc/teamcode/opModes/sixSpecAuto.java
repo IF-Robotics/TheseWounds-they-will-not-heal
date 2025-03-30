@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opModes;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.*;
 
-import android.util.Log;
-
 import androidx.core.math.MathUtils;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -11,7 +9,6 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -19,12 +16,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleFast;
-import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleSlow;
 import org.firstinspires.ftc.teamcode.commandGroups.IntakeSub;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
-import org.firstinspires.ftc.teamcode.commandGroups.StartSpecAuto;
 import org.firstinspires.ftc.teamcode.commandGroups.SweepSpikes;
-import org.firstinspires.ftc.teamcode.commandGroups.rightPreloadSpecScore;
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand;
@@ -101,7 +95,7 @@ public class sixSpecAuto extends AutoBase {
                 //wait
                 new WaitCommand(100),
                 //pickup sample and retract
-                new RetractAfterIntake(armSubsystem, intakeSubsystem),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
 
 
 

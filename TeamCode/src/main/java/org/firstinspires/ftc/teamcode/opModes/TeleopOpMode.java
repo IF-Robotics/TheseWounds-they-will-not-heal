@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -33,12 +32,12 @@ import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.ResetSlides;
 import org.firstinspires.ftc.teamcode.commandGroups.TeleopSpecScore;
 
-import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
+import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.other.Robot;
-import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 
 @Disabled
@@ -67,7 +66,8 @@ public class TeleopOpMode extends Robot {
         manualArm = false;
         manualSlides = false;
 
-        new ArmCoordinatesCommand(armSubsystem, 3.5, 14).schedule(true);
+        new ArmCoordinatesCommand(armSubsystem, 12, 7).schedule(true);
+        new InstantCommand(() -> secondaryArmSubsystem.setDiffyYaw(0)).schedule(true);
 
     }
 
@@ -138,16 +138,16 @@ public class TeleopOpMode extends Robot {
         dRight2.whenPressed(new IntakeCloseCommand(armSubsystem, intakeSubsystem));
         //retract after intaking
         dDown1.whenPressed(new ConditionalCommand(
-                new RetractAfterIntake(armSubsystem, intakeSubsystem),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                         new SequentialCommandGroup(
-                                new RetractAfterIntake(armSubsystem, intakeSubsystem),
-                                new HighBasketCommand(armSubsystem, intakeSubsystem)
+                                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                                new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
                         ),
                         () -> teleopSpec == true
             )
         );
-
-        dDown2.whenPressed(new RetractAfterIntake(armSubsystem, intakeSubsystem));
+        //retract after intaking (spec mode)
+        dDown2.whenPressed(new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem, true));
         //wall intake
 //        tRight1.toggleWhenActive(new teleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem));
 //        tLeft1.whenActive(new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, false, ()->{return false;},m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX));
@@ -172,8 +172,7 @@ public class TeleopOpMode extends Robot {
         );
 
         //dropping sample (into observation zone)
-        circle2.whenPressed(new DropCommand(armSubsystem, intakeSubsystem));
-        circle2.whenReleased(dropOffCommandOp2);
+        square2.whenReleased(new DropCommand(armSubsystem, intakeSubsystem));
         tRight1.whenActive(
                 new ConditionalCommand(
                         new DropCommand(armSubsystem, intakeSubsystem),
@@ -184,11 +183,10 @@ public class TeleopOpMode extends Robot {
                         () -> armSubsystem.getArmAngle() < 45
                 )
         );
-        tRight1.whenInactive(new DropOffCommand(armSubsystem, intakeSubsystem));
 
 
         //baskets
-        triangle2.whenPressed(new HighBasketCommand(armSubsystem, intakeSubsystem));
+        triangle2.whenPressed(new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
         triangle1.whenPressed(new ConditionalCommand(
                 new SequentialCommandGroup(
                     //move to high basket
@@ -254,14 +252,10 @@ public class TeleopOpMode extends Robot {
         if(gamepad1.start){
             schedule(new ParallelCommandGroup(
                     new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitch, roll),
-                    new InstantCommand(() -> secondaryArmSubsystem.setDiffy(secondaryArmPitch, secondaryArmYaw))
+                    new SecondaryArmCommand(secondaryArmSubsystem, secondaryArmPitch, secondaryArmYaw)
             ));
         }
 
-        //extend after dropOff
-        /*if(armSubsystem.getLastCommand().getName().equals("DropOffCommand") && Math.abs(driveSubsystem.getPos().getRotation().getDegrees()) < 100){
-            schedule(new IntakeSub(armSubsystem, intakeSubsystem));
-        }*/
 
         //switch teleop mode
         if(currentGamepad1.touchpad && !previousGamepad1.touchpad || currentGamepad2.touchpad && !previousGamepad2.touchpad){

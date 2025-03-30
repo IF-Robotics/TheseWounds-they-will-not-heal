@@ -164,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         //actually moving
-        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, -turnSpeed * power, currentPos.getRotation().getDegrees());
+        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, turnSpeed * power, currentPos.getRotation().getDegrees());
 
         //read pinpoint
         readPinpoint();

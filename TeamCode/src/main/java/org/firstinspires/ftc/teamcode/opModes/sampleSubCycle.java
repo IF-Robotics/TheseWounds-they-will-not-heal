@@ -64,7 +64,7 @@ public class sampleSubCycle extends AutoBase {
                 new RetractFromBasketAuto(armSubsystem, intakeSubsystem),
 
                 //cycle the spikemarks
-                new CycleLeftSpikeMarksFast(driveSubsystem, intakeSubsystem, armSubsystem),
+                new CycleLeftSpikeMarksFast(driveSubsystem, intakeSubsystem, armSubsystem, secondaryArmSubsystem),
 
                 //cyling from the sub
                 new SampleSubAuto(driveSubsystem, intakeSubsystem, armSubsystem, secondaryArmSubsystem, visionSubsystem, colorSubsystem, new Pose2d(-26, -7, Rotation2d.fromDegrees(-90))),

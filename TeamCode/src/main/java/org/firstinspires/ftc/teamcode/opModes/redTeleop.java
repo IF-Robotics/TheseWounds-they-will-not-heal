@@ -26,8 +26,10 @@ public class redTeleop extends TeleopOpMode {
 
         if(teleopSpec){
             gamepad1.setLedColor(0,0,255, LED_DURATION_CONTINUOUS);
+            gamepad2.setLedColor(0,0,255, LED_DURATION_CONTINUOUS);
         } else{
             gamepad1.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
+            gamepad2.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
         }
     }
 

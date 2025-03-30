@@ -97,7 +97,7 @@ public class ArmSubsystem extends SubsystemBase {
         slideKgLut.add(-999999, 0.135);
         slideKgLut.add(7, 0.135);
         slideKgLut.add(23.9, .2);
-        slideKgLut.add(41, .25);
+        slideKgLut.add(41,.6);
         slideKgLut.add(99999999, .25);
         //generating final equation
         slideKgLut.createLUT();

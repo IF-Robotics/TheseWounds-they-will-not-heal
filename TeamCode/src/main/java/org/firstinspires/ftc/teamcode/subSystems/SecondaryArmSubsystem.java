@@ -14,15 +14,15 @@ import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 @Config
 public class SecondaryArmSubsystem extends SubsystemBase {
 
-    private Servo secondaryArmLeft, secondaryArmRight;
+    private Servo secondaryArmLeft, secondaryArmRight, secondaryYawServo;
 
     private Telemetry telemetry;
 
     private double pitchAngle;
     private double yawAngle;
 
-    public static int secondaryPitchAngleOffset = 0;
-    public static int secondaryYawAngleOffset = 0;
+    public static int secondaryPitchAngleOffset = -13;
+    public static int secondaryYawAngleOffset = -73;
 
     //the value in the parentheses is our desired angle range in degrees
 //    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
@@ -30,9 +30,10 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
 
 
-    public SecondaryArmSubsystem(Servo secondaryArmLeft, Servo secondaryArmRight, Telemetry telemetry) {
+    public SecondaryArmSubsystem(Servo secondaryArmLeft, Servo secondaryArmRight, Telemetry telemetry, Servo secondaryArmServo) {
         this.secondaryArmLeft = secondaryArmLeft;
         this.secondaryArmRight = secondaryArmRight;
+        this.secondaryYawServo = secondaryArmServo;
         this.telemetry = telemetry;
     }
 
@@ -40,32 +41,41 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
         this.pitchAngle = pitchAngle;
         setDiffyYaw(yawAngle);
+        setDiffyPitch(pitchAngle);
     }
 
     public void setDiffyPitch(double pitchAngle){
         this.pitchAngle = pitchAngle;
-
-        powerServos();
+        powerPitchServos();
     }
 
     public void setDiffyYaw(double yawAngle){
 
-        //accounting for the fact that we are using bevel gears with  GR
-        yawAngle/= 52/18.0;
-
 //        this.yawAngle = yawAngle;
         this.yawAngle = 0;
-        powerServos();
+
+        double yawInput = ((yawAngle + secondaryYawAngleOffset)/355 + .5);
+        secondaryYawServo.setPosition(yawInput);
     }
 
-    public void powerServos(){
-        double leftInput = (((pitchAngle + secondaryPitchAngleOffset) + (yawAngle + secondaryYawAngleOffset))  * diffyScalar + .5);
-        double rightInput = (((pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset))  * diffyScalar + .5);
+    public void powerPitchServos(){
+        double leftInput = ((pitchAngle + secondaryPitchAngleOffset)  * diffyScalar + .5);
+        double rightInput = ((pitchAngle + secondaryPitchAngleOffset)  * diffyScalar + .5);
         secondaryArmLeft.setPosition(leftInput);
         secondaryArmRight.setPosition(rightInput);
 //        secondaryArmLeft.setPosition((((pitchAngle + secondaryPitchAngleOffset) - (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar +.5);
 //        secondaryArmRight.setPosition((((pitchAngle + secondaryPitchAngleOffset) + (yawAngle + secondaryYawAngleOffset)) / 2) * diffyScalar + .5);
 //        Log.i("secondaryArmServosSet", "true");
+    }
+
+    public double getPitchAngle(){
+        //return (secondaryArmLeft.getPosition() - .5)/diffyScalar - secondaryPitchAngleOffset;
+        return pitchAngle;
+    }
+
+    public double getYawAngle(){
+        //return (secondaryYawServo.getPosition() - .5) * 355 - secondaryYawAngleOffset;
+        return yawAngle;
     }
 
     public void periodic() {

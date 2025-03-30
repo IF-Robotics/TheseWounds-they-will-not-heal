@@ -5,13 +5,8 @@ import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
@@ -20,7 +15,6 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -29,22 +23,14 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.commandGroups.DropOffCommand;
-import org.firstinspires.ftc.teamcode.commandGroups.HighBasketCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.HighChamberCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterWallIntake;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractFromBasket;
 import org.firstinspires.ftc.teamcode.commandGroups.ScoreHighChamberCommand;
-import org.firstinspires.ftc.teamcode.commands.ArmCommand;
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
-import org.firstinspires.ftc.teamcode.commands.ArmManualCommand;
-import org.firstinspires.ftc.teamcode.commandGroups.DropCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.SlideCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleDriveCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
@@ -79,7 +65,6 @@ public abstract class Robot extends CommandOpMode {
     public static HighChamberCommand highChamberCommand;
     public static ScoreHighChamberCommand scoreHighChamberCommand;
     public static RetractAfterWallIntake retractAfterWallIntake;
-    public static DropOffCommand dropOffCommandOp2;
 
     //test statics
     public static double x = 0, y = 0;
@@ -88,7 +73,7 @@ public abstract class Robot extends CommandOpMode {
     //hardware
     public MotorEx BL, BR, FL, FR, armLeft, armRight, slideLeft, slideRight;
     public MotorGroup slide, arm;
-    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, ptoServo;
+    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo;
     public AnalogInput armEncoder;
     public GoBildaPinpointDriver pinpoint;
     private MecanumDrive mecanumDrive;
@@ -233,9 +218,10 @@ public abstract class Robot extends CommandOpMode {
         //secondaryArmSubsystem
         secondaryArmLeft = hardwareMap.get(Servo.class, "secondaryArmLeft");
         secondaryArmRight = hardwareMap.get(Servo.class, "secondaryArmRight");
-        secondaryArmLeft.setDirection(Servo.Direction.REVERSE);
+        secondaryYawServo = hardwareMap.get(Servo.class, "secondaryYawServo");
+        secondaryArmRight.setDirection(Servo.Direction.REVERSE);
 
-        secondaryArmSubsystem = new SecondaryArmSubsystem(secondaryArmLeft, secondaryArmRight, telemetry);
+        secondaryArmSubsystem = new SecondaryArmSubsystem(secondaryArmLeft, secondaryArmRight, telemetry, secondaryYawServo);
         register(secondaryArmSubsystem);
 
         //vision
@@ -302,8 +288,7 @@ public abstract class Robot extends CommandOpMode {
         armWhenIntakeWallCommand = new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY);
         //arm auto parking
         armLeftAutoParkCommand = new ArmCoordinatesCommand(armSubsystem, armParkLeftAutoX, armParkLeftAutoY);
-        //drop command
-        dropOffCommandOp2 = new DropOffCommand(armSubsystem, intakeSubsystem);
+
 
 
 
@@ -325,7 +310,6 @@ public abstract class Robot extends CommandOpMode {
 
 
         //command groups
-        retractAfterIntake = new RetractAfterIntake(armSubsystem, intakeSubsystem, colorSubsystem);
         retractFromBasket = new RetractFromBasket(driveSubsystem, armSubsystem, intakeSubsystem);
         highChamberCommand = new HighChamberCommand(armSubsystem, intakeSubsystem);
         scoreHighChamberCommand = new ScoreHighChamberCommand(armSubsystem, intakeSubsystem);

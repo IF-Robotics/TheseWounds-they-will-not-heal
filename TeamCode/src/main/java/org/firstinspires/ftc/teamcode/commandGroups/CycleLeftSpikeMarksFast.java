@@ -5,9 +5,7 @@ import static org.firstinspires.ftc.teamcode.other.PosGlobals.*;
 
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ScheduleCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -16,16 +14,17 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
-import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 public class CycleLeftSpikeMarksFast extends SequentialCommandGroup {
 
 
-    public CycleLeftSpikeMarksFast(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem) {
+    public CycleLeftSpikeMarksFast(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, SecondaryArmSubsystem secondaryArmSubsystem) {
         Command customHighBasketCommand = new SequentialCommandGroup(
                 //move arm back
                 new WaitForArmCommand(armSubsystem, 100, 55),
@@ -55,7 +54,7 @@ public class CycleLeftSpikeMarksFast extends SequentialCommandGroup {
                 new WaitCommand(300),
 
                 //grab and retract
-                new RetractAfterIntake(armSubsystem, intakeSubsystem),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 //arm basket
                 customHighBasketCommand,
 
@@ -84,7 +83,7 @@ public class CycleLeftSpikeMarksFast extends SequentialCommandGroup {
                 //wait
                 new WaitCommand(300),
                 //grab and retract
-                new RetractAfterIntake(armSubsystem, intakeSubsystem),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 //arm basket
                 customHighBasketCommand,
                 new WaitCommand(200),
@@ -108,7 +107,7 @@ public class CycleLeftSpikeMarksFast extends SequentialCommandGroup {
                 //wait
                 new WaitCommand(200),
                 //grab and retract
-                new RetractAfterIntake(armSubsystem, intakeSubsystem),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 //arm basket
                 customHighBasketCommand,
 

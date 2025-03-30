@@ -16,18 +16,22 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 public class DropOffCommand extends SequentialCommandGroup {
 
-    public DropOffCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
+    public DropOffCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem) {
         addCommands(
-                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchWhenIntake, rollWhenIntake),
-                new WaitCommand(50),
-                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchWhenIntake, rollWhenBasket + 40),
-                new InstantCommand(() -> armSubsystem.setSlide(8))
+                new InstantCommand(()-> intakeSubsystem.clawExtraOpen()),
+                new WaitCommand(100),
 
+                new InstantCommand(() -> secondaryArmSubsystem.setDiffyYaw(0)),
+                new WaitCommand(200),
+
+                new SecondaryArmCommand(secondaryArmSubsystem, 135)
 
         );
 

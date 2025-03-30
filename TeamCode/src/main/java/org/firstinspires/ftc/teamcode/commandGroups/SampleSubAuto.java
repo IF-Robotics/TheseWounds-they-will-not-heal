@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commandGroups;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeX;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.leftBasketPose2;
-import static org.firstinspires.ftc.teamcode.other.PosGlobals.leftSideLeftSpike;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -13,7 +12,6 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
@@ -42,11 +40,11 @@ public class SampleSubAuto extends SequentialCommandGroup {
                     )
                 ).withTimeout(3500),
                 new WaitCommand(100),
-                new RetractAfterIntake(armSubsystem, intakeSubsystem, colorSubsystem),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, colorSubsystem, secondaryArmSubsystem),
                 new ParallelCommandGroup(
                     new DriveToPointCommand(driveSubsystem, new Pose2d(-40, -7, Rotation2d.fromDegrees(-90)),2, 10).withTimeout(300)
                         .andThen(new DriveToPointCommand(driveSubsystem, leftBasketPose2, 2, 5)),
-                    new HighBasketCommand(armSubsystem, intakeSubsystem)
+                    new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
                 ),
                 new WaitCommand(200),
                 new RetractFromBasketAuto(armSubsystem, intakeSubsystem)
