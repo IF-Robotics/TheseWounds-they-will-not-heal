@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     //arm PIDF
-    public static double kParm = 0.05, kIarm = 0, kDarm = 0.01, kFarm = 2, kGarm = 1.8;
+    public static double kParm = 0.05, kIarm = 0, kDarm = 0.01, kFarm = 2, kGarm = 0.7;
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -102+8.4;
     public static double climbingArmP = .03;
@@ -96,7 +96,7 @@ public class ArmSubsystem extends SubsystemBase {
 //TODO: tune the slide gain scheduling
         //Adding each val with a key
         slideKgLut.add(-999999, 0.1);
-        slideKgLut.add(9, 0.1);
+        slideKgLut.add(9, 0.08);
         slideKgLut.add(20, 0.37);
         slideKgLut.add(25, .53);
         slideKgLut.add(30, .7);

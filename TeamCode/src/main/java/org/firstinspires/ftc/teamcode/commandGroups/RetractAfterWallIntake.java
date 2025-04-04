@@ -35,7 +35,7 @@ public class RetractAfterWallIntake extends SequentialCommandGroup {
 //                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchPlaceFrontHighRightChamber, rollFrontHighChamber),
                 new InstantCommand(()->armSubsystem.setSlide(10.5)),
                 secondaryArmSubsystem.setPitchSafe(0),
-                new WaitForArmCommand(armSubsystem, 46, 10),
+                new WaitForArmCommand(armSubsystem, 46, 10).withTimeout(500),
                 new ParallelCommandGroup(
                     new ArmCoordinatesCommand(armSubsystem, armBackX, armBackY), //wait for secondary arm yaw to clear nautilus
                     new WaitCommand(50).andThen(secondaryArmSubsystem.setPitchSafe(0)), //wait for sample to rotate

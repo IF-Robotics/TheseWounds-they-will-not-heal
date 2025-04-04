@@ -48,7 +48,7 @@ public class IntakeSub extends SequentialCommandGroup {
                 //wait for arm to be horizontal
                 new WaitForArmCommand(armSubsystem, 8, 5),
                 //arm & intake to correct pos
-                new ArmCoordinatesCommand(armSubsystem, armReadySubIntakeX, armReadySubIntakeY+1.5)
+                new ArmCoordinatesCommand(armSubsystem, armReadySubIntakeX, armReadySubIntakeY)
         );
 
         addRequirements(armSubsystem, intakeSubsystem);

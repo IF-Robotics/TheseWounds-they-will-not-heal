@@ -158,14 +158,14 @@ public class TeleopOpMode extends Robot {
         }));
 
         //In-sub adjuster for secondary
-//        new Trigger(()->Math.abs(m_driverOp.getLeftX()) > .1).or(new Trigger(()->Math.abs(m_driverOp.getRightY()) > .1))
-//                .whenActive(new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)).andThen(
-//                        new RunCommand(() -> {
-//                            secondaryArmSubsystem.setDiffyYaw(()->m_driverOp.getLeftX() * 90);/*makes the range 180degrees*/
-//                            intakeSubsystem.normalizeRollToSecondaryArm(()->m_driverOp.getLeftX() * 90);
-//                        }, secondaryArmSubsystem, intakeSubsystem)
-//                ))
-//                .whenActive(new JacobSlideValorantAimer(armSubsystem, m_driverOp::getRightY, ()->m_driverOp.getLeftX() * 90));
+        new Trigger(()->Math.abs(m_driverOp.getLeftX()) > .1).or(new Trigger(()->Math.abs(m_driverOp.getRightY()) > .1))
+                .whenActive(new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)).andThen(
+                        new RunCommand(() -> {
+                            secondaryArmSubsystem.setDiffyYaw(()->m_driverOp.getLeftX() * 90);/*makes the range 180degrees*/
+                            intakeSubsystem.normalizeRollToSecondaryArm(()->m_driverOp.getLeftX() * 90);
+                        }, secondaryArmSubsystem, intakeSubsystem)
+                ))
+                .whenActive(new JacobSlideValorantAimer(armSubsystem, m_driverOp::getRightY, ()->m_driverOp.getLeftX() * 90));
 
 
 //        new Trigger(()->Math.abs(m_driverOp.getRightY()) > .1)

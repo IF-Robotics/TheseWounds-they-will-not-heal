@@ -23,7 +23,9 @@ public class PosGlobals {
     //high chamber
     public static Pose2d highChamberLeft = new Pose2d(-5, -32.4, Rotation2d.fromDegrees(0));
     public static Pose2d firstHighChamberRight = new Pose2d(1, -32.5, Rotation2d.fromDegrees(0));
-    public static Pose2d highChamberRight = new Pose2d(8, -32, Rotation2d.fromDegrees(180));
+    public static Pose2d postSpikeHighChamberCheckpoint = new Pose2d(8, -35, Rotation2d.fromDegrees(30));
+
+    public static Pose2d highChamberRight = new Pose2d(3, -30, Rotation2d.fromDegrees(30));
 
 
     //baskets
@@ -40,8 +42,8 @@ public class PosGlobals {
     public static Pose2d rightSideRightSpike = new Pose2d(54, -36, Rotation2d.fromDegrees(-37));
 
     public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.65, -55.5, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(60.4, -55.5, Rotation2d.fromDegrees(0));
-//    public static Pose2d rightSideRightSpikeFlip = new Pose2d(54, -55,5, Rotation2d.fromDegrees(-37));
+    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(61.5, -55.5, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideRightSpikeFlip = new Pose2d(62, -53, Rotation2d.fromDegrees(-18));
 
 
     //observation zone pickup
@@ -50,7 +52,8 @@ public class PosGlobals {
     public static double obsZoneHeading = 0;
 
     //wallPickUp
-    public static Pose2d wallPickUp = new Pose2d(38, -60 + 1, Rotation2d.fromDegrees(180));
+    public static Pose2d firstWallPickUp = new Pose2d(62, -61, Rotation2d.fromDegrees(0));
+    public static Pose2d wallPickUp = new Pose2d(42, -61, Rotation2d.fromDegrees(0));
 
     //parking
     public static Pose2d leftAutoPark = new Pose2d(-24, -7.09, Rotation2d.fromDegrees(-90));

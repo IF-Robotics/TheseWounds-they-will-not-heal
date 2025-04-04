@@ -45,7 +45,7 @@ public class rightPreloadSpecScore extends SequentialCommandGroup {
                         .andThen(new ArmCoordinatesCommand(armSubsystem, armFrontHighChamberX, autoArmFrontHighChamberY)),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, autoPitchFrontHighChamber, rollFrontHighChamber),
                 // Drive to high chamber
-                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 10).withTimeout(1500),
+                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500),
                 //open
                 new WaitCommand(100),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, autoPitchFrontHighChamber, rollFrontHighChamber),
