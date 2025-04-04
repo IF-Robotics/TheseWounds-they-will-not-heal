@@ -58,5 +58,6 @@ public class DriveToPointCommand extends CommandBase {
     public void end(boolean interrupted) {
         //hold position
         //driveSubsystem.toggleAutoDrive(true);
+        Log.i("timedrivetopoint", String.valueOf(timer.seconds()));
     }
 }

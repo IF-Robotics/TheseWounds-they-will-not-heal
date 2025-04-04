@@ -9,11 +9,11 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 @Config
 public class PosGlobals {
     //starting pos
-    public static final double startRightX = (3 + 7/16) + 14.74/2;//the 3&7/16 is the length a sample
+    public static final double startRightX = (3 + 7/16) + (14.74/2)-1.5;//the 3&7/16 is the length a sample (bro didn't do double division :skull)
     public static final double startLeftX = -startRightX;
 //    public static final double startRightX = 14.74/2 + .5;//the 3&7/16 is the length a sample
 //    public static final double startLeftX = -(2*(3 + 7/16) + 14.74/2);
-    public static final double startLeftY = -70.9 + (8.18898);
+    public static final double startLeftY = -70.9 + (8.18898)-1.25;
     public static final double startRightY = startLeftY;
     public static Pose2d startingPosRight = new Pose2d(startRightX, startRightY, Rotation2d.fromDegrees(0));
     public static Pose2d startingPosLeft = new Pose2d(startLeftX, startLeftY, Rotation2d.fromDegrees(0));
@@ -22,7 +22,7 @@ public class PosGlobals {
 
     //high chamber
     public static Pose2d highChamberLeft = new Pose2d(-5, -32.4, Rotation2d.fromDegrees(0));
-    public static Pose2d firstHighChamberRight = new Pose2d(1, -33.0, Rotation2d.fromDegrees(0));
+    public static Pose2d firstHighChamberRight = new Pose2d(1, -32.5, Rotation2d.fromDegrees(0));
     public static Pose2d highChamberRight = new Pose2d(8, -32, Rotation2d.fromDegrees(180));
 
 
@@ -38,6 +38,10 @@ public class PosGlobals {
     public static Pose2d rightSideLeftSpike = new Pose2d(32, -37, Rotation2d.fromDegrees(-37));
     public static Pose2d rightSideMiddleSpike = new Pose2d(44, -36, Rotation2d.fromDegrees(-37));
     public static Pose2d rightSideRightSpike = new Pose2d(54, -36, Rotation2d.fromDegrees(-37));
+
+    public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.65, -55.5, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(60.4, -55.5, Rotation2d.fromDegrees(0));
+//    public static Pose2d rightSideRightSpikeFlip = new Pose2d(54, -55,5, Rotation2d.fromDegrees(-37));
 
 
     //observation zone pickup

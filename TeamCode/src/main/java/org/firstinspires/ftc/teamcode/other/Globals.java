@@ -10,13 +10,13 @@ import java.util.function.DoubleSupplier;
 public class Globals {
 //intake subsystem
     //intaking
-    public static int pitchWhenIntake = -90;
+    public static int pitchWhenIntake = -80;
     public static int rollWhenIntake = -0;
     public static int pitchLastLeftAuto = 60;
     public static int rollLastLeftAuto = -190;
     //intake from the wall
-    public static int pitchIntakeWall = 400;
-    public static int rollIntakeWall = -20;
+    public static int pitchIntakeWall = -60;
+    public static int rollIntakeWall = 180;
     // Right left specimens
     public static int pitchRightAutoSpecimen = pitchIntakeWall;
     public static int rollRightAutoSpecimen = -190;
@@ -30,7 +30,7 @@ public class Globals {
 
     //scoring
     //basket
-    public static int pitchWhenBasket = 70;
+    public static int pitchWhenBasket = 40;
     public static int rollWhenBasket = 0;
 
     public static double pitchWhenHighChamber = 0;
@@ -38,7 +38,7 @@ public class Globals {
 
     //autoLeft
     public static double autoPitchFrontHighChamber = 0;
-    public static double rollFrontHighChamber = 70+20;
+    public static double rollFrontHighChamber = 0;
 
     public static double pitchFrontHighChamber = 300;
 
@@ -59,6 +59,21 @@ public class Globals {
     public static int rollWhenArmBack = -150;
     public static int rollWhenArmHome = 200;
 
+
+
+    //secondaryArm poses
+
+    //wall intake
+    public static int secondaryPitchWallIntake = 200;//over, but it guarantees that even when we skip we will still be able to pickup
+    public static int secondaryYawWallIntake = 0;
+
+    //high chamber
+    public static int secondaryPitchHighChamber = 0;
+    public static int secondaryYawHighChamber = 0;
+
+
+
+
 //arm subsystem
     //arm home
     public static double armHomeX = 7.5;
@@ -66,16 +81,17 @@ public class Globals {
     //arm fold
     public static double armFoldX = 6.5;
     public static double armFoldY = 4.0;
-    //arm back
-    public static double armBackX = -1;
-    public static double armBackY = 17;
-    //arm high basket
+    //arm back - not really back anymmore, just the spec scoring position
+    public static double armBackX = 13.0;
+    public static double armBackY = 20.0;
+    //arm basket
     public static double armHighBasketX = -2;
-    public static double  armHighBasketY = 40  ;
+    public static double  armHighBasketY = 41;
+    public static double  armLowBasketY = 30;
     //arm when front high chamber
-    public static double armFrontHighChamberX = 20;
-    public static double armFrontHighChamberY = 17.6;
-    public static double autoArmFrontHighChamberY = 17.75;
+    public static double armFrontHighChamberX = 13.0;
+    public static double armFrontHighChamberY = 20.0;
+    public static double autoArmFrontHighChamberY = 20.0;
     //arm when high chamber
     public static double armRightHighChamberX = -1;
     public static double armRightHighChamberY = 28.0;
@@ -84,16 +100,16 @@ public class Globals {
 
     //arm when intaking from sub
     public static double armAutoSpikeX = 23;
-    public static double armReadySubIntakeX = 29;
+    public static double armReadySubIntakeX = 28;
     public static double armSubIntakeY = 3;
-    public static double armReadySubIntakeY = 10;
+    public static double armReadySubIntakeY = 8.5;
     public static double armInSubIntakeY = 5;
     //arm when close (distance) intake
     public static double armCloseIntakeX = 15;
     public static double armCloseIntakeY = 6;
     //arm when intaking form the wall
-    public static double armIntakeWallX = 7.7;
-    public static double armIntakeWallY = 8 +0.5;
+    public static double armIntakeWallX = 2;
+    public static double armIntakeWallY = 14.2;
     // arm when intaking for AutoRight
     public static double armAutoRightX = 16.6;
     public static double armAutoRightY = 1.3;
@@ -139,15 +155,18 @@ public class Globals {
 
 //drive to point
     public static double translationKP = 0.02*1.2;
+    public static final double translationKPprecise = 0.01;
+    public static final double translationKPfast = 0.02*1.2;
 
     public static double translationKI = 0.0;
     public static double translationKD = 0.01;
 //    public static double translationKD = 0.001;
+    public static double translationKF = -0.04; //static friction coefficient, overall robot vector not individual module so may not work as expected
 
     public static double translationKR = .5; //KR is the constant for the root of the pid
     public static double translationMaxVel = 1; //in inches per second
 
-    public static double headingKP = 0.005 * (11.5/9.0);
+    public static double headingKP = 0.005 * (11.5/9.0) / 1.5;
     public static double headingKI = 0.0;
     public static double headingKD = 0.0002;
     public static double headingKR = .5;

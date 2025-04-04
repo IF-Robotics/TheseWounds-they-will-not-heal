@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static java.lang.Double.NaN;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
@@ -29,6 +31,7 @@ public class SecondaryArmCommand extends CommandBase {
 
     @Override
     public void execute() {
+        Log.i("bruhbruhbruhauto", String.valueOf(pitchAngle));
         secondaryArmSubsystem.setDiffyPitch(pitchAngle);
 
         if(!Double.isNaN(yawAngle)){

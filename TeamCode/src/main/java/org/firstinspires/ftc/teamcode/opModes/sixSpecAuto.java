@@ -164,8 +164,21 @@ public class sixSpecAuto extends AutoBase {
                 subY = MathUtils.clamp(subY, 0, 15);
             }
 
+            //change spec mode
+            if(currentGamepad1.touchpad && !previousGamepad1.touchpad){
+                teleopSpec = !teleopSpec;
+            }
+
             telemetry.addData("subX (-8,6)", subX);
             telemetry.addData("subY(offesetFromBarrier)(0,15)", subY);
+
+            //specMode
+            if(teleopSpec){
+                telemetry.addData("specMode", "\uD83D\uDCA7\uD83D\uDCA7true\uD83D\uDC7A\uD83D\uDC7A");
+            }else{
+                telemetry.addData("specMode", "\uD83D\uDC72\uD83D\uDC72false⭐⭐");
+            }
+
             telemetry.update();
         }
     }

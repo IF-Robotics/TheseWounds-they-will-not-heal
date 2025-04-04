@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.other.Robot;
 @Autonomous(name="autoTest")
 public class autoTest extends Robot {
 
-    private Button dUp1, dDown1, dLeft1, dRight1;
+    private Button dUp1, dDown1, dLeft1, dRight1, bLeft1, bRight1;
 
     public static double sprintDistance = 20;
 
@@ -36,11 +36,16 @@ public class autoTest extends Robot {
         dDown1 = new GamepadButton(m_driver, GamepadKeys.Button.DPAD_DOWN);
         dLeft1 = new GamepadButton(m_driver, GamepadKeys.Button.DPAD_LEFT);
         dRight1 = new GamepadButton(m_driver, GamepadKeys.Button.DPAD_RIGHT);
+        bLeft1 = new GamepadButton(m_driver, GamepadKeys.Button.LEFT_BUMPER);
+        bRight1 = new GamepadButton(m_driver, GamepadKeys.Button.RIGHT_BUMPER);
 
         dUp1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(0, sprintDistance, new Rotation2d(0)), 2, 2));
         dDown1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(0, -sprintDistance, new Rotation2d(0)), 2, 2));
         dLeft1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(-sprintDistance, 0, new Rotation2d(0)), 2, 2));
         dRight1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(sprintDistance, 0, new Rotation2d(0)), 2, 2));
+        bLeft1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(90))), 2, 2));
+        bRight1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(-90))), 2, 2));
+
 
 
         schedule(new SequentialCommandGroup(

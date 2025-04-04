@@ -31,9 +31,9 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     //arm PIDF
-    public static double kParm = 0.05, kIarm = 0, kDarm = 0.01, kFarm = 2, kGarm = 2;
+    public static double kParm = 0.05, kIarm = 0, kDarm = 0.01, kFarm = 2, kGarm = 1.8;
     public static double armWeakKP = 0.01;
-    public static double armAngleOffset = -102;
+    public static double armAngleOffset = -102+8.4;
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
     private double ff;
@@ -48,12 +48,13 @@ public class ArmSubsystem extends SubsystemBase {
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
     public static double slideKP = .4, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
     private PIDController slideController;
-    private final double ticksPerIn = 738/30.5; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides
+    private final double ticksPerIn = 870.0/26.8; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides 738/30.5 / 1.3529
     private int slideTicks = 1;
     private double slidePower = 0;
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
-    public static double setSlideTarget = 9;
+    public static final double slideRetractMin = slideWristOffset;
+    public static double setSlideTarget = slideRetractMin;
     private double slideError = 0;
 
     //arm coordinates
@@ -94,12 +95,16 @@ public class ArmSubsystem extends SubsystemBase {
 
 //TODO: tune the slide gain scheduling
         //Adding each val with a key
-        slideKgLut.add(-999999, 0.135);
-        slideKgLut.add(7, 0.135);
-        slideKgLut.add(23.9, .2);
-        slideKgLut.add(41,.6);
-        slideKgLut.add(99999999, .25);
+        slideKgLut.add(-999999, 0.1);
+        slideKgLut.add(9, 0.1);
+        slideKgLut.add(20, 0.37);
+        slideKgLut.add(25, .53);
+        slideKgLut.add(30, .7);
+        slideKgLut.add(35,.88);
+        slideKgLut.add(40, 1.08);
+        slideKgLut.add(9999999, 1.00);
         //generating final equation
+
         slideKgLut.createLUT();
 
         //nautilus lut
@@ -115,11 +120,18 @@ public class ArmSubsystem extends SubsystemBase {
         slideManualPower = slidePower;
     }
 
+    public void manualSlides(double slidePower){
+        slideManualPower = slidePower;
+    }
+
     public void setArm(double targetAngle) {
         setArmTargetAngle = targetAngle;
     }
 
     public void setSlide(double targetInches) {
+        if(targetInches<slideRetractMin){
+            targetInches = slideRetractMin;
+        }
         setSlideTarget = targetInches;
     }
 
@@ -291,7 +303,7 @@ public class ArmSubsystem extends SubsystemBase {
         correctedAngle = rawAngle + armAngleOffset;
 
         //calculate slide extension
-        slideExtention = (slideTicks/ticksPerIn + slideWristOffset);
+        slideExtention = (slideTicks/ticksPerIn + slideWristOffset) + 0.931 * Math.toRadians(correctedAngle);
 
 
         //arm pid
@@ -335,6 +347,7 @@ public class ArmSubsystem extends SubsystemBase {
         telemetry.addData("armAngle", correctedAngle);
         telemetry.addData("armTarget", setArmTargetAngle);
         telemetry.addData("armPower", armPower);
+        telemetry.addData("armManual", armManualPower);
         telemetry.addData("armKP", armController.getP());
         telemetry.addData("armError", setArmTargetAngle - correctedAngle);
 

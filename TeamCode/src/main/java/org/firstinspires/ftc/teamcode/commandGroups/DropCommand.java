@@ -18,7 +18,7 @@ public class DropCommand extends SequentialCommandGroup {
 
     public DropCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
         addCommands(
-                new WaitForArmCommand(armSubsystem, 0, 10),
+                new WaitForArmCommand(armSubsystem, 10, 10),
                 new ArmCoordinatesCommand(armSubsystem, armReadySubIntakeX, armReadySubIntakeY),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenIntake, rollWhenIntake)
         );

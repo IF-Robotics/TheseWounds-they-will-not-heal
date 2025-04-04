@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commandGroups;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armHighBasketX;
 import static org.firstinspires.ftc.teamcode.other.Globals.armHighBasketY;
+import static org.firstinspires.ftc.teamcode.other.Globals.armLowBasketY;
 import static org.firstinspires.ftc.teamcode.other.Globals.pitchWhenBasket;
 import static org.firstinspires.ftc.teamcode.other.Globals.rollWhenBasket;
 
@@ -15,17 +16,17 @@ import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
-public class HighBasketCommand extends SequentialCommandGroup{
+public class LowBasketCommand extends SequentialCommandGroup{
 
-    public HighBasketCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
+    public LowBasketCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
                 //move arm back
                 new WaitForArmCommand(armSubsystem, 100, 45),
 
                 //move to high basket
-                new ArmCoordinatesCommand(armSubsystem, armHighBasketX, armHighBasketY),
+                new ArmCoordinatesCommand(armSubsystem, armHighBasketX, armLowBasketY),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket),
-                new SecondaryArmCommand(secondaryArmSubsystem, 40, 0)
+                new SecondaryArmCommand(secondaryArmSubsystem, 30, 0)
 
 
         );

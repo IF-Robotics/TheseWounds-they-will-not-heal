@@ -133,7 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         //actually moving
-        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, -turnSpeed * power, currentPos.getRotation().getDegrees());
+        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, turnSpeed * power, currentPos.getRotation().getDegrees());
 
         //read pinpoint
         readPinpoint();
@@ -164,7 +164,50 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         //actually moving
-        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, turnSpeed * power, currentPos.getRotation().getDegrees());
+        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, -turnSpeed * power, currentPos.getRotation().getDegrees());
+
+        //read pinpoint
+        readPinpoint();
+    }
+
+    public void teleDriveHeadingLocked(BooleanSupplier slowmode, boolean arcTanZones, int arcTanAngleRange, double strafeSpeed, double forwardSpeed, Rotation2d desiredHeading){
+        //slow mode
+        if (slowmode.getAsBoolean()) {
+            power = .3;
+        } else {
+            power = 1;
+        }
+
+        rawErrorHeading = currentPos.getRotation().getDegrees() - targetPos.getRotation().getDegrees();
+        rawErrorHeading = rawErrorHeading % 360;
+
+        if (rawErrorHeading < -180) {
+            correctedErrorHeading = rawErrorHeading + 360;
+        } else if (rawErrorHeading > 180) {
+            correctedErrorHeading = rawErrorHeading - 360;
+        } else {
+            correctedErrorHeading = rawErrorHeading;
+        }
+
+        headingCalculation = headingController.calculate(correctedErrorHeading);
+
+        turnVelocity = -Math.sqrt(Math.abs(headingCalculation)) * Math.signum(headingCalculation);
+
+
+        //arc tan dead zones
+        if (arcTanZones) {
+            if (Math.toDegrees(Math.atan(y / x)) > 90 - arcTanAngleRange / 2 && Math.toDegrees(Math.atan(y / x)) < 90 + arcTanAngleRange / 2
+                    || Math.toDegrees(Math.atan(y / x)) < -90 - arcTanAngleRange / 2 && Math.toDegrees(Math.atan(y / x)) > -90 + arcTanAngleRange / 2) {
+                x = 0;
+
+            } else if (Math.toDegrees(Math.atan(y / x)) > 0 - arcTanAngleRange / 2 && Math.toDegrees(Math.atan(y / x)) < 0 + arcTanAngleRange / 2
+                    || Math.toDegrees(Math.atan(y / x)) > 180 - arcTanAngleRange / 2 && Math.toDegrees(Math.atan(y / x)) < 180 + arcTanAngleRange / 2) {
+                y = 0;
+            }
+        }
+
+        //actually moving
+        mecanumDrive.driveFieldCentric(strafeSpeed * power, forwardSpeed * power, turnVelocity, currentPos.getRotation().getDegrees());
 
         //read pinpoint
         readPinpoint();
@@ -223,6 +266,7 @@ public class DriveSubsystem extends SubsystemBase {
         //testing
         telemetry.addData("errorX", errorX);
         telemetry.addData("errorY", errorY);
+        Log.i("autoError", String.valueOf(errorY));
         telemetry.addData("targetHeading", targetPos.getRotation().getDegrees());
         telemetry.addData("rawErrorHeading", rawErrorHeading);
         telemetry.addData("correctedHeading", correctedErrorHeading);
@@ -237,6 +281,11 @@ public class DriveSubsystem extends SubsystemBase {
         headingCalculation = voltageCompensation * headingController.calculate(correctedErrorHeading);
         correctedVectorMagnitude = voltageCompensation * -Math.pow((Math.abs(translationController.calculate(rawVectorMagnitude,0))) * Math.signum(rawVectorMagnitude), translationKR);
 
+        //Do not do static friction if error is low enough
+        if(rawVectorMagnitude<0.015) {
+            correctedVectorMagnitude += translationKF;
+        }
+
         //testing
         telemetry.addData("rawVectorMagnitude", rawVectorMagnitude);
         telemetry.addData("correctedVectorMagnitude", correctedVectorMagnitude);
@@ -245,7 +294,7 @@ public class DriveSubsystem extends SubsystemBase {
         //breaking vector into speed values + pid
         strafeVelocity = lateralMutliplier * (Math.cos (Math.toRadians(vectorTheta)) * correctedVectorMagnitude);
         forwardVelocity = (Math.sin (Math.toRadians(vectorTheta)) * correctedVectorMagnitude);
-        turnVelocity = Math.sqrt(Math.abs(headingCalculation)) * Math.signum(headingCalculation);
+        turnVelocity = -Math.sqrt(Math.abs(headingCalculation)) * Math.signum(headingCalculation);
 
         //testing
         telemetry.addData("strafeSpeed", strafeVelocity);
@@ -325,6 +374,15 @@ public class DriveSubsystem extends SubsystemBase {
             ptoServo.setPosition(dtPTOEngaged);
         } else
             ptoServo.setPosition(dtPTODisengaged);
+    }
+
+    public void enablePrecisePID(boolean enable){
+        if(enable){
+            translationKP=translationKPprecise;
+        }
+        else{
+            translationKP=translationKPfast;
+        }
     }
 
     @Override

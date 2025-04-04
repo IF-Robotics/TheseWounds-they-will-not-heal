@@ -49,7 +49,7 @@ public class WaitForArmCommand extends CommandBase {
     public void initialize(){
         armSubsystem.setArm(targetAngle);
         if(returnSlides){
-            armSubsystem.setSlide(7.75);
+            armSubsystem.setSlide(10);
         }
         timer.reset();
         loopCount = 0;

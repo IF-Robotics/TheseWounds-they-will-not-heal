@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleSlow;
+import org.firstinspires.ftc.teamcode.commandGroups.FlipSpikes;
 import org.firstinspires.ftc.teamcode.commandGroups.StartSpecAuto;
 import org.firstinspires.ftc.teamcode.commandGroups.SweepSpikes;
 import org.firstinspires.ftc.teamcode.commandGroups.rightPreloadSpecScore;
@@ -33,33 +34,34 @@ public class five_spec_auto extends Robot {
         //schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchPlaceFrontHighRightChamber, rollPlaceFrontHighRightChamber));
         manualArm = false;
 
-        new InstantCommand(() -> armSubsystem.setArm(90)).schedule(true);
+//        new InstantCommand(() -> armSubsystem.setArm(90)).schedule(true);
         claw.setPosition(clawClose);
-
+        intakeSubsystem.setDiffy(0,0);
+        secondaryArmSubsystem.setDiffy(0, 0);
 
         //turn on auto drive
         driveSubsystem.setDefaultCommand(new holdDTPosCommand(driveSubsystem));
 
         schedule(new SequentialCommandGroup(
-                new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem),
+                new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 new DriveToPointCommand(driveSubsystem, new Pose2d(12.45, -48, new Rotation2d(-45)), 10, 10),
-                new SweepSpikes(driveSubsystem, armSubsystem, intakeSubsystem),
-                new WaitCommand(300),
-                // wait?
-                new DriveToPointCommand(driveSubsystem,  new Pose2d(42, -45, Rotation2d.fromDegrees(-140)), 10, 10),
-
-                //open claw
-                //retract slide
-                armWhenIntakeWallCommand,
-                intakeWallCommand,
-                //drive close to pickup point
-                new DriveToPointCommand(driveSubsystem, new Pose2d(37, -50, Rotation2d.fromDegrees(180)), 2, 5),
-
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(50, -56, Rotation2d.fromDegrees(-180)), 1, 5)
+                new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+//                new WaitCommand(300),
+//                // wait?
+//                new DriveToPointCommand(driveSubsystem,  new Pose2d(42, -45, Rotation2d.fromDegrees(-140)), 10, 10),
+//
+//                //open claw
+//                //retract slide
+//                armWhenIntakeWallCommand,
+//                intakeWallCommand,
+//                //drive close to pickup point
+//                new DriveToPointCommand(driveSubsystem, new Pose2d(37, -50, Rotation2d.fromDegrees(180)), 2, 5),
+//
+//                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new DriveToPointCommand(driveSubsystem, new Pose2d(50, -56, Rotation2d.fromDegrees(-180)), 1, 5)
         ));
 
 

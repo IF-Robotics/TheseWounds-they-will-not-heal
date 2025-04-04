@@ -3,13 +3,21 @@ package org.firstinspires.ftc.teamcode.subSystems;
 
 import android.util.Log;
 
+import androidx.core.math.MathUtils;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
+
+import java.util.function.DoubleSupplier;
 
 @Config
 public class SecondaryArmSubsystem extends SubsystemBase {
@@ -21,12 +29,15 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     private double pitchAngle;
     private double yawAngle;
 
-    public static int secondaryPitchAngleOffset = -13;
+    public static int secondaryPitchAngleOffset = 0;
     public static int secondaryYawAngleOffset = -73;
 
     //the value in the parentheses is our desired angle range in degrees
 //    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
     public static double diffyScalar = 1.0/355.0 * 1.2;
+
+    public static final double safeLowerPitch = 5.0;
+
 
 
 
@@ -50,11 +61,20 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     }
 
     public void setDiffyYaw(double yawAngle){
-
+        yawAngle = MathUtils.clamp(yawAngle, -90, 90);
 //        this.yawAngle = yawAngle;
         this.yawAngle = 0;
 
         double yawInput = ((yawAngle + secondaryYawAngleOffset)/355 + .5);
+        secondaryYawServo.setPosition(yawInput);
+    }
+
+    public void setDiffyYaw(DoubleSupplier yawAngle){
+        double yawAngleDouble = MathUtils.clamp(yawAngle.getAsDouble(), -90, 90);
+//        this.yawAngle = yawAngle;
+        this.yawAngle = 0;
+
+        double yawInput = ((yawAngleDouble + secondaryYawAngleOffset)/355 + .5);
         secondaryYawServo.setPosition(yawInput);
     }
 
@@ -88,6 +108,41 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
     public Command intakeSub(){
         return new SecondaryArmCommand(this, 0, 0);
+    }
+
+    /**
+     * If yaw is nonzero, checks and sets yaw to 0 before adjusting the pitch
+     * @return conditional command beforming these checks
+     */
+    public Command setPitchSafe(double pitch){
+        return new ConditionalCommand(
+                new SecondaryArmCommand(this, pitch, 0),
+                new SequentialCommandGroup(
+                        new SecondaryArmCommand(this, getPitchAngle(), 0),
+                        new WaitCommand(500),
+                        new SecondaryArmCommand(this, pitch, 0)
+                ),
+                () -> Math.abs(this.getYawAngle()) < 5
+        );
+    }
+
+    /**
+     * IF pitch is not within "yaw-safe" zones, will not even attempt to change the yaw
+     */
+    public Command setPitchYawSafe(double pitch, double yaw){
+        //In this range, we cannot move yaw
+        if (pitch > safeLowerPitch){
+            return new SecondaryArmCommand(this, pitch, 0);
+        }
+        else {
+            //Just for slightly more efficiency + versatile
+            if(Math.abs(yaw)>3){
+                return setPitchSafe(pitch);
+            }
+            else {
+                return new SecondaryArmCommand(this, pitch, yaw);
+            }
+        }
     }
 
 }

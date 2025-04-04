@@ -44,7 +44,6 @@ import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 public abstract class Robot extends CommandOpMode {
 
     //commands
-    public static TeleDriveCommand teleDriveCommand;
     public static ArmCoordinatesCommand armHighBasketCommand;
     public static ArmCoordinatesCommand armBackCommand;
     public static ArmCoordinatesCommand armWhenIntakeWallCommand;
@@ -274,7 +273,6 @@ public abstract class Robot extends CommandOpMode {
     }
 
     public void configureCommands(){
-        teleDriveCommand = new TeleDriveCommand(driveSubsystem, m_driver, true, 10, m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX);
 
         //home poses
         armBackCommand = new ArmCoordinatesCommand(armSubsystem, armBackX, armBackY);
@@ -313,7 +311,7 @@ public abstract class Robot extends CommandOpMode {
         retractFromBasket = new RetractFromBasket(driveSubsystem, armSubsystem, intakeSubsystem);
         highChamberCommand = new HighChamberCommand(armSubsystem, intakeSubsystem);
         scoreHighChamberCommand = new ScoreHighChamberCommand(armSubsystem, intakeSubsystem);
-        retractAfterWallIntake = new RetractAfterWallIntake(armSubsystem, intakeSubsystem);
+        retractAfterWallIntake = new RetractAfterWallIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem);
 
     }
 
@@ -336,7 +334,7 @@ public abstract class Robot extends CommandOpMode {
         backwards is a negative number.
          */
 
-       pinpoint.setOffsets(-2.9, 6.4); //these are tuned for 3110-0002-0001 Product Insight #1
+       pinpoint.setOffsets(73.66, 162.56); //these are tuned for 3110-0002-0001 Product Insight #1
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -353,7 +351,7 @@ public abstract class Robot extends CommandOpMode {
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
-       pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+       pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
 
        //set yaw scalar

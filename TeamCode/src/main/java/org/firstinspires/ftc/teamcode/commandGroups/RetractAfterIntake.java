@@ -3,6 +3,7 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -28,22 +29,15 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(100),
+                new WaitCommand(50),
+                secondaryArmSubsystem.setPitchYawSafe(0,0).withTimeout(100), //not enough timeout to do worst case scenario, whatever....
 
-                new InstantCommand(()-> armSubsystem.setArm(15)),
-                new ParallelDeadlineGroup(
-                        //retract slides
-                        new WaitForSlideCommand(armSubsystem, 8, 15),
-                        //move intake out of the way
-                        new ConditionalCommand(
-                                new SecondaryArmCommand(secondaryArmSubsystem, 45, 0),
-                                new SequentialCommandGroup(
-                                        new SecondaryArmCommand(secondaryArmSubsystem, 0),
-                                        new WaitCommand(500),
-                                        new SecondaryArmCommand(secondaryArmSubsystem, 45, 0)
-                                ),
-                                () -> Math.abs(secondaryArmSubsystem.getYawAngle()) < 5
-                        )
+                new InstantCommand(()-> armSubsystem.setArm(5)),
+                new ParallelCommandGroup(
+                    //retract slides
+                    new WaitForSlideCommand(armSubsystem, 8, 15),
+                    //move intake out of the way
+                    secondaryArmSubsystem.setPitchYawSafe(45,0)
                 )
         );
 
@@ -108,21 +102,14 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 new WaitCommand(100),
 
                 new InstantCommand(()-> armSubsystem.setArm(15)),
-                new ParallelDeadlineGroup(
+                new WaitForSlideCommand(armSubsystem, 10, 10),
+                new ParallelCommandGroup(
                         //retract slides
-                        new WaitForSlideCommand(armSubsystem, 9, 5),
+                        new WaitForSlideCommand(armSubsystem, 10, 5),
 
-                        new WaitCommand(100),
+                        new WaitCommand(1500),//until we add two servos
                         //move intake out of the way
-                        new ConditionalCommand(
-                                new SecondaryArmCommand(secondaryArmSubsystem, 160, 0),
-                                new SequentialCommandGroup(
-                                        new SecondaryArmCommand(secondaryArmSubsystem, 0),
-                                        new WaitCommand(500),
-                                        new SecondaryArmCommand(secondaryArmSubsystem, 160, 0)
-                                ),
-                                () -> Math.abs(secondaryArmSubsystem.getYawAngle()) < 5
-                        )
+                        secondaryArmSubsystem.setPitchSafe(160)
                 ),
 
                 //raise arm
@@ -130,6 +117,7 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 //move secondaryArm to the side
                 new InstantCommand(()-> secondaryArmSubsystem.setDiffyYaw(90)),
                 //straigten out diffyWrist
+                new WaitCommand(200), //ensure we can safely set yaw
                 new InstantCommand(() -> intakeSubsystem.setDiffy(0,0))
         );
 

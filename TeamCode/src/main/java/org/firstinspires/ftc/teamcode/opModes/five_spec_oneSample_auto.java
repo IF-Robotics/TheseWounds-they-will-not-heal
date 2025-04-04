@@ -54,7 +54,7 @@ public class five_spec_oneSample_auto extends AutoBase {
 
 
         schedule(new SequentialCommandGroup(
-                new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem),
+                new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 new DriveToPointCommand(driveSubsystem, new Pose2d(12.45, -48, new Rotation2d(-45)), 10, 10),
                 new SweepSpikes(driveSubsystem, armSubsystem, intakeSubsystem),
 

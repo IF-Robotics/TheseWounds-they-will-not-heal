@@ -12,6 +12,8 @@ import android.util.Log;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.function.DoubleSupplier;
+
 @Config
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -77,6 +79,11 @@ public class IntakeSubsystem extends SubsystemBase {
         powerDiffyServos();
     }
 
+    public void setPitch(double pitchAngle) {
+        this.pitchAngle = pitchAngle;
+
+        powerDiffyServos();
+    }
 
 
     public void powerDiffyServos(){
@@ -84,12 +91,12 @@ public class IntakeSubsystem extends SubsystemBase {
         double rightInput = (  ((pitchAngle + pitchAngleOffset) + (rollAngle + rollAngleOffset))  * diffyScalar + .5);
         diffyLeft.setPosition(leftInput);
         diffyRight.setPosition(rightInput);
-        Log.i("diffyServosSet", "true");
-        Log.i("diffyServosScalar", String.valueOf(diffyScalar));
-        Log.i("diffyServosLeft", String.valueOf(leftInput));
-        Log.i("diffyServosRight", String.valueOf(rightInput));
-        Log.i("diffyServosPitch", String.valueOf(pitchAngle));
-        Log.i("diffyServosRoll", String.valueOf(rollAngle));
+//        Log.i("diffyServosSet", "true");
+//        Log.i("diffyServosScalar", String.valueOf(diffyScalar));
+//        Log.i("diffyServosLeft", String.valueOf(leftInput));
+//        Log.i("diffyServosRight", String.valueOf(rightInput));
+//        Log.i("diffyServosPitch", String.valueOf(pitchAngle));
+//        Log.i("diffyServosRoll", String.valueOf(rollAngle));
 
 
     }
@@ -121,6 +128,47 @@ public class IntakeSubsystem extends SubsystemBase {
                 setDiffy(135);
                 break;
         }
+    }
+
+    //if another method is controlling the diffy, this method shouldn't be controlling it
+    public void rotateIntake(boolean fullControl){
+        if(fullControl){
+            rotateIntake();
+        }
+        else{
+            //switching to next rotation
+            intakePitchAngle += 45;
+
+            //rotation reset
+            if (intakePitchAngle > 135){
+                intakePitchAngle = 0;
+            }
+
+            //don't setDiffy here, cause normalizeRollToSecondaryArm will
+        }
+    }
+
+    //Takes the yaw of the secondary arm and normalizes the wrist roll
+    public void normalizeRollToSecondaryArm(DoubleSupplier yawSupplier){
+        double wristAngle = -yawSupplier.getAsDouble();
+        Log.i("wristAnglePreRotation", String.valueOf(wristAngle));
+        wristAngle += intakePitchAngle;
+
+        if(wristAngle>=105){
+            while(wristAngle>=105){
+                wristAngle-=180;
+            }
+        }
+        else if (wristAngle<=-105){
+            while(wristAngle<=-105){
+                wristAngle+=180;
+            }
+        }
+
+        Log.i("wristAnglePostRotation", String.valueOf(wristAngle));
+
+
+        setDiffy(wristAngle);
     }
 
     @Override
