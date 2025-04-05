@@ -38,6 +38,11 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
     public static final double safeLowerPitch = 5.0;
 
+    public static final int hardStoppedHighPitch = 200;
+
+    public static final double secondaryArmLength = 7.0;
+
+
 
 
 

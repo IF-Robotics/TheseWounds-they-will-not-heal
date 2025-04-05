@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.other.Globals;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 import org.opencv.core.RotatedRect;
 
@@ -94,10 +95,6 @@ public class VisionToSampleInterpolate extends CommandBase {
         this.isSample = isSample;
 
         addRequirements(visionSubsystem, armSubsystem, intakeSubsystem);
-
-        if(!isAuto){
-            addRequirements(driveSubsystem);
-        }
 
         initializeLUTs();
     }
@@ -182,7 +179,7 @@ public class VisionToSampleInterpolate extends CommandBase {
         armSubsystem.setArmY(armReadySubIntakeY);
         hasFoundBlock=false;
 
-        armSubsystem.setSlideP(0.15*1.5);
+//        armSubsystem.setSlideP(0.15*1.5);
         visionSubsystem.turnOnStreaming(true);
         timer.reset();
     }
@@ -190,28 +187,21 @@ public class VisionToSampleInterpolate extends CommandBase {
     @Override
     public void execute(){
         turnpid = new BasicPID(new PIDCoefficients(kPTurn,0,0));
-        driveSubsystem.readPinpoint();
 
-        Optional<RotatedRect> allianceBoxFit = Optional.empty();
+        Optional<RotatedRect> boxFit = Optional.empty();
 
         if(!hasFoundBlock) {
-            if(isSample){
-                allianceBoxFit = visionSubsystem.getYellowBoxFit();
-            }
-            else{
-                allianceBoxFit = visionSubsystem.getAllianceBoxFit();
-            }
+            boxFit = visionSubsystem.getBoxFit();
         }
 
-        if(allianceBoxFit.isPresent()&&!hasFoundBlock&&timer.milliseconds()>50){
+        if(boxFit.isPresent()&&!hasFoundBlock&&timer.milliseconds()>200){ //REQUIRED-please raise wrist before viewing, can then work on reducing timeouts
             hasFoundBlock=true;
 
-            List<Double> allianceOffsets = visionSubsystem.getOffsetFromBoxFit(allianceBoxFit.get());
+            List<Double> allianceOffsets = visionSubsystem.getOffsetFromBoxFit(boxFit.get());
             double xOffsetInches = lutXOffset.get(allianceOffsets.get(0));
             double yOffsetInches = lutYOffset.get(allianceOffsets.get(1));
-            Log.i("bruhbruh", String.valueOf(yOffsetInches));
 
-            double allianceSkew = -visionSubsystem.getAngleFromRotatedRect(allianceBoxFit.get());
+            double allianceSkew = -visionSubsystem.getAngleFromRotatedRect(boxFit.get());
 
             Rotation2d allianceSkewRotation2d = new Rotation2d(Math.toRadians(allianceSkew));
 
@@ -232,26 +222,38 @@ public class VisionToSampleInterpolate extends CommandBase {
 
         if (hasFoundBlock){
             Translation2d botToSample = samplePoseFieldOriented.relativeTo(driveSubsystem.getPos()).getTranslation();
-            Log.i("bruhbruhx", String.valueOf(botToSample.getX()));
-            Log.i("bruhbruhy", String.valueOf(botToSample.getY()));
+
+//            //CCW is positive
+//            double headingErrorRadians  = Math.atan2(-botToSample.getX(), botToSample.getY());
+//
+//            double slideExtension = botToSample.getNorm();
+//            double headingCalculation = turnpid.calculate(0, headingErrorRadians);
+//            double turnVelocity = Math.sqrt(Math.abs(headingCalculation)) * Math.signum(headingCalculation);
+////            Log.i("stupidOmega", String.valueOf(turnVelocity));
+//            if(!isAuto){
+//                driveSubsystem.teleDrive(slowMode, true, 10, strafe.getAsDouble(), forward.getAsDouble(), turnVelocity);
+//            }
+//            else{
+//                driveSubsystem.pidToRotation2d(new Rotation2d(autoDesiredHeading));
+//            }
+////            slideExtension = MathUtils.clamp(slideExtension, 7.75, 41);
+//            armSubsystem.setArmX(slideExtension);
+
+            double desiredX = MathUtils.clamp(botToSample.getY(), -SecondaryArmSubsystem.secondaryArmLength, SecondaryArmSubsystem.secondaryArmLength);
+            desiredX = MathUtils.clamp(desiredX, -1, 1); //just in case ig
 
 
+            double yaw = Math.toDegrees(Math.acos(desiredX/SecondaryArmSubsystem.secondaryArmLength))-90;
 
-            //CCW is positive
-            double headingErrorRadians  = Math.atan2(-botToSample.getX(), botToSample.getY());
-            double slideExtension = botToSample.getNorm();
-            Log.i("bruhbruhnorm", String.valueOf(slideExtension));
-            double headingCalculation = turnpid.calculate(0, headingErrorRadians);
-            double turnVelocity = Math.sqrt(Math.abs(headingCalculation)) * Math.signum(headingCalculation);
-//            Log.i("stupidOmega", String.valueOf(turnVelocity));
-            if(!isAuto){
-                driveSubsystem.teleDrive(slowMode, true, 10, strafe.getAsDouble(), forward.getAsDouble(), turnVelocity);
-            }
-            else{
-                driveSubsystem.pidToRotation2d(new Rotation2d(autoDesiredHeading));
-            }
-//            slideExtension = MathUtils.clamp(slideExtension, 7.75, 41);
+            double slideDueToYawCompensation = Math.cos(Math.toRadians(yaw))*SecondaryArmSubsystem.secondaryArmLength;
+
+            double slideExtension = MathUtils.clamp(-botToSample.getX(), ArmSubsystem.slideRetractMin, 32);
+
+            slideExtension -= slideDueToYawCompensation;
+
             armSubsystem.setArmX(slideExtension);
+
+
 
             double wristAngle = samplePoseFieldOriented.relativeTo(driveSubsystem.getPos()).getRotation().getDegrees();
 
@@ -279,7 +281,7 @@ public class VisionToSampleInterpolate extends CommandBase {
 
     @Override
     public void end(boolean e){
-        armSubsystem.setSlideP(0.3);
+//        armSubsystem.setSlideP(0.3);
         if(isAuto&!isSample) {
             visionSubsystem.turnOnStreaming(false);
         }

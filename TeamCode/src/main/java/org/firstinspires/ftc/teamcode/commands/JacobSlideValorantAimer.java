@@ -8,13 +8,13 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 import java.util.function.DoubleSupplier;
 
 public class JacobSlideValorantAimer extends CommandBase {
     public static final double maxChangePerSecond = 25; //can only change 40 inches per second
     public static final double timeToInvalidation = 0.05;
-    private final double secondaryArmLength = 7.0;
 
     private double startPosition = ArmSubsystem.slideRetractMin;
     private double totalChangeToDriver = 0;
@@ -48,7 +48,7 @@ public class JacobSlideValorantAimer extends CommandBase {
         Log.i("jacobValorantAimerYaw", String.valueOf(yawInput.getAsDouble()));
         double changeInPosToYaw = Math.cos(Math.toRadians(startYaw)) - Math.cos(Math.toRadians(yawInput.getAsDouble()));
         changeInPosToYaw = MathUtils.clamp(changeInPosToYaw, -1, 1);
-        changeInPosToYaw *= secondaryArmLength;
+        changeInPosToYaw *= SecondaryArmSubsystem.secondaryArmLength;
         desiredPosition+=changeInPosToYaw;
 
 

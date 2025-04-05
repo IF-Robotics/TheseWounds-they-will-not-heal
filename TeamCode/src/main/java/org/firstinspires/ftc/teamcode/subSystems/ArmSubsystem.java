@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     //arm PIDF
-    public static double kParm = 0.15, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 0.7; //kF is gain scheduling, kG is gravity ff
+    public static double kParm = 0.2, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -102+8.4;
     public static double climbingArmP = .03;
@@ -43,6 +43,8 @@ public class ArmSubsystem extends SubsystemBase {
     private double rawAngle;
     private double correctedAngle = 0;
     private InterpLUT slideKgLut = new InterpLUT();
+    private InterpLUT slideKfLut = new InterpLUT();
+
 
     //slide pidf
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
@@ -95,17 +97,25 @@ public class ArmSubsystem extends SubsystemBase {
 
 //TODO: tune the slide gain scheduling
         //Adding each val with a key
-        slideKgLut.add(-999999, -.2);
-        slideKgLut.add(9, -.2);
-        slideKgLut.add(20, -.1);
-        slideKgLut.add(25, 0);
-        slideKgLut.add(30, .2);
-        slideKgLut.add(35,.3);
-        slideKgLut.add(40, .4);
-        slideKgLut.add(9999999, .4);
+        slideKgLut.add(-999999, 0);
+        slideKgLut.add(9, 0);
+        slideKgLut.add(20, 0.05);
+        slideKgLut.add(25, .1);
+        slideKgLut.add(30, .3);
+        slideKgLut.add(35,.4);
+        slideKgLut.add(40, .5);
+        slideKgLut.add(9999999, .5);
         //generating final equation
 
         slideKgLut.createLUT();
+
+        slideKfLut.add(-999999, 0.135);
+        slideKfLut.add(7, 0.135);
+        slideKfLut.add(23.9, .2);
+        slideKfLut.add(41, .25);
+        slideKfLut.add(99999999, .25);
+
+        slideKfLut.createLUT();
 
         //nautilus lut
         nautilus.add(-999999,0);
@@ -307,7 +317,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 
         //arm pid
-        armController = new PIDController(kParm * (kFarm * slideKgLut.get(slideExtention)), kIarm, kDarm);
+        armController = new PIDController(kParm * (kFarm * slideKfLut.get(slideExtention)), kIarm, kDarm);
         //feed forward
         ff = kGarm * (Math.cos(Math.toRadians(correctedAngle)) * slideKgLut.get(slideExtention));
         armPower = (voltageCompensation * (Math.sqrt(Math.abs(armController.calculate(correctedAngle, setArmTargetAngle))) * Math.signum(setArmTargetAngle - correctedAngle))) + ff;

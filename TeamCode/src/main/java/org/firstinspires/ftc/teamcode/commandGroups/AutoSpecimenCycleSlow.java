@@ -42,7 +42,7 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
 
                 new DriveToPointCommand(driveSubsystem, startPos.plus(new Transform2d(new Translation2d(0,5), new Rotation2d())), 3, 3),
-                new DriveToPointCommand(driveSubsystem, startPos, 1, 3),
+                new DriveToPointCommand(driveSubsystem, startPos, 3, 3).withTimeout(1500),
                 //wait
                 new WaitCommand(100),
 
@@ -50,7 +50,7 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
                 // Intake specimen from wall
                 new ParallelCommandGroup(
                     new RetractAfterWallIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                    new DriveToPointCommand(driveSubsystem, highChamberRight, 5, 5).withTimeout(3000)
+                    new DriveToPointCommand(driveSubsystem, highChamberRight, 5, 5).withTimeout(1500)
                 )
         );
 
@@ -65,7 +65,7 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
                 new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
 
-                new DriveToPointCommand(driveSubsystem, startPos, 1, 3),
+                new DriveToPointCommand(driveSubsystem, startPos, 3, 3),
                 //wait
                 new WaitCommand(100),
 
@@ -73,8 +73,8 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
                 // Intake specimen from wall
                 new ParallelCommandGroup(
                         new RetractAfterWallIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                        new DriveToPointCommand(driveSubsystem, checkpoint, 5, 5).withTimeout(3000)
-                            .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight, 5, 5).withTimeout(3000))
+                        new DriveToPointCommand(driveSubsystem, checkpoint, 5, 5).withTimeout(1500)
+                            .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight, 4, 5).withTimeout(500))
                 )
         );
 

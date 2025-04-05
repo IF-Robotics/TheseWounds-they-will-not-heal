@@ -31,7 +31,7 @@ public class FlipSpikes extends SequentialCommandGroup {
             new WaitCommand(400),
             new ParallelCommandGroup(
                 new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem).andThen(secondaryArmSubsystem.intakeSub()),
-                new WaitCommand(450).andThen(new DriveToPointCommand(driveSubsystem, rightSideRightSpikeFlip, 2, 5))
+                new WaitCommand(650).andThen(new DriveToPointCommand(driveSubsystem, rightSideRightSpikeFlip, 2, 5))
             ),
             new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 18),
             new WaitCommand(400),

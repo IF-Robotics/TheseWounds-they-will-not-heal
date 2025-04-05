@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.other;
 
+import static org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem.hardStoppedHighPitch;
 import static java.lang.Double.NaN;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -64,7 +65,7 @@ public class Globals {
     //secondaryArm poses
 
     //wall intake
-    public static int secondaryPitchWallIntake = 200;//over, but it guarantees that even when we skip we will still be able to pickup
+    public static int secondaryPitchWallIntake = hardStoppedHighPitch;//over, but it guarantees that even when we skip we will still be able to pickup
     public static int secondaryYawWallIntake = 0;
 
     //high chamber
@@ -83,15 +84,15 @@ public class Globals {
     public static double armFoldY = 4.0;
     //arm back - not really back anymmore, just the spec scoring position
     public static double armBackX = 13.0;
-    public static double armBackY = 20.0;
+    public static double armBackY = 20.5;
     //arm basket
     public static double armHighBasketX = -2;
     public static double  armHighBasketY = 41;
     public static double  armLowBasketY = 30;
     //arm when front high chamber
     public static double armFrontHighChamberX = 13.0;
-    public static double armFrontHighChamberY = 20.0;
-    public static double autoArmFrontHighChamberY = 20.0;
+    public static double armFrontHighChamberY = 20.5;
+    public static double autoArmFrontHighChamberY = 20.5;
     //arm when high chamber
     public static double armRightHighChamberX = -1;
     public static double armRightHighChamberY = 28.0;
@@ -155,7 +156,7 @@ public class Globals {
 
 //drive to point
     public static double translationKP = 0.02*1.2;
-    public static final double translationKPprecise = 0.01;
+    public static final double translationKPprecise = 0.015;
     public static final double translationKPfast = 0.02*1.2;
 
     public static double translationKI = 0.0;
@@ -166,7 +167,7 @@ public class Globals {
     public static double translationKR = .5; //KR is the constant for the root of the pid
     public static double translationMaxVel = 1; //in inches per second
 
-    public static double headingKP = 0.005 * (11.5/9.0) / 1.5;
+    public static double headingKP = 0.005 * (11.5/9.0) / 1.5 * 2;
     public static double headingKI = 0.0;
     public static double headingKD = 0.0002;
     public static double headingKR = .5;
