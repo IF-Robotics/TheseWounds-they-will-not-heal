@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
 
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 
 @Config
@@ -72,7 +73,7 @@ public abstract class Robot extends CommandOpMode {
     //hardware
     public MotorEx BL, BR, FL, FR, armLeft, armRight, slideLeft, slideRight;
     public MotorGroup slide, arm;
-    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo;
+    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo, specClaw, specArm;
     public AnalogInput armEncoder;
     public GoBildaPinpointDriver pinpoint;
     private MecanumDrive mecanumDrive;
@@ -88,6 +89,7 @@ public abstract class Robot extends CommandOpMode {
     public IntakeSubsystem intakeSubsystem;
     public VisionSubsystem visionSubsystem;
     public ColorSubsystem colorSubsystem;
+    public SpecMechSubsystem specMechSubsystem;
 
     //system
     private LynxModule controlHub;
@@ -222,6 +224,14 @@ public abstract class Robot extends CommandOpMode {
 
         secondaryArmSubsystem = new SecondaryArmSubsystem(secondaryArmLeft, secondaryArmRight, telemetry, secondaryYawServo);
         register(secondaryArmSubsystem);
+
+        //specMech
+        specClaw = hardwareMap.get(Servo.class, "specClaw");
+        specArm = hardwareMap.get(Servo.class, "tertiaryArm");
+
+        specMechSubsystem = new SpecMechSubsystem(specClaw, specArm, telemetry);
+        register(specMechSubsystem);
+
 
         //vision
         //visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), hardwareMap.get(Servo.class, "light"), telemetry);

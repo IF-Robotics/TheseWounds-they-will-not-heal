@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opModes;
 
 
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.FunctionalCommand;
@@ -9,6 +11,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -238,6 +241,28 @@ public class TeleopOpMode extends Robot {
                                 new WaitForArmCommand(armSubsystem, 0, 5)
                         ),
                         () -> armSubsystem.getArmAngle() < 45
+                )
+        );
+
+
+        //specMech
+        circle2.whenPressed(
+                new ConditionalCommand(
+                        new ParallelCommandGroup(
+                                //wallIntake
+                                new InstantCommand(() -> specMechSubsystem.openClaw()),
+                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                        ),
+                        new SequentialCommandGroup(
+                                //ramSpec
+                                new InstantCommand(() -> specMechSubsystem.closeClaw()),
+                                new WaitCommand(200),
+                                new InstantCommand(() -> specMechSubsystem.setArm(specArmUp))
+                        ),
+                        () -> {
+                            specMechSubsystem.toggle();
+                            return specMechSubsystem.active();
+                        }
                 )
         );
 
