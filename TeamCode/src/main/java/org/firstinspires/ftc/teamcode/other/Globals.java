@@ -106,7 +106,7 @@ public class Globals {
     public static double armInSubIntakeY = 5;
     //arm when close (distance) intake
     public static double armCloseIntakeX = 15;
-    public static double armCloseIntakeY = 6;
+    public static double armCloseIntakeY = 8;
     //arm when intaking form the wall
     public static double armIntakeWallX = 2;
     public static double armIntakeWallY = 14.2;

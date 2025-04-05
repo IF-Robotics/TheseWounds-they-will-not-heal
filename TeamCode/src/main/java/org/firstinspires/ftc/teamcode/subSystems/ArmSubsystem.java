@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     //arm PIDF
-    public static double kParm = 0.05, kIarm = 0, kDarm = 0.01, kFarm = 2, kGarm = 0.7;
+    public static double kParm = 0.15, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 0.7; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -102+8.4;
     public static double climbingArmP = .03;
@@ -46,7 +46,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     //slide pidf
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
-    public static double slideKP = .4, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
+    public static double slideKP = 1, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
     private PIDController slideController;
     private final double ticksPerIn = 870.0/26.8; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides 738/30.5 / 1.3529
     private int slideTicks = 1;
@@ -95,14 +95,14 @@ public class ArmSubsystem extends SubsystemBase {
 
 //TODO: tune the slide gain scheduling
         //Adding each val with a key
-        slideKgLut.add(-999999, 0.1);
-        slideKgLut.add(9, 0.08);
-        slideKgLut.add(20, 0.37);
-        slideKgLut.add(25, .53);
-        slideKgLut.add(30, .7);
-        slideKgLut.add(35,.88);
-        slideKgLut.add(40, 1.08);
-        slideKgLut.add(9999999, 1.00);
+        slideKgLut.add(-999999, -.2);
+        slideKgLut.add(9, -.2);
+        slideKgLut.add(20, -.1);
+        slideKgLut.add(25, 0);
+        slideKgLut.add(30, .2);
+        slideKgLut.add(35,.3);
+        slideKgLut.add(40, .4);
+        slideKgLut.add(9999999, .4);
         //generating final equation
 
         slideKgLut.createLUT();
