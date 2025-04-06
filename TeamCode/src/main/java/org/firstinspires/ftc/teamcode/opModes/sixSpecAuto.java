@@ -16,16 +16,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleFast;
+import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleSlow;
+import org.firstinspires.ftc.teamcode.commandGroups.FlipSpikes;
 import org.firstinspires.ftc.teamcode.commandGroups.IntakeSub;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
+import org.firstinspires.ftc.teamcode.commandGroups.StartSpecAuto;
 import org.firstinspires.ftc.teamcode.commandGroups.SweepSpikes;
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
+import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
+import org.firstinspires.ftc.teamcode.commands.holdDTPosCommand;
 import org.firstinspires.ftc.teamcode.other.AutoBase;
+import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 @Disabled
 @Autonomous(name="6+0")
@@ -45,95 +53,47 @@ public class sixSpecAuto extends AutoBase {
     public void initialize() {
         super.initialize();
 
+        intakeSubsystem.setDiffy(0,0);
+        secondaryArmSubsystem.setDiffy(0, 0);
+
+
         schedule(new SequentialCommandGroup(
-                new InstantCommand(() -> driveSubsystem.setStartingPos(startingPosRight)),
-                //wait
-                new WaitCommand(6),
-
-                //hold pos
-                new InstantCommand(() -> driveSubsystem.driveToPoint(startingPosRight)),
-
-                //score preload
-                //raise intake and arm
+                new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchHighChamber, secondaryYawHighChamber),
+                new WaitForArmCommand(armSubsystem, Math.toDegrees(Math.atan2(autoArmFrontHighChamberY, armFrontHighChamberX)), 5)
+                        .andThen(new ArmCoordinatesCommand(armSubsystem, armFrontHighChamberX, autoArmFrontHighChamberY)),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, autoPitchFrontHighChamber, rollFrontHighChamber),
-                new InstantCommand(() -> armSubsystem.setArm(22)),
-                //wait
-                new WaitCommand(200),
-                //extend slides
-                new ArmCoordinatesCommand(armSubsystem, armFrontHighChamberX, autoArmFrontHighChamberY),
-                //wait
-                new WaitCommand(300),
 
-
-                // Drive to high chamber
-                // Score specimen
-                new DriveToPointDoubleSupplierCommand(driveSubsystem, ()-> MathUtils.clamp(subX, -20, 4)+3, ()->firstHighChamberRight.getY(), firstHighChamberRight.getRotation(), 5, 10).withTimeout(1500),
+                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500),
                 //open
+                new WaitCommand(100),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, autoPitchFrontHighChamber, rollFrontHighChamber),
-                new WaitCommand(50),
                 //arm to home pos
-                new InstantCommand(() -> armSubsystem.setArm(60)),
+                new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
                 new WaitCommand(100),
-                new InstantCommand(()->armSubsystem.setSlide(7.75)),
+                new InstantCommand(() -> armSubsystem.setArm(8)),
 
-
-                //drive back
-                new ParallelCommandGroup(
-                    new DriveToPointDoubleSupplierCommand(driveSubsystem, ()->subX+3, ()->firstHighChamberRight.getY() - 5, firstHighChamberRight.getRotation(), 5, 5),
-                    //extend slides into sub
-                    new WaitForArmCommand(armSubsystem, -5, 5),
-                    new WaitCommand(300).andThen(new InstantCommand(() -> intakeSubsystem.setDiffy(0,-50)))
-                ).withTimeout(500),
-                new InstantCommand(() -> intakeSubsystem.setDiffy(0,-50)),
-                new ParallelCommandGroup(
-                    new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                    new DriveToPointDoubleSupplierCommand(driveSubsystem, ()->subX+3, ()->-46.5 + subY, firstHighChamberRight.getRotation(), 5, 5)
-                ),
-                new WaitCommand(800).interruptOn(()->armSubsystem.getCurrentX()>armReadySubIntakeX-0.75),
-                //vision
+                new DriveToPointDoubleSupplierCommand(driveSubsystem, ()-> MathUtils.clamp(subX, -16, 16), ()->-32, new Rotation2d(), 5, 5).withTimeout(1500),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(1, -40, new Rotation2d(-0)), 5, 5),
+                new InstantCommand(()->armSubsystem.setArmX(()->9+subY)),
+                new WaitCommand(200),
                 new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, true).withTimeout(2000),
-                //wait
-                new WaitCommand(100),
-                //pickup sample and retract
-                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-
-
-
-                //dropoff sample at observation zone
-                //drive to observation zone
-                new ParallelDeadlineGroup(
-                    new DriveToPointCommand(driveSubsystem, new Pose2d(45, -50, new Rotation2d(Math.toRadians(15))), 10, 10),
-                    new SequentialCommandGroup(
-                        new WaitCommand(400),
-                        new InstantCommand(() -> armSubsystem.setArm(95)),
-                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket)
-                    )
+                new ParallelCommandGroup(
+                    new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem).andThen(secondaryArmSubsystem.setPitchSafe(SecondaryArmSubsystem.hardStoppedHighPitch)),
+                    new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5)
                 ),
-                //drop sample
-                new InstantCommand(() -> intakeSubsystem.openClaw()),
+                new InstantCommand(()->intakeSubsystem.openClaw()),
+                new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                secondaryArmSubsystem.intakeSub(),
 
-
-
-                //sweep spikes
-                new SweepSpikes(driveSubsystem, armSubsystem, intakeSubsystem),
-
-
-
+                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem, firstWallPickUp),
+                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
                 new WaitCommand(300),
-                // wait?
-                new DriveToPointCommand(driveSubsystem,  new Pose2d(42, -45, Rotation2d.fromDegrees(-140)), 10, 10),
-                //open claw
-                //retract slide
-                armWhenIntakeWallCommand,
-                intakeWallCommand,
-                //drive close to pickup point
-                new DriveToPointCommand(driveSubsystem, new Pose2d(37, -50, Rotation2d.fromDegrees(180)), 2, 5),
-
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+                new InstantCommand(()->intakeSubsystem.openClaw()),
+                new InstantCommand(()->armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
                 new DriveToPointCommand(driveSubsystem, new Pose2d(50, -56, Rotation2d.fromDegrees(-180)), 1, 5)
         ));
 

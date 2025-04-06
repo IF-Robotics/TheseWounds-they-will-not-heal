@@ -46,6 +46,8 @@ public class autoTest extends Robot {
         bLeft1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(90))), 2, 2));
         bRight1.whenPressed(new DriveToPointCommand(driveSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(-90))), 2, 2));
 
+        slideLeft.resetEncoder();
+        slideRight.resetEncoder();
 
 
         schedule(new SequentialCommandGroup(

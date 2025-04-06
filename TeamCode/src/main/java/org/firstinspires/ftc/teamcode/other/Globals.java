@@ -5,6 +5,8 @@ import static java.lang.Double.NaN;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
+
 import java.util.function.DoubleSupplier;
 
 @Config
@@ -80,8 +82,8 @@ public class Globals {
     public static double armHomeX = 7.5;
     public static double armHomeY = 7;
     //arm fold
-    public static double armFoldX = 6.5;
-    public static double armFoldY = 4.0;
+    public static double armFoldX = ArmSubsystem.slideRetractMin;
+    public static double armFoldY = 6.0;
     //arm back - not really back anymmore, just the spec scoring position
     public static double armBackX = 13.0;
     public static double armBackY = 20.2;

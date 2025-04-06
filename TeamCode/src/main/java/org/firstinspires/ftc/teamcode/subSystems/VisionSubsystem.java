@@ -88,7 +88,7 @@ public class VisionSubsystem extends SubsystemBase {
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
 //        enableLight(true);
-        waitForSetCameraSettings(10000, 1000000);
+        waitForSetCameraSettings(5000, 1000000);
     }
 
 
@@ -114,17 +114,17 @@ public class VisionSubsystem extends SubsystemBase {
 //        }
 //        telemetry.addData("Sample Skew", getTotalSkew().orElse(-99999.0));
 //
-        Optional<List<Double>> offsets = getOffsets();
-        if(offsets.isPresent()) {
-            telemetry.addData("offset x", offsets.get().get(0));
-            telemetry.addData("offset y", offsets.get().get(1));
-        }
+//        Optional<List<Double>> offsets = getOffsets();
+//        if(offsets.isPresent()) {
+//            telemetry.addData("offset x", offsets.get().get(0));
+//            telemetry.addData("offset y", offsets.get().get(1));
+//        }
 //
-        Optional<RotatedRect> rect = getBoxFit();
-        if(rect.isPresent()){
-            telemetry.addData("rect x", rect.get().center.x);
-            telemetry.addData("rect y", rect.get().center.y);
-        }
+//        Optional<RotatedRect> rect = getBoxFit();
+//        if(rect.isPresent()){
+//            telemetry.addData("rect x", rect.get().center.x);
+//            telemetry.addData("rect y", rect.get().center.y);
+//        }
 //        setExposure();
 //        light.setPosition(lightStrength);
     }

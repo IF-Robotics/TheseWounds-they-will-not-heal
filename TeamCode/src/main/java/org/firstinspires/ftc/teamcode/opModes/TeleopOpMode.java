@@ -76,9 +76,10 @@ public class TeleopOpMode extends Robot {
         manualArm = false;
         manualSlides = false;
 
-        new ArmCoordinatesCommand(armSubsystem, 12, 7).schedule(true);
+//        new ArmCoordinatesCommand(armSubsystem, 12, 7).schedule(true);
         new InstantCommand(() -> secondaryArmSubsystem.setDiffyYaw(0)).schedule(true);
 
+        visionSubsystem.turnOnStreaming(false);
     }
 
     /*public void configureMoreCommands() {

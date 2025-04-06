@@ -30,6 +30,7 @@ public class five_spec_auto extends Robot {
     @Override
     public void initialize(){
         super.initialize();
+        slideRight.resetEncoder();
         slideLeft.resetEncoder();
 
         //schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchPlaceFrontHighRightChamber, rollPlaceFrontHighRightChamber));
@@ -45,7 +46,7 @@ public class five_spec_auto extends Robot {
 
         schedule(new SequentialCommandGroup(
                 new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(12.45, -48, new Rotation2d(-45)), 10, 10),
+                new rightPreloadSpecScore(driveSubsystem, intakeSubsystem, armSubsystem, secondaryArmSubsystem),
                 new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem, firstWallPickUp),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),

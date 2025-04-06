@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.LinkedList;
+import java.util.function.DoubleSupplier;
 
 @Config
 public class ArmSubsystem extends SubsystemBase {
@@ -31,9 +32,9 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     //arm PIDF
-    public static double kParm = 0.2, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
+    public static double kParm = 0.17, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
-    public static double armAngleOffset = -97;
+    public static double armAngleOffset = -98;
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
     private double ff;
@@ -55,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double slidePower = 0;
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
-    public static final double slideRetractMin = slideWristOffset;
+    public static final double slideRetractMin = slideWristOffset+0.5;
     public static double setSlideTarget = slideRetractMin;
     private double slideError = 0;
 
@@ -166,6 +167,11 @@ public class ArmSubsystem extends SubsystemBase {
     public void setArmX(double x){
         targetX = x;
         setArmCoordinates(x, targetY);
+    }
+
+    public void setArmX(DoubleSupplier x){
+        targetX = x.getAsDouble();
+        setArmCoordinates(targetX, targetY);
     }
 
     //set nautilus

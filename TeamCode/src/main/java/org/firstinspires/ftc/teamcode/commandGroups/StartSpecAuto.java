@@ -19,10 +19,10 @@ public class StartSpecAuto extends SequentialCommandGroup {
                 new WaitCommand(6),
 
                 //hold pos
-                new InstantCommand(() -> driveSubsystem.driveToPoint(startingPosRight)),
-
-                //score preload
-                new rightPreloadSpecScore(driveSubsystem, intakeSubsystem, armSubsystem, secondaryArmSubsystem)
+                new InstantCommand(() -> driveSubsystem.driveToPoint(startingPosRight))
+//
+//                //score preload
+//                new rightPreloadSpecScore(driveSubsystem, intakeSubsystem, armSubsystem, secondaryArmSubsystem)
         );
 
         addRequirements(armSubsystem, intakeSubsystem, secondaryArmSubsystem);
