@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
 public class Globals {
 //intake subsystem
     //intaking
-    public static int pitchWhenIntake = -100;
+    public static int pitchWhenIntake = -95;
     public static int rollWhenIntake = -0;
     public static int pitchLastLeftAuto = 60;
     public static int rollLastLeftAuto = -190;

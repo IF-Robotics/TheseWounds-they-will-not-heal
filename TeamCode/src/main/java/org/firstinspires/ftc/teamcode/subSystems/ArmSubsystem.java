@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
     //arm PIDF
     public static double kParm = 0.2, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
-    public static double armAngleOffset = -102+8.4;
+    public static double armAngleOffset = -97;
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
     private double ff;

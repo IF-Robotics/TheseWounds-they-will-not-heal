@@ -34,7 +34,7 @@ public class SampleSubAuto extends SequentialCommandGroup {
                 ),
                 new WaitCommand(800).interruptOn(()->armSubsystem.getCurrentX()>armReadySubIntakeX-0.4),
                 new ParallelDeadlineGroup(
-                    new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, true, ()->false,()->0, ()->0, ()->0, true),
+                    new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, false, ()->false,()->0, ()->0, ()->0, true),
                     new WaitCommand(400).andThen(new WaitCommand(100000000).interruptOn(()->!VisionToSampleInterpolate.hasFoundBlock)).andThen(
                         new DriveToPointCommand(driveSubsystem, new Pose2d(intakePose.getX(), intakePose.getY(), intakePose.getRotation().plus(new Rotation2d(Math.toRadians(30)))),2, 5).withTimeout(500)
                     )

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeY;
 import static org.firstinspires.ftc.teamcode.other.Globals.armSubIntakeY;
+import static org.firstinspires.ftc.teamcode.other.Globals.pitchWhenIntake;
 import static org.firstinspires.ftc.teamcode.other.Globals.rollWhenIntake;
 
 import android.provider.Settings;
@@ -43,6 +44,8 @@ public class VisionToSampleInterpolate extends CommandBase {
 
     private IntakeSubsystem intakeSubsystem;
 
+    private SecondaryArmSubsystem secondaryArmSubsystem;
+
     private BooleanSupplier slowMode;
     private DoubleSupplier strafe, forward, turn;
 
@@ -79,11 +82,12 @@ public class VisionToSampleInterpolate extends CommandBase {
     boolean isSample = false;
 
 
-    public VisionToSampleInterpolate(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, Boolean isAuto, BooleanSupplier slowMode, DoubleSupplier strafe, DoubleSupplier forward, DoubleSupplier turn, boolean isSample){
+    public VisionToSampleInterpolate(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem,  SecondaryArmSubsystem secondarArmSubsystem, Boolean isAuto, BooleanSupplier slowMode, DoubleSupplier strafe, DoubleSupplier forward, DoubleSupplier turn, boolean isSample){
         this.driveSubsystem = driveSubsystem;
         this.visionSubsystem = visionSubsystem;
         this.armSubsystem = armSubsystem;
         this.intakeSubsystem = intakeSubsystem;
+        this.secondaryArmSubsystem = secondarArmSubsystem;
 
         this.slowMode=slowMode;
         this.strafe=strafe;
@@ -99,54 +103,56 @@ public class VisionToSampleInterpolate extends CommandBase {
         initializeLUTs();
     }
 
-    public VisionToSampleInterpolate(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, Boolean isAuto, BooleanSupplier slowMode, DoubleSupplier strafe, DoubleSupplier forward, DoubleSupplier turn){
-        this(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, isAuto, ()->false, ()->0, ()->0, ()->0, false);
+    public VisionToSampleInterpolate(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondarArmSubsystem, Boolean isAuto, BooleanSupplier slowMode, DoubleSupplier strafe, DoubleSupplier forward, DoubleSupplier turn){
+        this(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondarArmSubsystem, isAuto, ()->false, ()->0, ()->0, ()->0, false);
 
     }
 
-    public VisionToSampleInterpolate(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, Boolean isAuto){
-        this(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, isAuto, ()->false, ()->0, ()->0, ()->0);
+    public VisionToSampleInterpolate(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondarArmSubsystem,  Boolean isAuto){
+        this(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondarArmSubsystem, isAuto, ()->false, ()->0, ()->0, ()->0);
     }
 
     private void initializeLUTs(){
-        lutXOffset.add(-555,-7.0);
-        lutXOffset.add(-525,-6.5);
-        lutXOffset.add(-495,-6.0);
-        lutXOffset.add(-464,-5.5);
-        lutXOffset.add(-433,-5.0);
-        lutXOffset.add(-396,-4.5);
-        lutXOffset.add(-360,-4.0);
-        lutXOffset.add(-327,-3.5);
-        lutXOffset.add(-288,-3.0);
-        lutXOffset.add(-251,-2.5);
-        lutXOffset.add(-200,-2.0);
-        lutXOffset.add(-156,-1.5);
+//        lutXOffset.add(-555,-7.0);
+//        lutXOffset.add(-525,-6.5);
+//        lutXOffset.add(-495,-6.0);
+//        lutXOffset.add(-464,-5.5);
+        lutXOffset.add(-9999,-7.0);
+        lutXOffset.add(-426,-7.0);
+        lutXOffset.add(-300,-4.5);
+        lutXOffset.add(-270,-4.0);
+        lutXOffset.add(-240,-3.5);
+        lutXOffset.add(-210,-3.0);
+        lutXOffset.add(-180,-2.5);
+        lutXOffset.add(-150,-2.0);
+        lutXOffset.add(-125,-1.5);
         lutXOffset.add(-108,-1);
         lutXOffset.add(-53,-0.5);
         lutXOffset.add(0,0);
         lutXOffset.add(53,0.5);
         lutXOffset.add(108,1);
-        lutXOffset.add(156,1.5);
-        lutXOffset.add(200,2.0);
-        lutXOffset.add(251,2.5);
-        lutXOffset.add(288,3.0);
-        lutXOffset.add(327,3.5);
-        lutXOffset.add(360,4.0);
-        lutXOffset.add(396,4.5);
-        lutXOffset.add(433,5.0);
-        lutXOffset.add(464,5.5);
-        lutXOffset.add(495,6.0);
-        lutXOffset.add(525,6.5);
-        lutXOffset.add(555,7.0);
+        lutXOffset.add(125,1.5);
+        lutXOffset.add(150,2.0);
+        lutXOffset.add(180,2.5);
+        lutXOffset.add(210,3.0);
+        lutXOffset.add(240,3.5);
+        lutXOffset.add(270,4.0);
+        lutXOffset.add(300,4.5);
+        lutXOffset.add(426,7.0);
+        lutXOffset.add(9999,7.0);
+//        lutXOffset.add(464,5.5);
+//        lutXOffset.add(495,6.0);
+//        lutXOffset.add(525,6.5);
+//        lutXOffset.add(555,7.0);
 
 
 
-        lutYOffset.add(-350,-4.0);
-        lutYOffset.add(-313,-3.5);
-        lutYOffset.add(-270,-3.0);
-        lutYOffset.add(-227,-2.5);
-        lutYOffset.add(-185,-2.0);
-        lutYOffset.add(-140,-1.5);
+        lutYOffset.add(-350,-5.0);
+        lutYOffset.add(-313,-4.25);
+        lutYOffset.add(-270,-3.6);
+        lutYOffset.add(-227,-2.9);
+        lutYOffset.add(-185,-2.3);
+        lutYOffset.add(-140,-1.7);
         lutYOffset.add(-95,-1.0);
         lutYOffset.add(-45,-0.5);
         lutYOffset.add(0,0);
@@ -202,12 +208,9 @@ public class VisionToSampleInterpolate extends CommandBase {
 
             samplePoseFieldOriented = driveSubsystem.getPos().plus(robotToCameraTransform).plus(cameraToSampleTransform);
 
-            intakeSubsystem.setDiffy(allianceSkew, rollWhenIntake);
+            intakeSubsystem.setDiffy(pitchWhenIntake, allianceSkew);
 
             Translation2d botToSample = samplePoseFieldOriented.relativeTo(driveSubsystem.getPos()).getTranslation();
-
-            autoDesiredHeading = Math.atan2(-botToSample.getX(), botToSample.getY());
-            autoDesiredHeading += driveSubsystem.getPos().getRotation().getRadians();
         }
 
         if (hasFoundBlock){
@@ -229,23 +232,37 @@ public class VisionToSampleInterpolate extends CommandBase {
 ////            slideExtension = MathUtils.clamp(slideExtension, 7.75, 41);
 //            armSubsystem.setArmX(slideExtension);
 
-            double desiredX = MathUtils.clamp(botToSample.getY(), -SecondaryArmSubsystem.secondaryArmLength, SecondaryArmSubsystem.secondaryArmLength);
-            desiredX = MathUtils.clamp(desiredX, -1, 1); //just in case ig
+            Log.i("bruhVisionPixelX", String.valueOf(botToSample.getX()));
+            Log.i("bruhVisionPixelY", String.valueOf(botToSample.getY()));
 
+
+            double desiredX = MathUtils.clamp(botToSample.getX(), -SecondaryArmSubsystem.secondaryArmLength, SecondaryArmSubsystem.secondaryArmLength);
 
             double yaw = Math.toDegrees(Math.acos(desiredX/SecondaryArmSubsystem.secondaryArmLength))-90;
+            Log.i("bruhVisionSlideExtensionDesiredX", String.valueOf(desiredX));
+            Log.i("bruhVisionSlideExtensionACosinedValue", String.valueOf(Math.toDegrees(Math.acos(desiredX/SecondaryArmSubsystem.secondaryArmLength))));
+
+
 
             double slideDueToYawCompensation = Math.cos(Math.toRadians(yaw))*SecondaryArmSubsystem.secondaryArmLength;
 
-            double slideExtension = MathUtils.clamp(-botToSample.getX(), ArmSubsystem.slideRetractMin, 32);
+            double slideExtension = MathUtils.clamp(botToSample.getY(), ArmSubsystem.slideRetractMin, 32);
+            Log.i("bruhVisionSlideExtensionPreYaw", String.valueOf(slideExtension));
 
             slideExtension -= slideDueToYawCompensation;
 
+            Log.i("bruhVisionSlideExtensionPostYaw", String.valueOf(slideExtension));
+            Log.i("bruhVisionSlideYawCompensation", String.valueOf(slideDueToYawCompensation));
+            Log.i("bruhVisionYaw", String.valueOf(yaw));
+
             armSubsystem.setArmX(slideExtension);
+
+            secondaryArmSubsystem.setDiffyYaw(-yaw);
 
 
 
             double wristAngle = samplePoseFieldOriented.relativeTo(driveSubsystem.getPos()).getRotation().getDegrees();
+            wristAngle-=yaw;
 
 
             //Technically could remove the ifs put i think its makes it more understandable
@@ -260,7 +277,7 @@ public class VisionToSampleInterpolate extends CommandBase {
                 }
             }
 
-            intakeSubsystem.setDiffy(-wristAngle*kPitchConversion);
+            intakeSubsystem.setDiffy(-wristAngle);
         }
         else{
             if(!isAuto) {

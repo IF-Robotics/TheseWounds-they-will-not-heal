@@ -54,11 +54,11 @@ public class VisionSubsystem extends SubsystemBase {
 
     public static Alliance alliance = Alliance.BLUE;
 
-    private final Servo light;
+//    private final Servo light;
     Telemetry telemetry;
 
 
-    public static int exposureMillis = 10;//8, 24, 35
+    public static int exposureMillis = 100;//8, 24, 35
 
     public static double lightStrength = 0.35;
 
@@ -67,8 +67,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     VisionPortal visionPortal;
 
-    public VisionSubsystem(CameraName camera, Servo light, Telemetry telemetry){
-        this.light = light;
+    public VisionSubsystem(CameraName camera, Telemetry telemetry){
         this.telemetry = telemetry;
 
         customLocatorProcess = new CustomLocatorProcessor();
@@ -88,8 +87,8 @@ public class VisionSubsystem extends SubsystemBase {
                 .addProcessor(customLocatorProcess)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
-        enableLight(true);
-        waitForSetCameraSettings(10000, 10000000);
+//        enableLight(true);
+        waitForSetCameraSettings(10000, 1000000);
     }
 
 
@@ -329,12 +328,12 @@ public class VisionSubsystem extends SubsystemBase {
         }
     }
 
-    public void enableLight(boolean enabled){
-        if(enabled){
-            light.setPosition(0.15);
-        }
-        else{
-            light.setPosition(0);
-        }
-    }
+//    public void enableLight(boolean enabled){
+//        if(enabled){
+//            light.setPosition(0.15);
+//        }
+//        else{
+//            light.setPosition(0);
+//        }
+//    }
 }

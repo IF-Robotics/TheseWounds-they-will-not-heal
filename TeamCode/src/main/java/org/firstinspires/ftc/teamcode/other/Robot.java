@@ -23,6 +23,7 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commandGroups.DropOffCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.HighChamberCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
@@ -234,8 +235,8 @@ public abstract class Robot extends CommandOpMode {
 
 
         //vision
-        //visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), hardwareMap.get(Servo.class, "light"), telemetry);
-        //register(visionSubsystem);
+        visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), telemetry);
+        register(visionSubsystem);
 
         m_driver = new GamepadEx(gamepad1);
         m_driverOp = new GamepadEx(gamepad2);

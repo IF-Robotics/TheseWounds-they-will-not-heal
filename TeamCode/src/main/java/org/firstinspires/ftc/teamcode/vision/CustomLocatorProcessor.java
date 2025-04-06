@@ -163,7 +163,7 @@ public class CustomLocatorProcessor implements VisionProcessor {
             if (rect.size.area() < 15000) {
                 xinleyang = false;
             }
-            if (rect.size.area() > 50000) {
+            if (rect.size.area() > 100000) {
                 xinleyang = false;
             }
 

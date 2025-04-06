@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.commandGroups.TeleopSpecScore;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleDriveHeadingLocked;
+import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.other.Robot;
@@ -176,15 +177,15 @@ public class TeleopOpMode extends Robot {
 //        .whenActive(new JacobSlideValorantAimer(armSubsystem, m_driverOp::getRightY, ()->m_driverOp.getLeftX() * 90));
 
         //retract after intaking
-//        dDown1.whenPressed(new ConditionalCommand(
-//                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-//                        new SequentialCommandGroup(
-//                                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-//                                new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
-//                        ),
-//                        () -> teleopSpec == true
-//            )
-//        );
+        dDown1.whenPressed(new ConditionalCommand(
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                        new SequentialCommandGroup(
+                                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                                new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                        ),
+                        () -> teleopSpec == true
+            )
+        );
 //        dDown1.whenPressed(new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
         //retract after intaking and basket (spec mode)
         dDown2.whenPressed(
@@ -204,8 +205,8 @@ public class TeleopOpMode extends Robot {
 
         //wall intake
 //        tRight1.toggleWhenActive(new teleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem));
-//        tLeft1.whenActive(new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, false, ()->{return false;},m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX));
-        tLeft1.toggleWhenActive(new TeleDriveHeadingLocked(driveSubsystem, m_driver));
+//        tLeft1.whenActive(new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, false, ()->{return false;},m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX));
+//        tLeft1.toggleWhenActive(new TeleDriveHeadingLocked(driveSubsystem, m_driver));
         //chambers
 //        square2.whenPressed(new HighChamberCommand(armSubsystem, intakeSubsystem));
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));
