@@ -40,15 +40,15 @@ public class IntakeSub extends SequentialCommandGroup {
     }
 
     //only for auto so we can optimize it
-    public IntakeSub(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, double roll){
+    public IntakeSub(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, double roll, double subIntakeDistance){
         addCommands(
                 //move intake down
                 secondaryArmSubsystem.intakeSub(),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchWhenIntake, roll),
                 //wait for arm to be horizontal
-                new WaitForArmCommand(armSubsystem, 8, 10),
+                new WaitForArmCommand(armSubsystem, 10, 15).withTimeout(300),
                 //arm & intake to correct pos
-                new ArmCoordinatesCommand(armSubsystem, armReadySubIntakeX, armReadySubIntakeY)
+                new ArmCoordinatesCommand(armSubsystem, subIntakeDistance, armReadySubIntakeY+1+0.5+0.5)
         );
 
         addRequirements(armSubsystem, intakeSubsystem);

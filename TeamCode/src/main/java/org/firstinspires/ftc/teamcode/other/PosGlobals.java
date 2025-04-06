@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.other;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Transform2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 
 @Config
 public class PosGlobals {
@@ -23,9 +21,9 @@ public class PosGlobals {
     //high chamber
     public static Pose2d highChamberLeft = new Pose2d(-5, -32.4, Rotation2d.fromDegrees(0));
     public static Pose2d firstHighChamberRight = new Pose2d(1, -32.5, Rotation2d.fromDegrees(0));
-    public static Pose2d postSpikeHighChamberCheckpoint = new Pose2d(8, -45, Rotation2d.fromDegrees(30));
+    public static Pose2d highChamberCheckpoint = new Pose2d(14.5, -45, Rotation2d.fromDegrees(15));
 
-    public static Pose2d highChamberRight = new Pose2d(3, -30, Rotation2d.fromDegrees(30));
+    public static Pose2d highChamberRight = new Pose2d(10.5, -29.5, Rotation2d.fromDegrees(15));
 
 
     //baskets
@@ -41,9 +39,9 @@ public class PosGlobals {
     public static Pose2d rightSideMiddleSpike = new Pose2d(44, -36, Rotation2d.fromDegrees(-37));
     public static Pose2d rightSideRightSpike = new Pose2d(54, -36, Rotation2d.fromDegrees(-37));
 
-    public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.65, -55.5, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(61.5, -55.5, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideRightSpikeFlip = new Pose2d(62, -53, Rotation2d.fromDegrees(-18));
+    public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.5, -54, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(62, -54, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideRightSpikeFlip = new Pose2d(62, -47, Rotation2d.fromDegrees(-20));
 
 
     //observation zone pickup
@@ -53,7 +51,7 @@ public class PosGlobals {
 
     //wallPickUp
     public static Pose2d firstWallPickUp = new Pose2d(62, -60.5, Rotation2d.fromDegrees(0));
-    public static Pose2d wallPickUp = new Pose2d(42, -60.5, Rotation2d.fromDegrees(0));
+    public static Pose2d wallPickUp = new Pose2d(38, -60.5, Rotation2d.fromDegrees(0));
 
     //parking
     public static Pose2d leftAutoPark = new Pose2d(-24, -7.09, Rotation2d.fromDegrees(-90));

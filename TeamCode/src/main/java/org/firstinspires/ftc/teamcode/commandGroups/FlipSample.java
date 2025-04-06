@@ -33,7 +33,7 @@ public class FlipSample extends SequentialCommandGroup {
                         new WaitForArmCommand(armSubsystem, 10, 5).withTimeout(300)
                 ),
 //                new WaitForSlideCommand(armSubsystem, 8,5),
-                new FullRetractSlidesUntil(armSubsystem, 13.5),
+                new FullRetractSlidesUntil(armSubsystem, 13.5).withTimeout(500),
 //                new InstantCommand(() -> intakeSubsystem.openClaw())
                 new InstantCommand(()->intakeSubsystem.clawExtraOpen())
         );
