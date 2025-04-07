@@ -18,8 +18,7 @@ public abstract class AutoBase extends Robot{
         super.initialize();
 
         //reset encoders
-        slideLeft.resetEncoder();
-        slideRight.resetEncoder();
+        armSubsystem.resetSlideEncoder();
 
         //schedule(new IntakeCommand(intakeSubsystem, IntakeC
         //command.Claw.OPEN, pitchPlaceFrontHighRightChamber, rollPlaceFrontHighRightChamber));

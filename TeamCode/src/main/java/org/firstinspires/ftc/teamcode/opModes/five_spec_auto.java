@@ -30,8 +30,7 @@ public class five_spec_auto extends Robot {
     @Override
     public void initialize(){
         super.initialize();
-        slideRight.resetEncoder();
-        slideLeft.resetEncoder();
+        armSubsystem.resetSlideEncoder();
 
         //schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchPlaceFrontHighRightChamber, rollPlaceFrontHighRightChamber));
         manualArm = false;

@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subSystems;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.Robot.voltageCompensation;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -14,6 +16,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -24,8 +27,8 @@ import java.util.function.DoubleSupplier;
 @Config
 public class ArmSubsystem extends SubsystemBase {
 
-    private MotorEx slideL;
-    private MotorGroup slide, arm;
+    private DcMotor slideL, slideR;
+    private MotorGroup arm;
     private Servo endStop;
     private AnalogInput armEncoder;
     private Telemetry telemetry;
@@ -87,10 +90,10 @@ public class ArmSubsystem extends SubsystemBase {
     Command lastCommand;
 
     //constructor
-    public ArmSubsystem(MotorGroup arm, MotorEx slideL, MotorGroup slide, Servo endStop, AnalogInput armEncoder, Telemetry telemetry) {
+    public ArmSubsystem(MotorGroup arm, DcMotor slideL, DcMotor slideR, Servo endStop, AnalogInput armEncoder, Telemetry telemetry) {
         this.arm = arm;
-        this.slide = slide;
         this.slideL = slideL;
+        this.slideR = slideR;
         this.endStop = endStop;
         this.armEncoder = armEncoder;
         this.telemetry = telemetry;
@@ -314,7 +317,7 @@ public class ArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         //read
-        slideTicks = slideL.getCurrentPosition();
+        slideTicks = slideR.getCurrentPosition();
         rawAngle = 360 - (armEncoder.getVoltage()/3.3 * 360);
         correctedAngle = rawAngle + armAngleOffset;
 
@@ -354,10 +357,12 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         if(manualSlides){
-            slide.set(slideManualPower);
+            slideL.setPower(slideManualPower);
+            slideR.setPower(slideManualPower);
         }
         else{
-            slide.set(slidePower);
+            slideL.setPower(slidePower);
+            slideR.setPower(slidePower);
         }
 
         telemetry.addData("armAngle", correctedAngle);
@@ -378,6 +383,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 
 
+
         //last command
         currentCommand = CommandScheduler.getInstance().requiring(this);
 
@@ -390,6 +396,9 @@ public class ArmSubsystem extends SubsystemBase {
         }
         telemetry.addData("armSubsystemLastCommand", lastCommand != null ? lastCommand.getName() : "None");
 
+        Log.i("slideLPower", String.valueOf(slideL.getPower()));
+        Log.i("slideRPower", String.valueOf(slideR.getPower()));
+
 
     }
 
@@ -398,11 +407,15 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setSlidePower(double power){
-        slide.set(power);
+        slideL.setPower(power);
+        slideR.setPower(power);
     }
 
     public void resetSlideEncoder(){
-        slideL.resetEncoder();
+        slideL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 

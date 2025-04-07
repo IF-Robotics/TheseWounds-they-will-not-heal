@@ -23,7 +23,7 @@ public class four_spec_auto extends Robot {
     @Override
     public void initialize(){
         super.initialize();
-        slideLeft.resetEncoder();
+        armSubsystem.resetSlideEncoder();
 
         //schedule(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, pitchPlaceFrontHighRightChamber, rollPlaceFrontHighRightChamber));
         manualArm = false;
