@@ -76,6 +76,7 @@ public class sixSpecAuto extends AutoBase {
                 new DriveToPointDoubleSupplierCommand(driveSubsystem, ()-> MathUtils.clamp(subX, -16, 16), ()->-32, new Rotation2d(), 5, 5).withTimeout(1500),
                 new DriveToPointCommand(driveSubsystem, new Pose2d(1, -40, new Rotation2d(-0)), 5, 5),
                 new InstantCommand(()->armSubsystem.setArmX(()->9+subY)),
+                new InstantCommand(()->armSubsystem.setArmY(armSubIntakeY)),
                 new WaitCommand(200),
                 new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, true).withTimeout(2000),
                 new ParallelCommandGroup(
@@ -83,9 +84,8 @@ public class sixSpecAuto extends AutoBase {
                     new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5)
                 ),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
-                new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 secondaryArmSubsystem.intakeSub(),
-
+                new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem, firstWallPickUp),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),

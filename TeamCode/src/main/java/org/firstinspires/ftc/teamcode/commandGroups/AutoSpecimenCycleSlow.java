@@ -44,7 +44,7 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
                 // Intake specimen from wall
                 new ParallelCommandGroup(
                     new RetractAfterWallIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                    new WaitCommand(150)
+                        new WaitCommand(150)
                             .andThen(new DriveToPointCommand(driveSubsystem, highChamberCheckpoint, 5, 5).withTimeout(1500))
                             .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight, 4, 5).withTimeout(500))
                 )
@@ -54,11 +54,9 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
     }
     public AutoSpecimenCycleSlow(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, Pose2d startPos) {
         addCommands(
-
                 new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchWallIntake, 0),
                 new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
-
                 new DriveToPointCommand(driveSubsystem, startPos, 3, 3).withTimeout(1500),
                 //wait
                 new WaitCommand(100),

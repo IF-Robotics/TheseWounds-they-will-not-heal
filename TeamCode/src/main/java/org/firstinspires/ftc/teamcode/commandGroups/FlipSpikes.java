@@ -51,7 +51,7 @@ public class FlipSpikes extends SequentialCommandGroup {
                 new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
                         .andThen(new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchWallIntake))
                         .andThen(new InstantCommand(intakeSubsystem::clawExtraOpen)),
-                new WaitCommand(1000)
+                        new WaitCommand(300)
                         .andThen(new InstantCommand(()->driveSubsystem.driveToPoint(firstWallPickUp)))
             ),
             new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
