@@ -397,7 +397,7 @@ public class ArmSubsystem extends SubsystemBase {
         arm.set(0);
     }
 
-    public void setSlidePower(double power){
+    private void setSlidePower(double power){
         slide.set(power);
     }
 

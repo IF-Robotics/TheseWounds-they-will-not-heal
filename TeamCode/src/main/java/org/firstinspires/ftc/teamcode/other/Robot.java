@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
 
+import org.firstinspires.ftc.teamcode.subSystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
@@ -91,6 +92,8 @@ public abstract class Robot extends CommandOpMode {
     public VisionSubsystem visionSubsystem;
     public ColorSubsystem colorSubsystem;
     public SpecMechSubsystem specMechSubsystem;
+
+    public LimelightSubsystem limelightSubsystem;
 
     //system
     private LynxModule controlHub;
@@ -237,6 +240,9 @@ public abstract class Robot extends CommandOpMode {
         //vision
         visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), telemetry);
         register(visionSubsystem);
+
+        limelightSubsystem = new LimelightSubsystem(hardwareMap, telemetry);
+        register(limelightSubsystem);
 
         m_driver = new GamepadEx(gamepad1);
         m_driverOp = new GamepadEx(gamepad2);
