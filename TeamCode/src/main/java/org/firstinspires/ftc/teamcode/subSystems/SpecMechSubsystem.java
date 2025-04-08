@@ -34,7 +34,7 @@ public class SpecMechSubsystem extends SubsystemBase {
     private double clawOpen = .18;
 
     //arm poses
-    public static double specArmUp = 1, specArmWallIntake = 0, specArmStow = specArmWallIntake;
+    public static double specArmUp = 0.05, specArmWallIntake = 1, specArmStow = specArmWallIntake;
 
     //toggle
     private boolean armUp = false;

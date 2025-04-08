@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.other.Robot.voltageCompensation;
 
 import android.util.Log;
 
+import androidx.core.math.MathUtils;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -38,6 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static double kParm = 0.17, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -98;
+
+    public static double armMaxAngle = 90;
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
     private double ff;
@@ -139,6 +143,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArm(double targetAngle) {
+        targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);
         setArmTargetAngle = targetAngle;
     }
 

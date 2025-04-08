@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opModes;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.*;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 
 import androidx.core.math.MathUtils;
 
@@ -26,6 +28,7 @@ import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.LimelightToSample;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
@@ -33,6 +36,9 @@ import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.commands.holdDTPosCommand;
 import org.firstinspires.ftc.teamcode.other.AutoBase;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 @Disabled
@@ -59,30 +65,33 @@ public class sixSpecAuto extends AutoBase {
 
         schedule(new SequentialCommandGroup(
                 new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchHighChamber, secondaryYawHighChamber),
-                new WaitForArmCommand(armSubsystem, Math.toDegrees(Math.atan2(autoArmFrontHighChamberY, armFrontHighChamberX)), 5)
-                        .andThen(new ArmCoordinatesCommand(armSubsystem, armFrontHighChamberX, autoArmFrontHighChamberY)),
-                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, autoPitchFrontHighChamber, rollFrontHighChamber),
-
-                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500),
-                //open
-                new WaitCommand(100),
-                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, autoPitchFrontHighChamber, rollFrontHighChamber),
-                //arm to home pos
-                new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
-                new WaitCommand(100),
-                new InstantCommand(() -> armSubsystem.setArm(8)),
-
-                new DriveToPointDoubleSupplierCommand(driveSubsystem, ()-> MathUtils.clamp(subX, -16, 16), ()->-32, new Rotation2d(), 5, 5).withTimeout(1500),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(1, -40, new Rotation2d(-0)), 5, 5),
-                new InstantCommand(()->armSubsystem.setArmX(()->9+subY)),
-                new InstantCommand(()->armSubsystem.setArmY(armSubIntakeY)),
-                new WaitCommand(200),
-                new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, true).withTimeout(2000),
                 new ParallelCommandGroup(
-                    new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem).andThen(secondaryArmSubsystem.setPitchSafe(SecondaryArmSubsystem.hardStoppedHighPitch)),
-                    new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5)
+                        new InstantCommand(() -> specMechSubsystem.closeClaw()),
+                        new InstantCommand(() -> specMechSubsystem.setArm(specArmUp)),
+                        new InstantCommand(() -> armSubsystem.setArm(25)),
+                        new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
+                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)),
+                        new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
+                        new InstantCommand(() ->intakeSubsystem.openClaw())
                 ),
+                new WaitCommand(200),
+                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500),
+                new WaitCommand(500),
+                new InstantCommand(() -> specMechSubsystem.openClaw()),
+                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake)),
+                //open
+                //arm to home pos
+
+
+//                new DriveToPointDoubleSupplierCommand(driveSubsystem, ()-> MathUtils.clamp(subX, -16, 16), ()->-32, new Rotation2d(), 5, 5).withTimeout(1500),
+//                new DriveToPointCommand(driveSubsystem, new Pose2d(1, -40, new Rotation2d(-0)), 5, 5),
+//                new InstantCommand(()->armSubsystem.setArmX(()->9+subY)),
+//                new InstantCommand(()->armSubsystem.setArmY(armSubIntakeY)),
+                new WaitCommand(200),
+                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
+                new WaitCommand(1000),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem).andThen(secondaryArmSubsystem.setPitchSafe(SecondaryArmSubsystem.hardStoppedHighPitch)),
+                new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
                 secondaryArmSubsystem.intakeSub(),
                 new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),

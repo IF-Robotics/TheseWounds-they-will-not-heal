@@ -104,7 +104,6 @@ public class LimelightSubsystem extends SubsystemBase {
             telemetry.addData("angle", pose.get().getRotation().getDegrees());
         }
 
-        telemetry.update();
     }
 
     public Optional<LLResult> getResult(){
