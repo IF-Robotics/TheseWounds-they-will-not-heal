@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeY;
+import static org.firstinspires.ftc.teamcode.other.Globals.pitchWhenIntake;
+
+import android.util.Log;
 
 import androidx.core.math.MathUtils;
 
@@ -48,12 +51,19 @@ public class LimelightToSample extends CommandBase {
     @Override
     public void initialize(){
         armSubsystem.setArm(25);
+        armSubsystem.setSlide(ArmSubsystem.slideRetractMin);
         secondaryArmSubsystem.setDiffy(0, -30);
         intakeSubsystem.setDiffy(0,0);
         intakeSubsystem.openClaw();
 
+        optionalResult = Optional.empty();
         safeResult = Optional.empty();
         timer.reset();
+
+        limelightSubsystem.initializeCamera();
+
+        //ONLY FOR TELEOP
+//        driveSubsystem.driveToPoint(driveSubsystem.getPos());
     }
 
     @Override
@@ -63,7 +73,7 @@ public class LimelightToSample extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if(optionalResult.isPresent() && timer.milliseconds()>50 && armSubsystem.getArmAngle()>20){
+        if(optionalResult.isPresent() && timer.milliseconds()>250 && armSubsystem.getArmAngle()>20){
             safeResult = optionalResult;
             return true;
         }
@@ -81,7 +91,7 @@ public class LimelightToSample extends CommandBase {
             driveSubsystem.driveToPoint(dtPose.transformBy(new Transform2d(new Translation2d(pose.getX(),0), new Rotation2d())));
 
             double slideExtension = MathUtils.clamp(pose.getY(), ArmSubsystem.slideRetractMin, 30);
-            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY);
+            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY+1.5);
 
             double angle = pose.getRotation().getDegrees();
 
@@ -96,7 +106,9 @@ public class LimelightToSample extends CommandBase {
                 }
             }
 
-            intakeSubsystem.setDiffy(angle);
+            Log.i("anglePost", String.valueOf(angle));
+
+            intakeSubsystem.setDiffy(pitchWhenIntake,angle);
         }
     }
 
