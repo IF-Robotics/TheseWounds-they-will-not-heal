@@ -40,7 +40,7 @@ public class Globals {
     public static double rollWhenHighChamber = -20;
 
     //autoLeft
-    public static double autoPitchFrontHighChamber = 0;
+    public static double autoPitchFrontHighChamber = 30;
     public static double rollFrontHighChamber = 0;
 
     public static double pitchFrontHighChamber = 300;
@@ -54,7 +54,7 @@ public class Globals {
     //autoright
     public static double pitchFrontRightHighChamber = 0;
     public static double rollFrontRightHighChamber = rollTeleopHighChamber;
-    public static double pitchPlaceFrontHighRightChamber = 0;
+    public static double pitchPlaceFrontHighRightChamber = 90;
     public static double rollPlaceFrontHighRightChamber = 260;
 
 
@@ -94,7 +94,7 @@ public class Globals {
     //arm when front high chamber
     public static double armFrontHighChamberX = 13.0;
     public static double armFrontHighChamberY = 20.5;
-    public static double autoArmFrontHighChamberY = 20.8;
+    public static double autoArmFrontHighChamberY = 21;
     //arm when high chamber
     public static double armRightHighChamberX = -1;
     public static double armRightHighChamberY = 28.0;

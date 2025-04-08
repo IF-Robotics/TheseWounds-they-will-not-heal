@@ -14,6 +14,8 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -73,9 +75,10 @@ public abstract class Robot extends CommandOpMode {
     public static double pitch = 0, roll = 0, secondaryArmYaw = 0, secondaryArmPitch = 0;
 
     //hardware
-    public MotorEx BL, BR, FL, FR, armLeft, armRight, slideLeft, slideRight;
+    public MotorEx BL, BR, FL, FR, armLeft, armRight;
+    public DcMotor slideLeft, slideRight;
     public MotorGroup slide, arm;
-    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo, specClaw, specArm;
+    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo, specClaw, specArm1, specArm2;
     public AnalogInput armEncoder;
     public GoBildaPinpointDriver pinpoint;
     private MecanumDrive mecanumDrive;
@@ -181,26 +184,25 @@ public abstract class Robot extends CommandOpMode {
         //arm
         armLeft = new MotorEx(hardwareMap, "armLeft");
         armRight = new MotorEx(hardwareMap, "armRight");
-        slideLeft = new MotorEx(hardwareMap, "slideL");
-        slideRight = new MotorEx(hardwareMap, "slideR");
+        slideLeft = hardwareMap.get(DcMotor.class, "slideL");
+        slideRight = hardwareMap.get(DcMotor.class, "slideR");
         armEncoder = hardwareMap.get(AnalogInput.class, "armEncoder");
         nautilus = hardwareMap.get(Servo.class, "nautilus");
         armLeft.setRunMode(Motor.RunMode.RawPower);
         armRight.setRunMode(Motor.RunMode.RawPower);
-        slideLeft.setRunMode(Motor.RunMode.RawPower);
-        slideRight.setRunMode(Motor.RunMode.RawPower);
-        slideLeft.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        slideRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideLeft.setInverted(true);
-        slideRight.setInverted(false);
+        slideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slideLeft.setDirection(DcMotor.Direction.REVERSE);
+        slideRight.setDirection(DcMotor.Direction.FORWARD);
         armLeft.setInverted(false);
         armRight.setInverted(true);
 
-        slide = new MotorGroup(slideLeft, slideRight);
         arm = new MotorGroup(armLeft, armRight);
 
         //armSubsystem
-        armSubsystem = new ArmSubsystem(arm, slideRight, slide, nautilus, armEncoder, telemetry);
+        armSubsystem = new ArmSubsystem(arm, slideLeft, slideRight, nautilus, armEncoder, telemetry);
         register(armSubsystem);
 
 
@@ -231,9 +233,10 @@ public abstract class Robot extends CommandOpMode {
 
         //specMech
         specClaw = hardwareMap.get(Servo.class, "specClaw");
-        specArm = hardwareMap.get(Servo.class, "tertiaryArm");
+        specArm1 = hardwareMap.get(Servo.class, "tertiaryArm1");
+        specArm2 = hardwareMap.get(Servo.class,"tertiaryArm2");
 
-        specMechSubsystem = new SpecMechSubsystem(specClaw, specArm, telemetry);
+        specMechSubsystem = new SpecMechSubsystem(specClaw, specArm1, specArm2, telemetry);
         register(specMechSubsystem);
 
 

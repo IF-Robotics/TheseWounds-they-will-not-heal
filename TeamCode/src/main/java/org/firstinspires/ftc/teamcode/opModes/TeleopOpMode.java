@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -378,8 +380,8 @@ public class TeleopOpMode extends Robot {
 //            schedule(new ArmManualCommand(armSubsystem, m_driverOp::getRightY));
 //        }
 
-
         telemetry.addData("gamepad2 leftX", m_driverOp.getLeftX());
+
     }
 
 

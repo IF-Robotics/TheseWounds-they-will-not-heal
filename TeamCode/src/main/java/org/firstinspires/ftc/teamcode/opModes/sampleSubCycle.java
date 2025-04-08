@@ -30,7 +30,7 @@ public class sampleSubCycle extends AutoBase {
     @Override
     public void initialize(){
         super.initialize();
-        slideLeft.resetEncoder();
+        armSubsystem.resetSlideEncoder();
  
         //turn on auto drive
         driveSubsystem.setDefaultCommand(new holdDTPosCommand(driveSubsystem));

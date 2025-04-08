@@ -369,13 +369,6 @@ public class DriveSubsystem extends SubsystemBase {
         return translationalError;
     }
 
-    public void engagePto(boolean engage){
-        if(engage){
-            ptoServo.setPosition(dtPTOEngaged);
-        } else
-            ptoServo.setPosition(dtPTODisengaged);
-    }
-
     public void enablePrecisePID(boolean enable){
         if(enable){
             translationKP=translationKPprecise;
@@ -383,6 +376,13 @@ public class DriveSubsystem extends SubsystemBase {
         else{
             translationKP=translationKPfast;
         }
+    }
+
+    public void engagePto(boolean engage){
+        if(engage){
+            ptoServo.setPosition(dtPTOEngaged);
+        } else
+            ptoServo.setPosition(dtPTODisengaged);
     }
 
     @Override
