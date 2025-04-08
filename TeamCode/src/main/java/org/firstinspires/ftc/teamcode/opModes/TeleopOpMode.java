@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.ArmManualCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.JacobSlideValorantAimer;
+import org.firstinspires.ftc.teamcode.commands.LimelightToSample;
 import org.firstinspires.ftc.teamcode.commands.ResetSlides;
 import org.firstinspires.ftc.teamcode.commandGroups.TeleopSpecScore;
 
@@ -47,6 +48,7 @@ import org.firstinspires.ftc.teamcode.commands.TeleDriveHeadingLocked;
 import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
+import org.firstinspires.ftc.teamcode.commands.holdDTPosCommand;
 import org.firstinspires.ftc.teamcode.other.Robot;
 
 
@@ -208,6 +210,8 @@ public class TeleopOpMode extends Robot {
 //        tRight1.toggleWhenActive(new teleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem));
 //        tLeft1.whenActive(new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, false, ()->{return false;},m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX));
 //        tLeft1.toggleWhenActive(new TeleDriveHeadingLocked(driveSubsystem, m_driver));
+        tLeft1.whileActiveContinuous(new holdDTPosCommand(driveSubsystem))
+                .whenActive(new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem));
         //chambers
 //        square2.whenPressed(new HighChamberCommand(armSubsystem, intakeSubsystem));
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));

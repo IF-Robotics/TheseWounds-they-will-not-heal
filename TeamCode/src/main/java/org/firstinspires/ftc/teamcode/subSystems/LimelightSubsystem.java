@@ -32,14 +32,13 @@ public class LimelightSubsystem extends SubsystemBase {
 
     private final Limelight3A camera;
     private boolean isDataOld = false;
-    private LLResult result;
     private double sampleColor = -1;
 
 
-    public static double CAMERA_HEIGHT = 11.0-1.5;//limelight height minus height of sample (limelight detects top of sample)
-    public static double CAMERA_ANGLE = 44.76; //downwards Angle
+    public static double CAMERA_HEIGHT = 11.06-1.5;//limelight height minus height of sample (limelight detects top of sample)
+    public static double CAMERA_ANGLE = 45.25; //downwards Angle
 
-    Pose2d botToLimelight = new Pose2d(new Translation2d(6.5, 13.5/2.0-3.5), new Rotation2d());
+    Pose2d botToLimelight = new Pose2d(new Translation2d(6.556, 5.45), new Rotation2d(Math.toRadians(30)));
 
 
 //    public static double TARGET_HEIGHT = ;
@@ -82,9 +81,10 @@ public class LimelightSubsystem extends SubsystemBase {
         if(camera.isRunning()){
             telemetry.addData("cameraNotRunning", "false");
             camera.updatePythonInputs(new double[] {sampleColor, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-            result = camera.getLatestResult(); // call this to get the limelight results
-            if(result.isValid()) {
+            Optional<LLResult> optionalResult = getResult(); // call this to get the limelight results
+            if(optionalResult.isPresent()) {
                 Log.i("limelightValid", "true");
+                LLResult result = optionalResult.get();
                 long staleness = result.getStaleness();
                 isDataOld = staleness >= 100; //100 ms
                 telemetry.addData("TV", String.valueOf(getTv(result)));
@@ -109,7 +109,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public Optional<LLResult> getResult(){
         if(camera.isRunning()) {
-            return Optional.of(camera.getLatestResult());
+            LLResult result = camera.getLatestResult();
+            if(result==null){
+                return Optional.empty();
+            }
+            return Optional.of(result);
         }
         return Optional.empty();
     }
@@ -154,7 +158,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
         double angle = getAngle(result);
 
-        angle += botToLimelight.getRotation().getDegrees();
 
         if(angle>90){
             while(angle>90){
@@ -169,12 +172,18 @@ public class LimelightSubsystem extends SubsystemBase {
 
         //Makes it so counterclockwise is positive
         angle = -angle;
+        Log.i("bruhAngle", String.valueOf(angle));
 
         Transform2d poseRelativeToLL = new Transform2d(new Translation2d(right, forward), new Rotation2d(Math.toRadians(angle)));
 
+        Log.i("bruhAngleRelative", String.valueOf(poseRelativeToLL.getRotation().getDegrees()));
         Pose2d poseRelativeToBot = botToLimelight.transformBy(poseRelativeToLL);
+        Log.i("bruhAngleAbsolute", String.valueOf(poseRelativeToBot.getRotation().getDegrees()));
+
 
         return Optional.of(poseRelativeToBot);
+
+//        return Optional.of(poseRelativeToLL);
     }
 }
 
