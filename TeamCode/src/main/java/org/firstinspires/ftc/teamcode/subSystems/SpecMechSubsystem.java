@@ -20,7 +20,7 @@ import java.util.function.DoubleSupplier;
 @Config
 public class SpecMechSubsystem extends SubsystemBase {
 
-    private Servo specClaw, specArm;
+    private Servo specClaw, specArm1, specArm2;
 
     private Telemetry telemetry;
 
@@ -34,14 +34,15 @@ public class SpecMechSubsystem extends SubsystemBase {
     private double clawOpen = .18;
 
     //arm poses
-    public static double specArmUp = 0, specArmWallIntake = .85, specArmStow = specArmWallIntake;
+    public static double specArmUp = 1, specArmWallIntake = 0, specArmStow = specArmWallIntake;
 
     //toggle
     private boolean armUp = false;
 
-    public SpecMechSubsystem(Servo specClaw, Servo specArm, Telemetry telemetry) {
+    public SpecMechSubsystem(Servo specClaw, Servo specArm1, Servo specArm2,Telemetry telemetry) {
         this.specClaw = specClaw;
-        this.specArm = specArm;
+        this.specArm1 = specArm1;
+        this.specArm2 = specArm2;
         this.telemetry = telemetry;
     }
 
@@ -54,7 +55,8 @@ public class SpecMechSubsystem extends SubsystemBase {
     }
 
     public void setArm(double angle){
-        specArm.setPosition(angle);
+        specArm1.setPosition(angle);
+        specArm2.setPosition(angle);
     }
 
     // switch the toggle
@@ -70,7 +72,7 @@ public class SpecMechSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 
-        telemetry.addData("specArmPos", specArm.getPosition());
+        telemetry.addData("specArmPos", specArm1.getPosition());
         telemetry.addData("specClawPos", specClaw.getPosition());
     }
 

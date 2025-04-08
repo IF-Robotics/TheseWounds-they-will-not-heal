@@ -77,7 +77,7 @@ public abstract class Robot extends CommandOpMode {
     public MotorEx BL, BR, FL, FR, armLeft, armRight;
     public DcMotor slideLeft, slideRight;
     public MotorGroup slide, arm;
-    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo, specClaw, specArm;
+    public Servo diffyLeft, diffyRight, claw, nautilus, defensePad, secondaryArmLeft, secondaryArmRight, secondaryYawServo, ptoServo, specClaw, specArm1, specArm2;
     public AnalogInput armEncoder;
     public GoBildaPinpointDriver pinpoint;
     private MecanumDrive mecanumDrive;
@@ -230,9 +230,10 @@ public abstract class Robot extends CommandOpMode {
 
         //specMech
         specClaw = hardwareMap.get(Servo.class, "specClaw");
-        specArm = hardwareMap.get(Servo.class, "tertiaryArm");
+        specArm1 = hardwareMap.get(Servo.class, "tertiaryArm1");
+        specArm2 = hardwareMap.get(Servo.class,"tertiaryArm2");
 
-        specMechSubsystem = new SpecMechSubsystem(specClaw, specArm, telemetry);
+        specMechSubsystem = new SpecMechSubsystem(specClaw, specArm1, specArm2, telemetry);
         register(specMechSubsystem);
 
 
