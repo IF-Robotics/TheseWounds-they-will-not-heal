@@ -89,7 +89,7 @@ public class Globals {
     public static double armBackY = 20.2;
     //arm basket
     public static double armHighBasketX = -2;
-    public static double  armHighBasketY = 41;
+    public static double  armHighBasketY = 40.5;
     public static double  armLowBasketY = 30;
     //arm when front high chamber
     public static double armFrontHighChamberX = 13.0;

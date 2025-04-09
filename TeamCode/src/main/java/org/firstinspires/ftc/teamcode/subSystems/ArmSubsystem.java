@@ -41,6 +41,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -98;
 
+    public static double armMinAngle = 4.0;
     public static double armMaxAngle = 90;
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
@@ -63,7 +64,8 @@ public class ArmSubsystem extends SubsystemBase {
     private double slidePower = 0;
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
-    public static final double slideRetractMin = slideWristOffset;
+    public static final double slideRetractMin = slideWristOffset+0.2;
+    public static final double slideRetractMax = 35.0;
     public static double setSlideTarget = slideRetractMin;
     private double slideError = 0;
 
@@ -143,14 +145,15 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArm(double targetAngle) {
-        targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);
+        //this is kind of sus
+        if(getSlideTarget()<20){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
+        //allow for intake sub to go lower when the arm is extended out
+        else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
         setArmTargetAngle = targetAngle;
     }
 
     public void setSlide(double targetInches) {
-        if(targetInches<slideRetractMin){
-            targetInches = slideRetractMin;
-        }
+        targetInches = MathUtils.clamp(targetInches, slideRetractMin, slideRetractMax);
         setSlideTarget = targetInches;
     }
 
@@ -163,8 +166,9 @@ public class ArmSubsystem extends SubsystemBase {
         armTargetAngle = Math.toDegrees(Math.atan2((y - armHeight), x));
 
         //write
-        setArm(armTargetAngle);
         setSlide(slideTargetIn);
+        //do one before the other so we can clamp arm based on slides
+        setArm(armTargetAngle);
     }
 
     public void setArmY(double y){

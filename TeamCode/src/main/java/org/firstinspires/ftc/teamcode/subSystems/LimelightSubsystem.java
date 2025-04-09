@@ -35,7 +35,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private double sampleColor = -1;
 
 
-    public static double CAMERA_HEIGHT = 11.06-1.5;//limelight height minus height of sample (limelight detects top of sample)
+    public static double CAMERA_HEIGHT = 11.06-1.5 + 0.8;//limelight height minus height of sample (limelight detects top of sample), 0.8 for offset cuz works?
     public static double CAMERA_ANGLE = 45.25; //downwards Angle
 
     Pose2d botToLimelight = new Pose2d(new Translation2d(6.556, 5.45), new Rotation2d(Math.toRadians(30)));
@@ -151,15 +151,20 @@ public class LimelightSubsystem extends SubsystemBase {
         //relative to limelight
         double forward = Math.tan(Math.toRadians(CAMERA_ANGLE+getTy(result)))*CAMERA_HEIGHT;
 
+        telemetry.addData("forwardRaw", forward);
+
         double hypot = Math.hypot(CAMERA_HEIGHT, forward);
 
         double right = Math.tan(Math.toRadians(getTx(result)))*hypot;
+
+        telemetry.addData("rightRaw", right);
+
 
         double angle = getAngle(result);
 
         Log.i("anglePre", String.valueOf(angle));
 
-        angle += 90;
+        angle -= 90;
 
         if(angle>90){
             while(angle>90){
@@ -176,16 +181,23 @@ public class LimelightSubsystem extends SubsystemBase {
         angle = -angle;
         Log.i("bruhAngle", String.valueOf(angle));
 
-        Transform2d poseRelativeToLL = new Transform2d(new Translation2d(right, forward), new Rotation2d(Math.toRadians(angle)));
+//        Transform2d poseRelativeToLL = new Transform2d(new Translation2d(right, forward), new Rotation2d(Math.toRadians(angle)));
+//
+//        Log.i("bruhAngleRelative", String.valueOf(poseRelativeToLL.getRotation().getDegrees()));
+//        Pose2d poseRelativeToBot = botToLimelight.transformBy(poseRelativeToLL);
+//        Log.i("bruhAngleAbsolute", String.valueOf(poseRelativeToBot.getRotation().getDegrees()));
+//        telemetry.addData("bruhAngleAbsolute", poseRelativeToBot.getRotation().getDegrees());
 
-        Log.i("bruhAngleRelative", String.valueOf(poseRelativeToLL.getRotation().getDegrees()));
-        Pose2d poseRelativeToBot = botToLimelight.transformBy(poseRelativeToLL);
-        Log.i("bruhAngleAbsolute", String.valueOf(poseRelativeToBot.getRotation().getDegrees()));
+        double cameraRadians = botToLimelight.getRotation().getRadians();
+
+        double forwardBotRelative = Math.cos(cameraRadians)*forward + Math.sin(cameraRadians) * right + botToLimelight.getY();
+
+        double rightBotRelative = -Math.sin(cameraRadians) * forward + Math.cos(cameraRadians) * right + botToLimelight.getX();
+
+        Pose2d poseRelativeToBot = new Pose2d(rightBotRelative, forwardBotRelative, new Rotation2d());
 
 
         return Optional.of(poseRelativeToBot);
-
-//        return Optional.of(poseRelativeToLL);
     }
 }
 

@@ -92,7 +92,7 @@ public abstract class Robot extends CommandOpMode {
     public ArmSubsystem armSubsystem;
     public SecondaryArmSubsystem secondaryArmSubsystem;
     public IntakeSubsystem intakeSubsystem;
-    public VisionSubsystem visionSubsystem;
+//    public VisionSubsystem visionSubsystem;
     public ColorSubsystem colorSubsystem;
     public SpecMechSubsystem specMechSubsystem;
 
@@ -241,8 +241,8 @@ public abstract class Robot extends CommandOpMode {
 
 
         //vision
-        visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), telemetry);
-        register(visionSubsystem);
+//        visionSubsystem = new VisionSubsystem(hardwareMap.get(WebcamName.class, "Webcam 1"), telemetry);
+//        register(visionSubsystem);
 
         limelightSubsystem = new LimelightSubsystem(hardwareMap, telemetry);
         register(limelightSubsystem);
