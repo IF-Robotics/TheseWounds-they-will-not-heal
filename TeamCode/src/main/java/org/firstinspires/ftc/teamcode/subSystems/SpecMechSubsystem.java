@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.other.Globals.clawClose;
 import static org.firstinspires.ftc.teamcode.other.Globals.clawExtraOpen;
 import static org.firstinspires.ftc.teamcode.other.Globals.clawHalfClose;
 import static org.firstinspires.ftc.teamcode.other.Globals.clawOpen;
-import static org.firstinspires.ftc.teamcode.other.Globals.teleopSpec;
 
 import android.util.Log;
 

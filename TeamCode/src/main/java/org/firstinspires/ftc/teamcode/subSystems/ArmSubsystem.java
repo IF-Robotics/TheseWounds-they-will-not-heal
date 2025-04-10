@@ -65,7 +65,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
     public static final double slideRetractMin = slideWristOffset+0.2;
-    public static final double slideRetractMax = 35.0;
+    public static final double slideRetractMax = 34.5;
     public static double setSlideTarget = slideRetractMin;
     private double slideError = 0;
 

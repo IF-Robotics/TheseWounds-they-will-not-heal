@@ -29,8 +29,8 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     private double pitchAngle;
     private double yawAngle;
 
-    public static int secondaryPitchAngleOffset = -70;
-    public static int secondaryYawAngleOffset = -73;
+    public static int secondaryPitchAngleOffset = -14;
+    public static int secondaryYawAngleOffset = 26;
 
     //the value in the parentheses is our desired angle range in degrees
 //    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
@@ -123,8 +123,8 @@ public class SecondaryArmSubsystem extends SubsystemBase {
         return new ConditionalCommand(
                 new SecondaryArmCommand(this, pitch, 0),
                 new SequentialCommandGroup(
-                        new SecondaryArmCommand(this, getPitchAngle(), 0),
-                        new WaitCommand(500),
+                        new SecondaryArmCommand(this, this::getPitchAngle, 0),
+                        new WaitCommand(300),
                         new SecondaryArmCommand(this, pitch, 0)
                 ),
                 () -> Math.abs(this.getYawAngle()) < 5
@@ -137,7 +137,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     public Command setPitchYawSafe(double pitch, double yaw){
         //In this range, we cannot move yaw
         if (pitch > safeLowerPitch){
-            return new SecondaryArmCommand(this, pitch, 0);
+            return setPitchSafe(pitch);
         }
         else {
             //Just for slightly more efficiency + versatile

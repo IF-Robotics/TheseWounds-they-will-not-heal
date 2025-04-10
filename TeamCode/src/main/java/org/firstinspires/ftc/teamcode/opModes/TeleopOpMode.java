@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
 
+import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
@@ -31,6 +32,8 @@ import org.firstinspires.ftc.teamcode.commandGroups.HighChamberCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.IntakeCloseCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.IntakeSub;
 import org.firstinspires.ftc.teamcode.commandGroups.LowBasketCommand;
+import org.firstinspires.ftc.teamcode.commandGroups.ParallelizingCommand;
+import org.firstinspires.ftc.teamcode.commandGroups.ParallelizingDropCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterWallIntake;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractFromBasket;
@@ -63,6 +66,10 @@ public class TeleopOpMode extends Robot {
     //buttons
     private Button cross1, back2, start2, dUp1, dDown1, dLeft1, dRight1, bRight1, bLeft1, triangle1, triangle2, square1, touchpad1, touchpad2, start1, square2, dUp2, bRight2, bLeft2, dRight2, dDown2, cross2, circle1, circle2, dLeft2, back1, stickButtonLeft2;
     private Trigger tLeft1, tRight1, tLeft2, tRight2;
+
+    //teleop mode
+    public static boolean teleopSpec = false;
+    public static boolean parallelizing = false;
 
 
     Gamepad currentGamepad1 = new Gamepad();
@@ -195,10 +202,11 @@ public class TeleopOpMode extends Robot {
         dDown2.whenPressed(
                 new ConditionalCommand(
                     //retract from intaking
+                        //In-case we want to make parrelizing and non parrelizing idfferent. however, we don't at this time
                         new ConditionalCommand(
                                 new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                                 new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                                () -> teleopSpec == true
+                                () -> parallelizing == false
                         ),
                     //retract from basket
                     new RetractFromBasket(driveSubsystem, armSubsystem, intakeSubsystem),
@@ -217,7 +225,7 @@ public class TeleopOpMode extends Robot {
 //        square2.whenPressed(new HighChamberCommand(armSubsystem, intakeSubsystem));
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));
         //auto spec scoring
-        square1.toggleWhenPressed(new ConditionalCommand(
+        circle1.toggleWhenPressed(new ConditionalCommand(
                 new TeleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem),
                 new ParallelCommandGroup(new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY), new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall)),
                 () -> (armSubsystem.getTargetX() == armIntakeWallX && armSubsystem.getTargetY() == armIntakeWallY)
@@ -238,8 +246,17 @@ public class TeleopOpMode extends Robot {
         ));
 
         //dropping sample (into observation zone)
-        square2.whenPressed(new DropCommand(armSubsystem, intakeSubsystem));
-        square2.whenReleased(new DropOffCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
+        square2.whenPressed(new ConditionalCommand(
+                new DropCommand(armSubsystem, intakeSubsystem),
+                new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                () -> parallelizing == false
+        ));
+
+        square2.whenReleased(new ConditionalCommand(
+                new DropOffCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                new ParallelizingCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem),
+                () -> parallelizing == false
+        ));
         tRight1.whenActive(
                 new ConditionalCommand(
                         new DropCommand(armSubsystem, intakeSubsystem),
@@ -253,6 +270,27 @@ public class TeleopOpMode extends Robot {
 
 
         //specMech
+        square1.whenPressed(
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                                //wallIntake
+                                new InstantCommand(() -> specMechSubsystem.openClaw()),
+                                new WaitCommand(200),
+                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                        ),
+                        new SequentialCommandGroup(
+                                //ramSpec
+                                new InstantCommand(() -> specMechSubsystem.closeClaw()),
+                                new WaitCommand(200),
+                                new InstantCommand(() -> specMechSubsystem.setArm(specArmUp))
+                        ),
+                        () -> {
+                            specMechSubsystem.toggle();
+                            return specMechSubsystem.active();
+                        }
+                )
+        );
+
         circle2.whenPressed(
                 new ConditionalCommand(
                         new ParallelCommandGroup(
@@ -363,8 +401,19 @@ public class TeleopOpMode extends Robot {
 
 
         //switch teleop mode
-        if(currentGamepad1.touchpad && !previousGamepad1.touchpad || currentGamepad2.touchpad && !previousGamepad2.touchpad){
+        if(currentGamepad1.touchpad && !previousGamepad1.touchpad){
             teleopSpec = !teleopSpec;
+        }
+
+        //switch parrallelizing
+        if(currentGamepad2.touchpad && !previousGamepad2.touchpad){
+            parallelizing = !parallelizing;
+        }
+
+        if(parallelizing){
+            gamepad2.setLedColor(128,0,128, LED_DURATION_CONTINUOUS);
+        } else{
+            gamepad2.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
         }
 
 //        //manual secondary arm  (couldnt figure out how to do it using conditional commands though didnt try very hard)

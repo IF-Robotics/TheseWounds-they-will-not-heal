@@ -105,8 +105,7 @@ public class Globals {
     public static double armAutoSpikeX = 23;
     public static double armReadySubIntakeX = 28;
     public static double armSubIntakeY = 3;
-    public static double armReadySubIntakeY = 8.75;
-    public static double armInSubIntakeY = 5;
+    public static double armReadySubIntakeY = 9.75;
     //arm when close (distance) intake
     public static double armCloseIntakeX = 15;
     public static double armCloseIntakeY = 8;
@@ -179,8 +178,5 @@ public class Globals {
     public static double testX = 0.0;
     public static double testY = 0.0;
     public static double testHeading = 0;
-
-    //teleop mode
-    public static boolean teleopSpec = false;
 
 }

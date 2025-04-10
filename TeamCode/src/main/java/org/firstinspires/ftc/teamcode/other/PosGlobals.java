@@ -53,6 +53,9 @@ public class PosGlobals {
     public static Pose2d firstWallPickUp = new Pose2d(62, -60.5, Rotation2d.fromDegrees(0));
     public static Pose2d wallPickUp = new Pose2d(38, -60.5, Rotation2d.fromDegrees(0));
 
+    public static Pose2d specMechPickUp = new Pose2d(32, -60.5, Rotation2d.fromDegrees(0));
+
+
     //parking
     public static Pose2d leftAutoPark = new Pose2d(-24, -7.09, Rotation2d.fromDegrees(-90));
 }

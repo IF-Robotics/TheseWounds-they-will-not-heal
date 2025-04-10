@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.other.Globals.*;
 
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
+import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.ColorSubsystem;
@@ -30,8 +31,7 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
                 new WaitCommand(50),
-                secondaryArmSubsystem.setPitchYawSafe(0,0).withTimeout(100), //not enough timeout to do worst case scenario, whatever....
-
+                new InstantCommand(()->intakeSubsystem.setDiffy(0,0)),
                 new InstantCommand(()-> armSubsystem.setArm(5)),
                 new ParallelCommandGroup(
                     //retract slides
@@ -89,6 +89,7 @@ public class RetractAfterIntake extends SequentialCommandGroup{
     }
 
 
+
     //retract after intaking then ready to dropoff to observation zone
     public RetractAfterIntake(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, Boolean specMode){
         addCommands(
@@ -99,26 +100,19 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(100),
-
-                new InstantCommand(()-> armSubsystem.setArm(15)),
-                new WaitForSlideCommand(armSubsystem, 10, 10),
+                new WaitCommand(50),
+                new InstantCommand(()->intakeSubsystem.setDiffy(0,0)), //maybe set roll to 90
+                new InstantCommand(()-> armSubsystem.setArm(5)),
                 new ParallelCommandGroup(
-                        //retract slides
-                        new WaitForSlideCommand(armSubsystem, 10, 5),
+                    secondaryArmSubsystem.setPitchYawSafe(0,0),
 
-                        new WaitCommand(1500),//until we add two servos
-                        //move intake out of the way
-                        secondaryArmSubsystem.setPitchSafe(160)
+                    //retract slides
+                    new WaitForSlideCommand(armSubsystem, 8, 15)
                 ),
-
                 //raise arm
-                new InstantCommand(()-> armSubsystem.setArm(90)),
-                //move secondaryArm to the side
-                new InstantCommand(()-> secondaryArmSubsystem.setDiffyYaw(90)),
-                //straigten out diffyWrist
-                new WaitCommand(200), //ensure we can safely set yaw
-                new InstantCommand(() -> intakeSubsystem.setDiffy(0,0))
+                new WaitForArmCommand(armSubsystem, 80, 45),
+                //move secondaryArm to the side, wait until above the side plates
+                new InstantCommand(()-> secondaryArmSubsystem.setDiffyYaw(90))
         );
 
         addRequirements(armSubsystem, intakeSubsystem);

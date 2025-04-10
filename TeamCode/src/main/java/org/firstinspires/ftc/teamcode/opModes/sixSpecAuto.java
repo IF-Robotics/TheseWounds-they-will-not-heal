@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opModes;
+import static org.firstinspires.ftc.teamcode.opModes.TeleopOpMode.teleopSpec;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.*;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
@@ -90,7 +91,8 @@ public class sixSpecAuto extends AutoBase {
                 new WaitCommand(200),
                 new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
                 new WaitCommand(1000),
-                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem).andThen(secondaryArmSubsystem.setPitchSafe(SecondaryArmSubsystem.hardStoppedHighPitch)),
+                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+
                 new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
                 secondaryArmSubsystem.intakeSub(),

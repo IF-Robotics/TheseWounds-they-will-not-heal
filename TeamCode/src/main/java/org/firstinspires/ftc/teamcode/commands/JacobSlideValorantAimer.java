@@ -34,9 +34,9 @@ public class JacobSlideValorantAimer extends CommandBase {
 
     @Override
     public void initialize() {
-        startPosition = armSubsystem.getSlideExtention();
-        startYaw=yawInput.getAsDouble();
-
+        startPosition = armSubsystem.getSlideX();
+        startYaw=0;
+        totalChangeToDriver = 0;
         timer.reset();
     }
 
@@ -64,7 +64,7 @@ public class JacobSlideValorantAimer extends CommandBase {
 
         desiredPosition = MathUtils.clamp(desiredPosition, ArmSubsystem.slideRetractMin, 30+changeInPosToYaw);
 
-        armSubsystem.setSlide(desiredPosition);
+        armSubsystem.setArmX(desiredPosition);
     }
 
     @Override

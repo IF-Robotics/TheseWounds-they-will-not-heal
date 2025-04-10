@@ -30,11 +30,9 @@ public class blueTeleop extends TeleopOpMode {
         if(teleopSpec){
             setColorTimer.reset();
             gamepad1.setLedColor(0,0,255, LED_DURATION_CONTINUOUS);
-            gamepad2.setLedColor(0,0,255, LED_DURATION_CONTINUOUS);
             Log.i("gamepadSetColorTime(mm)", String.valueOf(setColorTimer.milliseconds()));
         } else{
             setColorTimer.reset();
-            gamepad1.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
             gamepad1.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
             Log.i("gamepadSetColorTime(mm)", String.valueOf(setColorTimer.milliseconds()));
         }

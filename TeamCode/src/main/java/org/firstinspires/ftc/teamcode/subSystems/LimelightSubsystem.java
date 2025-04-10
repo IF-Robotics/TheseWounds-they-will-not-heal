@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subSystems;
 
 import android.util.Log;
 
+import androidx.core.math.MathUtils;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -162,23 +164,14 @@ public class LimelightSubsystem extends SubsystemBase {
 
         double angle = getAngle(result);
 
+        angle = MathUtils.clamp(angle, 0, 180);
+
+        angle += botToLimelight.getRotation().getDegrees();
+
+        if(angle>90){angle-=180;}//unsafe, but whatever
+
         Log.i("anglePre", String.valueOf(angle));
 
-        angle -= 90;
-
-        if(angle>90){
-            while(angle>90){
-                angle-=180;
-            }
-        }
-        else if(angle<-90){
-            while(angle<-90){
-                angle+=180;
-            }
-        }
-
-        //Makes it so counterclockwise is positive
-        angle = -angle;
         Log.i("bruhAngle", String.valueOf(angle));
 
 //        Transform2d poseRelativeToLL = new Transform2d(new Translation2d(right, forward), new Rotation2d(Math.toRadians(angle)));
@@ -194,7 +187,8 @@ public class LimelightSubsystem extends SubsystemBase {
 
         double rightBotRelative = -Math.sin(cameraRadians) * forward + Math.cos(cameraRadians) * right + botToLimelight.getX();
 
-        Pose2d poseRelativeToBot = new Pose2d(rightBotRelative, forwardBotRelative, new Rotation2d());
+
+        Pose2d poseRelativeToBot = new Pose2d(rightBotRelative, forwardBotRelative, new Rotation2d(Math.toRadians(angle)));
 
 
         return Optional.of(poseRelativeToBot);
