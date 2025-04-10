@@ -38,4 +38,27 @@ public class FlipSample extends SequentialCommandGroup {
                 new InstantCommand(()->intakeSubsystem.clawExtraOpen())
         );
     }
+
+    public FlipSample(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, double desiredArmAngle) {
+        addCommands(
+                //tilts slides down a tad
+                new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
+                //wait
+                new WaitCommand(200),
+                //grab the sample
+                new InstantCommand(() -> intakeSubsystem.closeClaw()),
+                //wait
+                new WaitCommand(150),
+                //retract slides & flip up intake
+                new ParallelCommandGroup(
+                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, 0).withTimeout(100),
+                        secondaryArmSubsystem.setPitchSafe(hardStoppedHighPitch),
+                        new FullRetractSlidesUntil(armSubsystem, 13.5).withTimeout(500)
+                            .andThen(new WaitForArmCommand(armSubsystem, desiredArmAngle, 5).withTimeout(300))
+                ),
+//                new WaitForSlideCommand(armSubsystem, 8,5),
+//                new InstantCommand(() -> intakeSubsystem.openClaw())
+                new InstantCommand(()->intakeSubsystem.clawExtraOpen())
+        );
+    }
 }

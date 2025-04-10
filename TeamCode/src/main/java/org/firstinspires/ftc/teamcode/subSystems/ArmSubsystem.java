@@ -146,7 +146,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setArm(double targetAngle) {
         //this is kind of sus
-        if(getSlideTarget()<20){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
+        if(getSlideTarget()<10){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
         setArmTargetAngle = targetAngle;

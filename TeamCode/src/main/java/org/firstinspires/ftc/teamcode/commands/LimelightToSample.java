@@ -95,6 +95,17 @@ public class LimelightToSample extends CommandBase {
 
             double angle = pose.getRotation().getDegrees();
 
+            if(angle > 90){
+                while (angle > 90){
+                    angle-=180;
+                }
+            }
+            if(angle<-90){
+                while(angle<-90){
+                    angle+=180;
+                }
+            }
+
             Log.i("anglePost", String.valueOf(angle));
 
             intakeSubsystem.setDiffy(pitchWhenIntake,angle);

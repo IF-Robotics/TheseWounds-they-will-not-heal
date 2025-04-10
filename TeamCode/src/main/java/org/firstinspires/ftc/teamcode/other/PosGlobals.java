@@ -40,8 +40,8 @@ public class PosGlobals {
     public static Pose2d rightSideRightSpike = new Pose2d(54, -36, Rotation2d.fromDegrees(-37));
 
     public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.5, -54, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(62, -53.7, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideRightSpikeFlip = new Pose2d(62, -47, Rotation2d.fromDegrees(-20));
+    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(61.5, -53.7, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideRightSpikeFlip = new Pose2d(61.5, -47, Rotation2d.fromDegrees(-20));
 
 
     //observation zone pickup

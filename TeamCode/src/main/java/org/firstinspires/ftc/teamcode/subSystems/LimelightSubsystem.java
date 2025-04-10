@@ -37,7 +37,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private double sampleColor = -1;
 
 
-    public static double CAMERA_HEIGHT = 11.06-1.5 + 0.8;//limelight height minus height of sample (limelight detects top of sample), 0.8 for offset cuz works?
+    public static double CAMERA_HEIGHT = 11.06-1.5;//limelight height minus height of sample (limelight detects top of sample), 0.8 for offset cuz works?
     public static double CAMERA_ANGLE = 45.25; //downwards Angle
 
     Pose2d botToLimelight = new Pose2d(new Translation2d(6.556, 5.45), new Rotation2d(Math.toRadians(30)));
@@ -164,13 +164,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
         double angle = getAngle(result);
 
-        angle = MathUtils.clamp(angle, 0, 180);
+        telemetry.addData("anglePre", String.valueOf(angle));
 
-        angle += botToLimelight.getRotation().getDegrees();
 
-        if(angle>90){angle-=180;}//unsafe, but whatever
+        angle -= botToLimelight.getRotation().getDegrees(); //technically not field relative
 
-        Log.i("anglePre", String.valueOf(angle));
 
         Log.i("bruhAngle", String.valueOf(angle));
 

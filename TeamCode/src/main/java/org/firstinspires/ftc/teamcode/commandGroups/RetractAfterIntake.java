@@ -30,14 +30,14 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(50),
-                new InstantCommand(()->intakeSubsystem.setDiffy(0,0)),
+                new WaitCommand(150),
+                new InstantCommand(()->intakeSubsystem.setDiffy(0,90)),
                 new InstantCommand(()-> armSubsystem.setArm(5)),
                 new ParallelCommandGroup(
                     //retract slides
-                    new WaitForSlideCommand(armSubsystem, 8, 15),
+                    new WaitForSlideCommand(armSubsystem, 8, 5),
                     //move intake out of the way
-                    secondaryArmSubsystem.setPitchYawSafe(45,0)
+                    secondaryArmSubsystem.setPitchYawSafe(0,0)
                 )
         );
 
@@ -100,7 +100,7 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(50),
+                new WaitCommand(150),
                 new InstantCommand(()->intakeSubsystem.setDiffy(0,0)), //maybe set roll to 90
                 new InstantCommand(()-> armSubsystem.setArm(5)),
                 new ParallelCommandGroup(

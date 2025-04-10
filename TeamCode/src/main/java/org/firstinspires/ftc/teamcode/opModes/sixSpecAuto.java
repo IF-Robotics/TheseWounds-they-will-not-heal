@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.*;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specAutoStart;
 
 import androidx.core.math.MathUtils;
 
@@ -20,8 +21,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleFast;
 import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleSlow;
+import org.firstinspires.ftc.teamcode.commandGroups.DropCommand;
+import org.firstinspires.ftc.teamcode.commandGroups.DropOffCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.FlipSpikes;
 import org.firstinspires.ftc.teamcode.commandGroups.IntakeSub;
+import org.firstinspires.ftc.teamcode.commandGroups.ParallelizingDropCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
 import org.firstinspires.ftc.teamcode.commandGroups.StartSpecAuto;
 import org.firstinspires.ftc.teamcode.commandGroups.SweepSpikes;
@@ -61,7 +65,10 @@ public class sixSpecAuto extends AutoBase {
         super.initialize();
 
         intakeSubsystem.setDiffy(0,0);
-        secondaryArmSubsystem.setDiffy(0, 0);
+        secondaryArmSubsystem.setDiffy(90, 0);
+
+        specMechSubsystem.closeClaw();
+        specMechSubsystem.setArm(specAutoStart);
 
 
         schedule(new SequentialCommandGroup(
@@ -71,14 +78,19 @@ public class sixSpecAuto extends AutoBase {
                         new InstantCommand(() -> specMechSubsystem.setArm(specArmUp)),
                         new InstantCommand(() -> armSubsystem.setArm(25)),
                         new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
-                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)),
+                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, 0)),
                         new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
                         new InstantCommand(() ->intakeSubsystem.openClaw())
                 ),
-                new WaitCommand(200),
-                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500),
-                new WaitCommand(500),
+                new InstantCommand(()->secondaryArmSubsystem.setDiffyPitch(SecondaryArmSubsystem.hardStoppedHighPitch)),
+                new WaitCommand(50),
+                new InstantCommand(()->secondaryArmSubsystem.setDiffyPitch(0)),
+                new WaitCommand(100),
+                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
+                        .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
+                new WaitCommand(400),
                 new InstantCommand(() -> specMechSubsystem.openClaw()),
+                new WaitCommand(200),
                 new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake)),
                 //open
                 //arm to home pos
@@ -90,10 +102,14 @@ public class sixSpecAuto extends AutoBase {
 //                new InstantCommand(()->armSubsystem.setArmY(armSubIntakeY)),
                 new WaitCommand(200),
                 new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                new WaitCommand(1000),
-                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-
-                new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5),
+                new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5),
+                new WaitCommand(100),
+                new ParallelCommandGroup(
+                        new WaitCommand(500)
+                                .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUp, 5, 5)),
+                        new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                            .andThen(new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem))
+                ),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
                 secondaryArmSubsystem.intakeSub(),
                 new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),

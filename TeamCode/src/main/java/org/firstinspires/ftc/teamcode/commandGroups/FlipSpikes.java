@@ -28,12 +28,12 @@ public class FlipSpikes extends SequentialCommandGroup {
             new InstantCommand(()->driveSubsystem.enablePrecisePID(true)), //so we accelerate faster
             new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 2, 5).withTimeout(500),
 
-            new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX),
+            new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX-1.0),
             new WaitCommand(500),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX+0.5),
+                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX - 0.5),
                         new WaitCommand(500)
                 ),
                 new WaitCommand(450).andThen(new DriveToPointCommand(driveSubsystem, rightSideMiddleSpikeFlip, 2, 5).withTimeout(500))
@@ -41,14 +41,14 @@ public class FlipSpikes extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 25, armReadySubIntakeX-5.5),
+                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 25, armReadySubIntakeX-6.0),
                         new WaitCommand(500)
                 ),
                 //Wait 1000 so we dont exit boundary while we are still flipping the second sample
                 new WaitCommand(1000).andThen(new DriveToPointCommand(driveSubsystem, rightSideRightSpikeFlip, 2, 5).withTimeout(500))
             ),
             new ParallelCommandGroup(
-                new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem,85)
                         .andThen(new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchWallIntake))
                         .andThen(new InstantCommand(intakeSubsystem::clawExtraOpen)),
                         new WaitCommand(300)
