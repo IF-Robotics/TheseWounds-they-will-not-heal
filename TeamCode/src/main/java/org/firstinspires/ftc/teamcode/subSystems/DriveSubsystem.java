@@ -332,6 +332,10 @@ public class DriveSubsystem extends SubsystemBase {
         return rawVectorMagnitude;
     }
 
+    public double getXError(){
+        return errorX;
+    }
+
     public double getHeadingError(){
         return correctedErrorHeading;
     }

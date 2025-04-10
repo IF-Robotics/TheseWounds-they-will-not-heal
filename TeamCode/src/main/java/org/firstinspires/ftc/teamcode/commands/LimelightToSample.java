@@ -84,6 +84,7 @@ public class LimelightToSample extends CommandBase {
     @Override
     public void end(boolean interrupted){
         if (safeResult.isPresent()) {
+            driveSubsystem.enablePrecisePID(false);
             secondaryArmSubsystem.setDiffy(0,0);
             Pose2d dtPose = driveSubsystem.getPos();
             Pose2d pose = safeResult.get();
@@ -91,7 +92,7 @@ public class LimelightToSample extends CommandBase {
             driveSubsystem.driveToPoint(dtPose.transformBy(new Transform2d(new Translation2d(pose.getX(),0), new Rotation2d())));
 
             double slideExtension = MathUtils.clamp(pose.getY(), ArmSubsystem.slideRetractMin, 30);
-            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY+1.5);
+            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY);
 
             double angle = pose.getRotation().getDegrees();
 

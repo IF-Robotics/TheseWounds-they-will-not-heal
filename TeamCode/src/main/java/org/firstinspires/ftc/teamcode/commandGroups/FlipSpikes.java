@@ -24,10 +24,6 @@ public class FlipSpikes extends SequentialCommandGroup {
 
     public FlipSpikes(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
-            new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 12, 5).withTimeout(1250),
-            new InstantCommand(()->driveSubsystem.enablePrecisePID(true)), //so we accelerate faster
-            new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 2, 5).withTimeout(500),
-
             new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX-1.0),
             new WaitCommand(500),
             new ParallelCommandGroup(
@@ -41,7 +37,7 @@ public class FlipSpikes extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 25, armReadySubIntakeX-6.0),
+                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 155, armReadySubIntakeX-6.0),
                         new WaitCommand(500)
                 ),
                 //Wait 1000 so we dont exit boundary while we are still flipping the second sample
@@ -51,7 +47,7 @@ public class FlipSpikes extends SequentialCommandGroup {
                 new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem,85)
                         .andThen(new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchWallIntake))
                         .andThen(new InstantCommand(intakeSubsystem::clawExtraOpen)),
-                        new WaitCommand(300)
+                        new WaitCommand(800)
                         .andThen(new InstantCommand(()->driveSubsystem.driveToPoint(firstWallPickUp)))
             ),
             new InstantCommand(()->driveSubsystem.enablePrecisePID(false))

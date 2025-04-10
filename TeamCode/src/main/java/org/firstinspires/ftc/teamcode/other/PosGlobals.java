@@ -23,7 +23,7 @@ public class PosGlobals {
     public static Pose2d firstHighChamberRight = new Pose2d(1, -32.5, Rotation2d.fromDegrees(0));
     public static Pose2d highChamberCheckpoint = new Pose2d(14.5, -45, Rotation2d.fromDegrees(15));
 
-    public static Pose2d highChamberRight = new Pose2d(10.5, -29.5, Rotation2d.fromDegrees(15));
+    public static Pose2d highChamberRight = new Pose2d(7.5, -29.5, Rotation2d.fromDegrees(15));
 
 
     //baskets
@@ -40,7 +40,7 @@ public class PosGlobals {
     public static Pose2d rightSideRightSpike = new Pose2d(54, -36, Rotation2d.fromDegrees(-37));
 
     public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.5, -54, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(61.5, -53.7, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(61.0, -53.7, Rotation2d.fromDegrees(0));
     public static Pose2d rightSideRightSpikeFlip = new Pose2d(61.5, -47, Rotation2d.fromDegrees(-20));
 
 

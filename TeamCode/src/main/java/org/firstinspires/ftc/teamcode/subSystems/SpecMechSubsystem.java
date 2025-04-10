@@ -29,7 +29,7 @@ public class SpecMechSubsystem extends SubsystemBase {
 
 
     //claw poses
-    private double clawClose = .45;
+    private double clawClose = .5;
     private double clawOpen = .18;
 
     //arm poses

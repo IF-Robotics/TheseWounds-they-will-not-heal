@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandGroups;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armSubIntakeY;
+import static org.firstinspires.ftc.teamcode.other.Globals.pitchIntakeWall;
 import static org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem.hardStoppedHighPitch;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -25,7 +26,7 @@ public class FlipSample extends SequentialCommandGroup {
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(150),
+                new WaitCommand(300),
                 //retract slides & flip up intake
                 new ParallelCommandGroup(
                         new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, 0).withTimeout(100),
@@ -48,10 +49,10 @@ public class FlipSample extends SequentialCommandGroup {
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(150),
+                new WaitCommand(300),
                 //retract slides & flip up intake
                 new ParallelCommandGroup(
-                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, 0, 0).withTimeout(100),
+                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchIntakeWall, 180).withTimeout(100),
                         secondaryArmSubsystem.setPitchSafe(hardStoppedHighPitch),
                         new FullRetractSlidesUntil(armSubsystem, 13.5).withTimeout(500)
                             .andThen(new WaitForArmCommand(armSubsystem, desiredArmAngle, 5).withTimeout(300))

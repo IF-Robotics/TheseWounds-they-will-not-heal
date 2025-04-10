@@ -57,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     //slide pidf
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
-    public static double slideKP = 1, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
+    public static double slideKP = 0.8, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
     private PIDController slideController;
     private final double ticksPerIn = 870.0/26.8; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides 738/30.5 / 1.3529
     private int slideTicks = 1;

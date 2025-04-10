@@ -88,10 +88,21 @@ public class sixSpecAuto extends AutoBase {
                 new WaitCommand(100),
                 new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
                         .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
-                new WaitCommand(400),
-                new InstantCommand(() -> specMechSubsystem.openClaw()),
-                new WaitCommand(200),
-                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake)),
+                new ParallelCommandGroup(
+                    new SequentialCommandGroup(
+                        new WaitCommand(400),
+                        new InstantCommand(() -> specMechSubsystem.openClaw()),
+                        new WaitCommand(200),
+                        new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                    ),
+                    new SequentialCommandGroup(
+                        new WaitCommand(200),
+                        new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
+                        new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getXError()<0.75),
+                        new WaitCommand(100),
+                        new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
+                    )
+                ),
                 //open
                 //arm to home pos
 
@@ -100,18 +111,21 @@ public class sixSpecAuto extends AutoBase {
 //                new DriveToPointCommand(driveSubsystem, new Pose2d(1, -40, new Rotation2d(-0)), 5, 5),
 //                new InstantCommand(()->armSubsystem.setArmX(()->9+subY)),
 //                new InstantCommand(()->armSubsystem.setArmY(armSubIntakeY)),
-                new WaitCommand(200),
-                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5),
-                new WaitCommand(100),
                 new ParallelCommandGroup(
-                        new WaitCommand(500)
-                                .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUp, 5, 5)),
+                        new SequentialCommandGroup(
+                            new WaitCommand(500),
+                            new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 12, 5).withTimeout(1250),
+                            new InstantCommand(()->driveSubsystem.enablePrecisePID(true)), //so we accelerate faster
+                            new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 2, 5).withTimeout(500)
+                        ),
                         new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                            .andThen(new WaitCommand(800))
                             .andThen(new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem))
                 ),
-                new InstantCommand(()->intakeSubsystem.openClaw()),
+                new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
+                new WaitCommand(50),
                 secondaryArmSubsystem.intakeSub(),
+                new WaitCommand(50),
                 new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem, firstWallPickUp),
                 new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
