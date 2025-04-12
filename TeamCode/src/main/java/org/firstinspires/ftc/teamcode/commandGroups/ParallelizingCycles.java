@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandGroups;
 
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberRight;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSpecMech;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUp;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
@@ -39,7 +40,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new WaitCommand(100),
                 new ParallelCommandGroup(
                         new WaitCommand(250)
-                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight.transformBy(new Transform2d(new Translation2d(0, -2.0), new Rotation2d())), 5, 5)),
+                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMech, 5, 5)),
                         new SequentialCommandGroup(
                             new ParallelizingCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem),
                             new InstantCommand(() -> armSubsystem.setArm(25)),
@@ -59,7 +60,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                         new SequentialCommandGroup(
                                 new WaitCommand(200),
                                 new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                                new WaitCommand(2000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getXError()<0.75),
+                                new WaitCommand(20000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getTranslationalError()<0.5),
                                 new WaitCommand(100),
                                 new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
                         )

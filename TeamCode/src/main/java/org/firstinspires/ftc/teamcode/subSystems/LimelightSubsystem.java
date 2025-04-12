@@ -10,12 +10,16 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -52,22 +56,45 @@ public class LimelightSubsystem extends SubsystemBase {
 
     Telemetry telemetry;
 
+    InterpLUT aspectLut = new InterpLUT();
+
+    InterpLUT aspectLutX = new InterpLUT();
+
+
 
     public LimelightSubsystem(final HardwareMap hardwareMap, Telemetry telemetry) {
         camera = hardwareMap.get(Limelight3A.class, "limelight");
 
         this.telemetry = telemetry;
 
-        if (alliance == Alliance.BLUE){
-            camera.pipelineSwitch(0);  //pipeline 0 is blue
-            sampleColor = 0.0;
-        }
-        else{
-            camera.pipelineSwitch(1);  //pipeline 1 is red
-            sampleColor = 1.0;
-        }
+//        if (alliance == Alliance.BLUE){
+//            camera.pipelineSwitch(0);  //pipeline 0 is blue
+//            sampleColor = 0.0;
+//        }
+//        else{
+//            camera.pipelineSwitch(1);  //pipeline 1 is red
+//            sampleColor = 1.0;
+//        }
+
+        camera.pipelineSwitch(4);  //pipeline 1 is red
 
         initializeCamera();
+
+        aspectLut.add(-999999, 4.0/3.0);
+        aspectLut.add(3, 1.0);
+        aspectLut.add(15, 2.0);
+        aspectLut.add(99999999, 2.0);
+
+        aspectLut.createLUT();
+
+        aspectLutX.add(-999999, 1);
+        aspectLutX.add(0, 1);
+        aspectLutX.add(12, 1.5);
+        aspectLutX.add(99999999, 1.5);
+
+        aspectLutX.createLUT();
+
+
     } //pipeline 2 is yellow
 
     public void initializeCamera() {
@@ -87,10 +114,6 @@ public class LimelightSubsystem extends SubsystemBase {
                 LLResult result = optionalResult.get();
                 long staleness = result.getStaleness();
                 isDataOld = staleness >= 100; //100 ms
-                telemetry.addData("TV", String.valueOf(getTv(result)));
-                telemetry.addData("Tx", getTx(result));
-                telemetry.addData("Ty", getTy(result));
-                telemetry.addData("Angle", getAngle(result));
             }
         }
         else{
@@ -117,58 +140,68 @@ public class LimelightSubsystem extends SubsystemBase {
         return Optional.empty();
     }
 
-    public double getTx(LLResult result) {
-        return result.getTx();
-    } //tx is the x distance from the crosshair (center of the screen)
-
-    public double getTy(LLResult result) {
-        return result.getTy();
-    } //ty is y distance from the crosshair (center of the screen)
-
-    //Whether see a sample or not
-    public boolean getTv(LLResult result){
-        if(result.getPythonOutput()[0]==1){
-            return true;
-        }
-        return false;
-    }
-
-    public double getAngle(LLResult result) {
-        double llAngle =  result.getPythonOutput()[3]; //0-180
-
-        return llAngle;
-    } //angle of the sample (.getPythonOutput()[i] gets the python snapscript outputs. 2 is center and 4 is area.
-
     public Optional<Pose2d> getPose(){
+
+        Log.i("llbruh", "bruh");
+
 
         Optional<LLResult> optionalResult = getResult();
         if(!optionalResult.isPresent()){return Optional.empty();}
 
-        LLResult result = optionalResult.get();
+        LLResult results = optionalResult.get();
 
-        if(!getTv(result)){return Optional.empty();}
+        ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
 
-        //relative to limelight
-        double forward = Math.tan(Math.toRadians(CAMERA_ANGLE+getTy(result)))*CAMERA_HEIGHT;
+        Log.i("llSize", String.valueOf(results.getDetectorResults().size()));
 
-        telemetry.addData("forwardRaw", forward);
+        for (LLResultTypes.DetectorResult result : results.getDetectorResults()) {
 
-        double hypot = Math.hypot(CAMERA_HEIGHT, forward);
+            Log.i("llresult", result.getClassName());
+            if (alliance == Alliance.BLUE) {
+                if (!result.getClassName().equals("blue")) {
+                    continue;
+                }
+            } else if (alliance == Alliance.RED) {
+                if (!result.getClassName().equals("red")) {
+                    continue;
+                }
+            }
 
-        double right = Math.tan(Math.toRadians(getTx(result)))*hypot;
+            //relative to limelight
+            double forward = Math.tan(Math.toRadians(CAMERA_ANGLE + result.getTargetYDegrees())) * CAMERA_HEIGHT;
 
-        telemetry.addData("rightRaw", right);
+//            telemetry.addData("forwardRaw", forward);
+
+            double hypot = Math.hypot(CAMERA_HEIGHT, forward);
+
+            double right = Math.tan(Math.toRadians(result.getTargetXDegrees())) * hypot;
+
+//            telemetry.addData("rightRaw", right);
+
+            List<List<Double>> corners = result.getTargetCorners();
+            double angle = 0.0;
+
+            if(!corners.isEmpty()){
+                double changeInX = corners.get(0).get(0)-corners.get(2).get(0);
+                double changeInY = corners.get(0).get(1)-corners.get(2).get(1);
+
+                changeInY *= aspectLut.get(forward);
+
+                changeInX *= aspectLutX.get(Math.abs(right));
+
+                double aspectRatio = Math.abs(changeInY/changeInX);
+                if(aspectRatio<1.0){
+                    angle=90.0;
+                }
+            }
+
+//            telemetry.addData("anglePre", String.valueOf(angle));
 
 
-        double angle = getAngle(result);
-
-        telemetry.addData("anglePre", String.valueOf(angle));
+            angle -= botToLimelight.getRotation().getDegrees(); //technically not field relative
 
 
-        angle -= botToLimelight.getRotation().getDegrees(); //technically not field relative
-
-
-        Log.i("bruhAngle", String.valueOf(angle));
+//            Log.i("bruhAngle", String.valueOf(angle));
 
 //        Transform2d poseRelativeToLL = new Transform2d(new Translation2d(right, forward), new Rotation2d(Math.toRadians(angle)));
 //
@@ -177,17 +210,32 @@ public class LimelightSubsystem extends SubsystemBase {
 //        Log.i("bruhAngleAbsolute", String.valueOf(poseRelativeToBot.getRotation().getDegrees()));
 //        telemetry.addData("bruhAngleAbsolute", poseRelativeToBot.getRotation().getDegrees());
 
-        double cameraRadians = botToLimelight.getRotation().getRadians();
+            double cameraRadians = botToLimelight.getRotation().getRadians();
 
-        double forwardBotRelative = Math.cos(cameraRadians)*forward + Math.sin(cameraRadians) * right + botToLimelight.getY();
+            double forwardBotRelative = Math.cos(cameraRadians) * forward + Math.sin(cameraRadians) * right + botToLimelight.getY();
 
-        double rightBotRelative = -Math.sin(cameraRadians) * forward + Math.cos(cameraRadians) * right + botToLimelight.getX();
-
-
-        Pose2d poseRelativeToBot = new Pose2d(rightBotRelative, forwardBotRelative, new Rotation2d(Math.toRadians(angle)));
+            double rightBotRelative = -Math.sin(cameraRadians) * forward + Math.cos(cameraRadians) * right + botToLimelight.getX();
 
 
-        return Optional.of(poseRelativeToBot);
+            Pose2d poseRelativeToBot = new Pose2d(rightBotRelative, forwardBotRelative, new Rotation2d(Math.toRadians(angle)));
+
+            poses.add(poseRelativeToBot);
+        }
+
+        if(poses.size()<=0){
+            return Optional.empty();
+        }
+
+        Pose2d best = new Pose2d();
+        double lowestX = Double.MAX_VALUE;
+        for (Pose2d pose : poses){
+            if (Math.abs(pose.getX())*2 + pose.getY()-ArmSubsystem.slideRetractMin<lowestX){
+                lowestX = Math.abs(pose.getX())*2 + pose.getY()-ArmSubsystem.slideRetractMin;
+                best = pose;
+            }
+        }
+
+        return Optional.of(best);
     }
 }
 

@@ -63,7 +63,7 @@ public class LimelightToSample extends CommandBase {
         limelightSubsystem.initializeCamera();
 
         //ONLY FOR TELEOP
-//        driveSubsystem.driveToPoint(driveSubsystem.getPos());
+        driveSubsystem.driveToPoint(driveSubsystem.getPos());
     }
 
     @Override
@@ -84,12 +84,28 @@ public class LimelightToSample extends CommandBase {
     @Override
     public void end(boolean interrupted){
         if (safeResult.isPresent()) {
-            driveSubsystem.enablePrecisePID(true);
+            driveSubsystem.enablePrecisePID(false);
             secondaryArmSubsystem.setDiffy(0,0);
             Pose2d dtPose = driveSubsystem.getPos();
             Pose2d pose = safeResult.get();
 
-            driveSubsystem.driveToPoint(dtPose.transformBy(new Transform2d(new Translation2d(pose.getX(),0), new Rotation2d())));
+            double heading = dtPose.getRotation().getRadians();
+            if(heading==0){heading+=0.00001;}//bruh
+
+//            Pose2d transformedPose = new Pose2d(
+//                    dtPose.getX() + Math.cos(heading)*pose.getX()*Math.signum(heading)*-1,
+//                    dtPose.getY() + Math.sin(heading)*pose.getX(),`
+//                    dtPose.getRotation()
+//            );
+
+
+            Pose2d transformedPose = new Pose2d(
+                dtPose.getX()+pose.getX(),
+                dtPose.getY(),
+                dtPose.getRotation()
+            );
+
+            driveSubsystem.driveToPoint(transformedPose);
 
             double slideExtension = MathUtils.clamp(pose.getY(), ArmSubsystem.slideRetractMin, 30);
             armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY);

@@ -23,7 +23,9 @@ public class PosGlobals {
     public static Pose2d firstHighChamberRight = new Pose2d(1, -31.5, Rotation2d.fromDegrees(0));
     public static Pose2d highChamberCheckpoint = new Pose2d(-2, -40.0, Rotation2d.fromDegrees(15));
 
-    public static Pose2d highChamberRight = new Pose2d(6, -29.5, Rotation2d.fromDegrees(15));
+    public static Pose2d highChamberRight = new Pose2d(6, -32.5, Rotation2d.fromDegrees(15));
+    public static Pose2d highChamberSpecMech = new Pose2d(6, -29.5, new Rotation2d());
+
 
     public static Pose2d highChamberFast = new Pose2d(9, -45.5, Rotation2d.fromDegrees(30));
 
