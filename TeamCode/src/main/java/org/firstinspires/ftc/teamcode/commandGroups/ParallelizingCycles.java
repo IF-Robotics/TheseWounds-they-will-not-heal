@@ -30,19 +30,40 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                     specMechSubsystem.setArm(specArmWallIntake);
                 }),
                 new ParallelCommandGroup(
-                    new DriveToPointCommand(driveSubsystem, specMechPickUp.plus(new Transform2d(new Translation2d(0, 8), new Rotation2d())), 3, 5)
+                    new WaitCommand(500)
                         .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)),
-                    new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                    new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                        .andThen(new WaitCommand(800))
+                        .andThen(new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem))
                 ),
                 new WaitCommand(100),
                 new ParallelCommandGroup(
                         new WaitCommand(250)
-                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight, 5, 5)),
-                        new ParallelizingCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem)
+                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight.transformBy(new Transform2d(new Translation2d(0, -2.0), new Rotation2d())), 5, 5)),
+                        new SequentialCommandGroup(
+                            new ParallelizingCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem),
+                            new InstantCommand(() -> armSubsystem.setArm(25)),
+                            new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
+                            new InstantCommand(() ->intakeSubsystem.openClaw()),
+                            new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
+                            new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30))
+                        )
                 ),
-                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem),
-                new WaitCommand(1000),
-                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                new ParallelCommandGroup(
+                        new SequentialCommandGroup(
+                                new WaitCommand(400),
+                                new InstantCommand(() -> specMechSubsystem.openClaw()),
+                                new WaitCommand(200),
+                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                        ),
+                        new SequentialCommandGroup(
+                                new WaitCommand(200),
+                                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
+                                new WaitCommand(2000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getXError()<0.75),
+                                new WaitCommand(100),
+                                new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
+                        )
+                )
         );
     }
 }

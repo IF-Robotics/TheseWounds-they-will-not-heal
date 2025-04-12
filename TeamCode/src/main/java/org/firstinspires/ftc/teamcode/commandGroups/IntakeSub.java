@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 public class IntakeSub extends SequentialCommandGroup {
     public IntakeSub(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
+            new InstantCommand(()->intakeSubsystem.resetRotateIntake()),
             new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(0)),
             //reset intake array
             new InstantCommand(() -> intakeSubsystem.setDiffy(0,0)),

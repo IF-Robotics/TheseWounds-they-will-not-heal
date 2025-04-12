@@ -149,8 +149,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     //Takes the yaw of the secondary arm and normalizes the wrist roll
-    public void normalizeRollToSecondaryArm(DoubleSupplier yawSupplier){
-        double wristAngle = -yawSupplier.getAsDouble();
+    public void normalizeRollToSecondaryArm(double yawSupplier){
+        double wristAngle = -yawSupplier;
         Log.i("wristAnglePreRotation", String.valueOf(wristAngle));
         wristAngle += intakePitchAngle;
 

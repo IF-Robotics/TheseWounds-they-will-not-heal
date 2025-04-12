@@ -12,10 +12,8 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
@@ -23,10 +21,8 @@ import org.firstinspires.ftc.teamcode.subSystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 import java.util.Optional;
-import java.util.Timer;
 
-public class LimelightToSample extends CommandBase {
-    DriveSubsystem driveSubsystem;
+public class LimelightTeleopAimer extends CommandBase {
     ArmSubsystem armSubsystem;
     SecondaryArmSubsystem secondaryArmSubsystem;
     IntakeSubsystem intakeSubsystem;
@@ -38,8 +34,7 @@ public class LimelightToSample extends CommandBase {
     Optional<Pose2d> safeResult = Optional.empty();
 
     ElapsedTime timer = new ElapsedTime();
-    public LimelightToSample(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, IntakeSubsystem intakeSubsystem,LimelightSubsystem limelightSubsystem){
-        this.driveSubsystem = driveSubsystem;
+    public LimelightTeleopAimer(ArmSubsystem armSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, IntakeSubsystem intakeSubsystem,LimelightSubsystem limelightSubsystem){
         this.armSubsystem = armSubsystem;
         this.secondaryArmSubsystem = secondaryArmSubsystem;
         this.intakeSubsystem = intakeSubsystem;
@@ -73,7 +68,7 @@ public class LimelightToSample extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if(optionalResult.isPresent() && timer.milliseconds()>250 && armSubsystem.getArmAngle()>20){
+        if(optionalResult.isPresent() && timer.milliseconds()>750 && armSubsystem.getArmAngle()>20){
             safeResult = optionalResult;
             return true;
         }
@@ -84,17 +79,28 @@ public class LimelightToSample extends CommandBase {
     @Override
     public void end(boolean interrupted){
         if (safeResult.isPresent()) {
-            driveSubsystem.enablePrecisePID(true);
             secondaryArmSubsystem.setDiffy(0,0);
-            Pose2d dtPose = driveSubsystem.getPos();
             Pose2d pose = safeResult.get();
 
-            driveSubsystem.driveToPoint(dtPose.transformBy(new Transform2d(new Translation2d(pose.getX(),0), new Rotation2d())));
+            double desiredX = pose.getX();
+            desiredX = MathUtils.clamp(desiredX, -SecondaryArmSubsystem.secondaryArmLength, SecondaryArmSubsystem.secondaryArmLength);
 
-            double slideExtension = MathUtils.clamp(pose.getY(), ArmSubsystem.slideRetractMin, 30);
-            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY);
+            double yaw = Math.acos(desiredX/SecondaryArmSubsystem.secondaryArmLength); //0 through 180
+
+            double slideCompensation = Math.sin(yaw) * SecondaryArmSubsystem.secondaryArmLength;
+
+            yaw = Math.toDegrees(yaw); //convert to degrees
+            yaw -=90; //make it -90 through 90
+            yaw *= -1; //flip it for our input into the secondary arm subsystem
+
+            secondaryArmSubsystem.setDiffyYaw(yaw);
+
+            double slideExtension = MathUtils.clamp(pose.getY()-slideCompensation+SecondaryArmSubsystem.secondaryArmLength, ArmSubsystem.slideRetractMin, 30);
+            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY-0.5);
 
             double angle = pose.getRotation().getDegrees();
+
+            angle+= yaw;
 
             if(angle > 90){
                 while (angle > 90){

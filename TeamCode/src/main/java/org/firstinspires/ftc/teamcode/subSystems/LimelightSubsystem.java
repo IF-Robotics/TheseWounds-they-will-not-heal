@@ -58,16 +58,14 @@ public class LimelightSubsystem extends SubsystemBase {
 
         this.telemetry = telemetry;
 
-//        if (alliance == Alliance.BLUE){
-//            camera.pipelineSwitch(0);  //pipeline 0 is blue
-//            sampleColor = 0.0;
-//        }
-//        else{
-//            camera.pipelineSwitch(1);  //pipeline 1 is red
-//            sampleColor = 1.0;
-//        }
-
-        camera.pipelineSwitch(0);
+        if (alliance == Alliance.BLUE){
+            camera.pipelineSwitch(0);  //pipeline 0 is blue
+            sampleColor = 0.0;
+        }
+        else{
+            camera.pipelineSwitch(1);  //pipeline 1 is red
+            sampleColor = 1.0;
+        }
 
         initializeCamera();
     } //pipeline 2 is yellow

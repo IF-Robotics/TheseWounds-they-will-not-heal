@@ -133,6 +133,8 @@ public class ArmSubsystem extends SubsystemBase {
         nautilus.add(30,360);
         nautilus.add(999999,360);
         nautilus.createLUT();
+
+        nautilusDown();
     }
 
     public void manualArm(double armPower, double slidePower){
@@ -149,6 +151,7 @@ public class ArmSubsystem extends SubsystemBase {
         if(getSlideTarget()<10){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
+
         setArmTargetAngle = targetAngle;
     }
 
@@ -425,6 +428,14 @@ public class ArmSubsystem extends SubsystemBase {
         slideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void nautilusUp(){
+        endStop.setPosition(0.43);
+    }
+
+    public void nautilusDown(){
+        endStop.setPosition(0.28);
     }
 
 

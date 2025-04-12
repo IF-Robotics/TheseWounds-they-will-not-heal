@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opModes;
 
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 
@@ -19,11 +20,13 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.commandGroups.AutoSpecimenCycleFast;
 import org.firstinspires.ftc.teamcode.commandGroups.ClimbLevel3;
 import org.firstinspires.ftc.teamcode.commandGroups.DropCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.DropOffCommand;
@@ -43,6 +46,7 @@ import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.ArmManualCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.JacobSlideValorantAimer;
+import org.firstinspires.ftc.teamcode.commands.LimelightTeleopAimer;
 import org.firstinspires.ftc.teamcode.commands.LimelightToSample;
 import org.firstinspires.ftc.teamcode.commands.ResetSlides;
 import org.firstinspires.ftc.teamcode.commandGroups.TeleopSpecScore;
@@ -55,6 +59,7 @@ import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.commands.holdDTPosCommand;
 import org.firstinspires.ftc.teamcode.other.Robot;
+import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 
 
 @Disabled
@@ -169,18 +174,15 @@ public class TeleopOpMode extends Robot {
 
         stickButtonLeft2.whenPressed(new InstantCommand(() -> {
             secondaryArmSubsystem.setDiffyYaw(0);
-            intakeSubsystem.normalizeRollToSecondaryArm(()->0);
+            intakeSubsystem.normalizeRollToSecondaryArm(0);
         }));
 
         //In-sub adjuster for secondary
         new Trigger(()->Math.abs(m_driverOp.getLeftX()) > .1).or(new Trigger(()->Math.abs(m_driverOp.getRightY()) > .1))
-                .whenActive(new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)).andThen(
-                        new RunCommand(() -> {
-                            secondaryArmSubsystem.setDiffyYaw(()->m_driverOp.getLeftX() * 90);/*makes the range 180degrees*/
-                            intakeSubsystem.normalizeRollToSecondaryArm(()->m_driverOp.getLeftX() * 90);
-                        }, secondaryArmSubsystem, intakeSubsystem)
-                ))
-                .whenActive(new JacobSlideValorantAimer(armSubsystem, m_driverOp::getRightY, ()->m_driverOp.getLeftX() * 90));
+                .whenActive(
+                    new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake))
+                        .andThen(new JacobSlideValorantAimer(armSubsystem, intakeSubsystem, secondaryArmSubsystem, m_driverOp::getRightY, ()->m_driverOp.getLeftX()))
+                );
 
 
 //        new Trigger(()->Math.abs(m_driverOp.getRightY()) > .1)
@@ -226,8 +228,15 @@ public class TeleopOpMode extends Robot {
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));
         //auto spec scoring
         circle1.toggleWhenPressed(new ConditionalCommand(
-                new TeleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem),
-                new ParallelCommandGroup(new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY), new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall)),
+//                new TeleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem),
+                new InstantCommand(()->driveSubsystem.setStartingPos(new Pose2d(wallPickUp.getX(), wallPickUp.getY() + 1, Rotation2d.fromDegrees(0))))
+                        .andThen(new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem)),
+                new ParallelCommandGroup(
+                        new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
+                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
+                        secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
+                        new InstantCommand(()->armSubsystem.nautilusUp())
+                ),
                 () -> (armSubsystem.getTargetX() == armIntakeWallX && armSubsystem.getTargetY() == armIntakeWallY)
                 )
         );
@@ -313,7 +322,22 @@ public class TeleopOpMode extends Robot {
 
 
         //baskets
-        triangle2.whenPressed(new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
+        triangle2.whenPressed(
+            new ConditionalCommand(
+                new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                new ConditionalCommand(
+                    new SequentialCommandGroup(
+                        new WaitForArmCommand(armSubsystem, ArmSubsystem.armMinAngle, 5),
+                        new WaitForSlideCommand(armSubsystem, 10, 2),
+                        new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem)
+                    ),
+                    new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem),
+                    ()-> armSubsystem.getArmAngle()>7 || armSubsystem.getSlideExtention()>11
+                ),
+                ()->parallelizing==false
+            )
+        );
+
         triangle1.whenPressed(new ConditionalCommand(
                 new SequentialCommandGroup(
                     //move to high basket

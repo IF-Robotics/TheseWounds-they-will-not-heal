@@ -87,6 +87,9 @@ public class Globals {
     //arm back - not really back anymmore, just the spec scoring position
     public static double armBackX = 13.0;
     public static double armBackY = 19.2;
+
+    public static double armFastX = 25;
+    public static double armFastY = 21.25;
     //arm basket
     public static double armHighBasketX = -2;
     public static double  armHighBasketY = 40.5;

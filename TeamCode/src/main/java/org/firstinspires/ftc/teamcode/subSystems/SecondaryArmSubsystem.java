@@ -70,7 +70,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 //        this.yawAngle = yawAngle;
         this.yawAngle = 0;
 
-        double yawInput = ((yawAngle + secondaryYawAngleOffset)/355 + .5);
+        double yawInput = ((yawAngle + secondaryYawAngleOffset)*1.05*(95/90.0)/355 + .5);
         secondaryYawServo.setPosition(yawInput);
     }
 

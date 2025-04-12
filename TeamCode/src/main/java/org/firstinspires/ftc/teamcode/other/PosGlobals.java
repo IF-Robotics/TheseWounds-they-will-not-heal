@@ -20,10 +20,13 @@ public class PosGlobals {
 
     //high chamber
     public static Pose2d highChamberLeft = new Pose2d(-5, -32.4, Rotation2d.fromDegrees(0));
-    public static Pose2d firstHighChamberRight = new Pose2d(1, -32.5, Rotation2d.fromDegrees(0));
-    public static Pose2d highChamberCheckpoint = new Pose2d(14.5, -45, Rotation2d.fromDegrees(15));
+    public static Pose2d firstHighChamberRight = new Pose2d(1, -31.5, Rotation2d.fromDegrees(0));
+    public static Pose2d highChamberCheckpoint = new Pose2d(-2, -40.0, Rotation2d.fromDegrees(15));
 
-    public static Pose2d highChamberRight = new Pose2d(7.5, -29.5, Rotation2d.fromDegrees(15));
+    public static Pose2d highChamberRight = new Pose2d(6, -29.5, Rotation2d.fromDegrees(15));
+
+    public static Pose2d highChamberFast = new Pose2d(9, -45.5, Rotation2d.fromDegrees(30));
+
 
 
     //baskets
@@ -39,8 +42,8 @@ public class PosGlobals {
     public static Pose2d rightSideMiddleSpike = new Pose2d(44, -36, Rotation2d.fromDegrees(-37));
     public static Pose2d rightSideRightSpike = new Pose2d(54, -36, Rotation2d.fromDegrees(-37));
 
-    public static Pose2d rightSideLeftSpikeFlip = new Pose2d(50.5, -54, Rotation2d.fromDegrees(0));
-    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(61.0, -53.7, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideLeftSpikeFlip = new Pose2d(49.5, -53.8, Rotation2d.fromDegrees(0));
+    public static Pose2d rightSideMiddleSpikeFlip = new Pose2d(60.0, -53.5, Rotation2d.fromDegrees(0));
     public static Pose2d rightSideRightSpikeFlip = new Pose2d(61.5, -47, Rotation2d.fromDegrees(-20));
 
 
@@ -53,7 +56,7 @@ public class PosGlobals {
     public static Pose2d firstWallPickUp = new Pose2d(62, -60.5, Rotation2d.fromDegrees(0));
     public static Pose2d wallPickUp = new Pose2d(38, -60.5, Rotation2d.fromDegrees(0));
 
-    public static Pose2d specMechPickUp = new Pose2d(32, -60.5, Rotation2d.fromDegrees(0));
+    public static Pose2d specMechPickUp = new Pose2d(40, -61.5, Rotation2d.fromDegrees(0));
 
 
     //parking

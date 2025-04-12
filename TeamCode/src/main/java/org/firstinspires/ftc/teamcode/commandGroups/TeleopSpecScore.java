@@ -16,27 +16,27 @@ public class TeleopSpecScore extends SequentialCommandGroup{
         addCommands(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
-                            new InstantCommand(() -> driveSubsystem.setStartingPos(new Pose2d(wallPickUp.getX(), wallPickUp.getY() + 1, Rotation2d.fromDegrees(180)))),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
-                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem)
+                            new InstantCommand(() -> driveSubsystem.setStartingPos(new Pose2d(wallPickUp.getX(), wallPickUp.getY() + 1, Rotation2d.fromDegrees(180))))
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem),
+//                            new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem)
                         ),
                         new AutoDriveCommand(driveSubsystem)
                 )

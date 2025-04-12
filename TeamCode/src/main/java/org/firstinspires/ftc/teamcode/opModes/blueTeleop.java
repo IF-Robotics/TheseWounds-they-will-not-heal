@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.commands.VisionClawCommand;
 import org.firstinspires.ftc.teamcode.other.Robot;
 import org.firstinspires.ftc.teamcode.opModes.TeleopOpMode;
+import org.firstinspires.ftc.teamcode.subSystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
 
 //import org.firstinspires.ftc.teamcode.subSystems.VisionSubsystem;
@@ -20,6 +21,8 @@ public class blueTeleop extends TeleopOpMode {
     ElapsedTime setColorTimer = new ElapsedTime();
     public void initialize(){
         VisionSubsystem.alliance = VisionSubsystem.Alliance.BLUE;
+        LimelightSubsystem.alliance = LimelightSubsystem.Alliance.BLUE;
+
         super.initialize();
     }
 

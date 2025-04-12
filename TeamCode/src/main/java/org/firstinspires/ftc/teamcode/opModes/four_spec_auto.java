@@ -98,9 +98,9 @@ public class four_spec_auto extends Robot {
                 new InstantCommand(() -> armSubsystem.setSlide(8)),
                 intakeWallCommand,
 
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
                 new DriveToPointCommand(driveSubsystem, new Pose2d(50, -56, Rotation2d.fromDegrees(0)), 1, 5)
 
 

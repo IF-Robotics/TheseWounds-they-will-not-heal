@@ -69,10 +69,10 @@ public class five_spec_oneSample_auto extends AutoBase {
                 //drive close to pickup point
                 new DriveToPointCommand(driveSubsystem, new Pose2d(37, -50, Rotation2d.fromDegrees(180)), 2, 5),
 
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
-                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
+//                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem),
 
 
 
