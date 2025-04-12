@@ -166,7 +166,7 @@ public class Globals {
     public static double translationKI = 0.0;
     public static double translationKD = 0.01;
 //    public static double translationKD = 0.001;
-    public static double translationKF = -0.04; //static friction coefficient, overall robot vector not individual module so may not work as expected
+    public static double translationKF = -0.06; //static friction coefficient, overall robot vector not individual module so may not work as expected
 
     public static double translationKR = .5; //KR is the constant for the root of the pid
     public static double translationMaxVel = 1; //in inches per second

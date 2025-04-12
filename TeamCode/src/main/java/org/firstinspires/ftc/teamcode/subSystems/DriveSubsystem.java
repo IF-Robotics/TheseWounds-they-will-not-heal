@@ -282,7 +282,7 @@ public class DriveSubsystem extends SubsystemBase {
         correctedVectorMagnitude = voltageCompensation * -Math.pow((Math.abs(translationController.calculate(rawVectorMagnitude,0))) * Math.signum(rawVectorMagnitude), translationKR);
 
         //Do not do static friction if error is low enough
-        if(rawVectorMagnitude<0.015) {
+        if(rawVectorMagnitude>0.015) {
             correctedVectorMagnitude += translationKF;
         }
 

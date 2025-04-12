@@ -41,10 +41,10 @@ public class LimelightSubsystem extends SubsystemBase {
     private double sampleColor = -1;
 
 
-    public static double CAMERA_HEIGHT = 11.06-1.5;//limelight height minus height of sample (limelight detects top of sample), 0.8 for offset cuz works?
+    public static double CAMERA_HEIGHT = 11.23-1.5;//limelight height minus height of sample (limelight detects top of sample), 0.8 for offset cuz works?
     public static double CAMERA_ANGLE = 45.25; //downwards Angle
 
-    Pose2d botToLimelight = new Pose2d(new Translation2d(6.556, 5.45), new Rotation2d(Math.toRadians(30)));
+    Pose2d botToLimelight = new Pose2d(new Translation2d(6.556-0.5, 5.45), new Rotation2d(Math.toRadians(30)));
 
 
 //    public static double TARGET_HEIGHT = ;
