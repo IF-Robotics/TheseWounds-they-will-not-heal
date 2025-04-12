@@ -228,9 +228,7 @@ public class TeleopOpMode extends Robot {
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));
         //auto spec scoring
         circle1.toggleWhenPressed(new ConditionalCommand(
-//                new TeleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem),
-                new InstantCommand(()->driveSubsystem.setStartingPos(new Pose2d(wallPickUp.getX(), wallPickUp.getY() + 1, Rotation2d.fromDegrees(0))))
-                        .andThen(new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem)),
+                new TeleopSpecScore(driveSubsystem,armSubsystem,intakeSubsystem, secondaryArmSubsystem),
                 new ParallelCommandGroup(
                         new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
                         new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),

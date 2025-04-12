@@ -30,7 +30,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     private double yawAngle;
 
     public static int secondaryPitchAngleOffset = -13;
-    public static int secondaryYawAngleOffset = 26;
+    public static int secondaryYawAngleOffset = 22;
 
     //the value in the parentheses is our desired angle range in degrees
 //    public static double diffyScalar = (245/255 * 355)/360; //servoRange *
@@ -41,6 +41,8 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     public static final int hardStoppedHighPitch = 200;
 
     public static final double secondaryArmLength = 5.2;
+
+    public static final double extensionOffsetFromMiddle = 0.5;
 
 
 
@@ -148,6 +150,21 @@ public class SecondaryArmSubsystem extends SubsystemBase {
                 return new SecondaryArmCommand(this, pitch, yaw);
             }
         }
+    }
+
+    //returns yaw in RADIANS
+    public double setX(double x){
+        double yaw = Math.asin(x/secondaryArmLength);
+        setDiffyYaw(Math.toDegrees(yaw));
+
+        return yaw;
+    }
+
+    //returns how much more forward we move the slides for a certain yaw
+    public double getSlideCompensation(double yaw){
+        double circleDifference = 1 - Math.cos(yaw);
+
+        return circleDifference*secondaryArmLength;
     }
 
 }

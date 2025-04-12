@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeY;
 import static org.firstinspires.ftc.teamcode.other.Globals.pitchWhenIntake;
+import static org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem.extensionOffsetFromMiddle;
 
 import android.util.Log;
 
@@ -85,22 +86,17 @@ public class LimelightTeleopAimer extends CommandBase {
             double desiredX = pose.getX();
             desiredX = MathUtils.clamp(desiredX, -SecondaryArmSubsystem.secondaryArmLength, SecondaryArmSubsystem.secondaryArmLength);
 
-            double yaw = Math.acos(desiredX/SecondaryArmSubsystem.secondaryArmLength); //0 through 180
+            double yaw = secondaryArmSubsystem.setX(desiredX);
 
-            double slideCompensation = Math.sin(yaw) * SecondaryArmSubsystem.secondaryArmLength;
+            double slideCompensation = secondaryArmSubsystem.getSlideCompensation(yaw);
 
-            yaw = Math.toDegrees(yaw); //convert to degrees
-            yaw -=90; //make it -90 through 90
-            yaw *= -1; //flip it for our input into the secondary arm subsystem
+            double slideExtension = MathUtils.clamp(pose.getY()+ extensionOffsetFromMiddle + slideCompensation, ArmSubsystem.slideRetractMin,30+slideCompensation);
 
-            secondaryArmSubsystem.setDiffyYaw(yaw);
-
-            double slideExtension = MathUtils.clamp(pose.getY()-slideCompensation+SecondaryArmSubsystem.secondaryArmLength, ArmSubsystem.slideRetractMin, 30);
             armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY-0.5);
 
             double angle = pose.getRotation().getDegrees();
 
-            angle+= yaw;
+            angle+= Math.toDegrees(yaw);
 
             if(angle > 90){
                 while (angle > 90){

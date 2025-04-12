@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeY;
 import static org.firstinspires.ftc.teamcode.other.Globals.pitchWhenIntake;
+import static org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem.extensionOffsetFromMiddle;
 
 import android.util.Log;
 
@@ -107,7 +108,7 @@ public class LimelightToSample extends CommandBase {
 
             driveSubsystem.driveToPoint(transformedPose);
 
-            double slideExtension = MathUtils.clamp(pose.getY()+0.5+1.0, ArmSubsystem.slideRetractMin, 30);
+            double slideExtension = MathUtils.clamp(pose.getY()+extensionOffsetFromMiddle, ArmSubsystem.slideRetractMin, 30);
             armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY);
 
             double angle = pose.getRotation().getDegrees();

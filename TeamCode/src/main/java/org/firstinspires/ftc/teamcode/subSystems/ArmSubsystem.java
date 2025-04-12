@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase {
     //arm PIDF
     public static double kParm = 0.17, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
-    public static double armAngleOffset = -98;
+    public static double armAngleOffset = -67;
 
     public static double armMinAngle = 4.0;
     public static double armMaxAngle = 90;
@@ -59,7 +59,7 @@ public class ArmSubsystem extends SubsystemBase {
     //IMPORTANT, slideKP needs to be changed in VisionToSampleInterpolte as well
     public static double slideKP = 0.8, slideKI = 0.0, slideKD = 0.0, slideKF = 0.07;
     private PIDController slideController;
-    private final double ticksPerIn = 870.0/26.8; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides 738/30.5 / 1.3529
+    private final double ticksPerIn = 837/20.8; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides 738/30.5 / 1.3529
     private int slideTicks = 1;
     private double slidePower = 0;
     private double slideExtention = 9;
@@ -151,6 +151,10 @@ public class ArmSubsystem extends SubsystemBase {
         if(getSlideTarget()<10){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
+
+        if(targetAngle<28){
+            nautilusDown();
+        }
 
         setArmTargetAngle = targetAngle;
     }
@@ -431,7 +435,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void nautilusUp(){
-        endStop.setPosition(0.43);
+        endStop.setPosition(0.45);
     }
 
     public void nautilusDown(){

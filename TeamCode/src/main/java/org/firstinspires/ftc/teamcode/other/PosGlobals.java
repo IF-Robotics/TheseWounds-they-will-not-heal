@@ -11,7 +11,7 @@ public class PosGlobals {
     public static final double startLeftX = -startRightX;
 //    public static final double startRightX = 14.74/2 + .5;//the 3&7/16 is the length a sample
 //    public static final double startLeftX = -(2*(3 + 7/16) + 14.74/2);
-    public static final double startLeftY = -70.9 + (8.18898)-1.25;
+    public static final double startLeftY = -70.9 + (8.18898)-1.25+1;
     public static final double startRightY = startLeftY;
     public static Pose2d startingPosRight = new Pose2d(startRightX, startRightY, Rotation2d.fromDegrees(0));
     public static Pose2d startingPosLeft = new Pose2d(startLeftX, startLeftY, Rotation2d.fromDegrees(0));
@@ -27,7 +27,9 @@ public class PosGlobals {
     public static Pose2d highChamberSpecMech = new Pose2d(6, -29.5, new Rotation2d());
 
 
-    public static Pose2d highChamberFast = new Pose2d(9, -45.5, Rotation2d.fromDegrees(30));
+    public static Pose2d highChamberFastCheckpoint = new Pose2d(16-10, -45.5-5, Rotation2d.fromDegrees(20));
+
+    public static Pose2d highChamberFast = new Pose2d(16, -44.5, Rotation2d.fromDegrees(20));
 
 
 
@@ -56,7 +58,11 @@ public class PosGlobals {
 
     //wallPickUp
     public static Pose2d firstWallPickUp = new Pose2d(62, -60.5, Rotation2d.fromDegrees(0));
-    public static Pose2d wallPickUp = new Pose2d(38, -60.5, Rotation2d.fromDegrees(0));
+
+    public static Pose2d wallPickUp = new Pose2d(38, -60.75, Rotation2d.fromDegrees(0));
+    public static Pose2d wallPickUpFastCheckpoint = new Pose2d(38+2, -52.5, Rotation2d.fromDegrees(0));
+
+
 
     public static Pose2d specMechPickUp = new Pose2d(40, -61.5, Rotation2d.fromDegrees(0));
 

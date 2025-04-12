@@ -22,43 +22,46 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 public class AutoSpecimenCycleFast extends SequentialCommandGroup {
     public AutoSpecimenCycleFast(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, SecondaryArmSubsystem secondaryArmSubsystem) {
             addCommands(
-                new ParallelDeadlineGroup(
-                    new SequentialCommandGroup(
+                new SequentialCommandGroup(
+                    new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
+                    new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
+                    new InstantCommand(()->armSubsystem.nautilusUp()),
+
+                    new ParallelCommandGroup(
+                        new DriveToPointCommand(driveSubsystem, wallPickUpFastCheckpoint, 5, 5).withTimeout(1500)
+                                .andThen(new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500)),
+                        secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
                         new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
                         new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
-                        new InstantCommand(()->armSubsystem.nautilusUp()),
-
-                        new ParallelCommandGroup(
-                            new DriveToPointCommand(driveSubsystem, wallPickUp, 3, 3).withTimeout(1500),
-                                secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake)
-                        ),
-                        //wait
-                        new WaitCommand(100),
-
-
-                        // Intake specimen from wall
-                        new ParallelCommandGroup(
-                                new SequentialCommandGroup(
-                                        //grab the specimen
-                                        new InstantCommand(()->intakeSubsystem.closeClaw()),
-                                        new WaitCommand(200),
-                                        //flip up the intake
-                                        new InstantCommand(()->armSubsystem.setSlide(12)),
-                                        secondaryArmSubsystem.setPitchSafe(0),
-                                        new WaitForArmCommand(armSubsystem, 30, 10).withTimeout(500),
-                                        new ParallelCommandGroup(
-                                                new ArmCoordinatesCommand(armSubsystem, armFastX, armFastY), //wait for secondary arm yaw to clear nautilus
-                                                new WaitCommand(50).andThen(new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(30))), //wait for sample to rotate
-                                                new InstantCommand(()->intakeSubsystem.setDiffy(50, 0))
-                                        )
-                                ),
-                                new WaitCommand(150)
-    //                            .andThen(new DriveToPointCommand(driveSubsystem, highChamberCheckpoint, 5, 5).withTimeout(1500))
-                                    .andThen(new DriveToPointCommand(driveSubsystem, highChamberFast, 4, 5).withTimeout(2000))
-                                    .andThen(new InstantCommand(()->armSubsystem.nautilusDown()))
-                        )
+                        new InstantCommand(()->armSubsystem.nautilusUp())
                     ),
-                    new AutoDriveCommand(driveSubsystem)
+
+                    // Intake specimen from wall
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    //grab the specimen
+                                    new InstantCommand(()->intakeSubsystem.closeClaw()),
+                                    new WaitCommand(50),
+                                    //flip up the intake
+                                    new InstantCommand(()->armSubsystem.setSlide(12)),
+                                    secondaryArmSubsystem.setPitchSafe(0),
+                                    new WaitForArmCommand(armSubsystem, 30, 15).withTimeout(500),
+                                    new ParallelCommandGroup(
+                                            new ArmCoordinatesCommand(armSubsystem, armFastX, armFastY), //wait for secondary arm yaw to clear nautilus
+                                            new WaitCommand(50).andThen(new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(5))), //wait for sample to rotate
+                                            new InstantCommand(()->intakeSubsystem.setDiffy(50, 0))
+                                    )
+                            ),
+
+                            new SequentialCommandGroup(
+                                    new WaitCommand(50),
+                                    new InstantCommand(()->driveSubsystem.enablePrecisePID(true)),
+//                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 10, 5).withTimeout(1500),
+                                    new DriveToPointCommand(driveSubsystem, highChamberFast, 4, 5).withTimeout(2000),
+//                                    new InstantCommand(()->armSubsystem.nautilusDown()),
+                                    new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
+                            )
+                    )
                 )
             );
 
