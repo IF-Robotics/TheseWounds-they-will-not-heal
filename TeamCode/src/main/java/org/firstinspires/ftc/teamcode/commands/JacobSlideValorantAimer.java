@@ -59,25 +59,20 @@ public class JacobSlideValorantAimer extends CommandBase {
         desiredX = MathUtils.clamp(desiredX, -1, 1);
         desiredX *= SecondaryArmSubsystem.secondaryArmLength;
 
-        double yaw = Math.acos(desiredX/SecondaryArmSubsystem.secondaryArmLength); //0 through 180
+        double yaw = secondaryArmSubsystem.setX(desiredX);
 
-        double slideCompensation = Math.sin(yaw) * SecondaryArmSubsystem.secondaryArmLength;
-
-        yaw = Math.toDegrees(yaw); //convert to degrees
-        yaw -=90; //make it -90 through 90
-        yaw *= -1; //flip it for our input into the secondary arm subsystem
-
-        secondaryArmSubsystem.setDiffyYaw(yaw);
-
-        double desiredPosition = desiredY-slideCompensation+SecondaryArmSubsystem.secondaryArmLength;
+        double slideCompensation = secondaryArmSubsystem.getSlideCompensation(yaw);
 
 
-        desiredPosition = MathUtils.clamp(desiredPosition, ArmSubsystem.slideRetractMin, 30-slideCompensation+SecondaryArmSubsystem.secondaryArmLength);
+        double desiredPosition = desiredY+slideCompensation;
+
+
+        desiredPosition = MathUtils.clamp(desiredPosition, ArmSubsystem.slideRetractMin, 30+slideCompensation);
 
 
         armSubsystem.setArmX(desiredPosition);
 
-        intakeSubsystem.normalizeRollToSecondaryArm(yaw);
+        intakeSubsystem.normalizeRollToSecondaryArm(Math.toDegrees(yaw));
     }
 
     @Override
