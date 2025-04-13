@@ -57,6 +57,7 @@ public class FlipSample extends SequentialCommandGroup {
                         new FullRetractSlidesUntil(armSubsystem, 13.5).withTimeout(500)
                             .andThen(new WaitForArmCommand(armSubsystem, desiredArmAngle, 5).withTimeout(300))
                 ),
+                new WaitCommand(150),
 //                new WaitForSlideCommand(armSubsystem, 8,5),
 //                new InstantCommand(() -> intakeSubsystem.openClaw())
                 new InstantCommand(()->intakeSubsystem.clawExtraOpen())
