@@ -21,11 +21,11 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commandGroups.DropOffCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.HighChamberCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
@@ -253,8 +253,8 @@ public abstract class Robot extends CommandOpMode {
         configureCommands();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset",pinpoint.getXOffset());
-        telemetry.addData("Y offset",pinpoint.getYOffset());
+        telemetry.addData("X offset",pinpoint.getXOffset(DistanceUnit.INCH));
+        telemetry.addData("Y offset",pinpoint.getYOffset(DistanceUnit.INCH));
         telemetry.addData("pinpoint status", pinpoint.getDeviceStatus());
         telemetry.addData("Device Version Number:",pinpoint.getDeviceVersion());
         telemetry.addData("Device SCalar",pinpoint.getYawScalar());
@@ -388,8 +388,8 @@ public abstract class Robot extends CommandOpMode {
        //pinpoint.resetPosAndIMU();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset",pinpoint.getXOffset());
-        telemetry.addData("Y offset",pinpoint.getYOffset());
+        telemetry.addData("X offset",pinpoint.getXOffset(DistanceUnit.INCH));
+        telemetry.addData("Y offset",pinpoint.getYOffset(DistanceUnit.INCH));
         telemetry.addData("pinpoint status", pinpoint.getDeviceStatus());
         telemetry.addData("Device Version Number:",pinpoint.getDeviceVersion());
         telemetry.addData("Device SCalar",pinpoint.getYawScalar());

@@ -41,8 +41,11 @@ public class ArmSubsystem extends SubsystemBase {
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -67;
 
-    public static double armMinAngle = 4.0;
+    public static double armMinAngle = 5.5;
     public static double armMaxAngle = 90;
+
+    public static double armNautilusMinAngle = 29.0;
+
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
     private double ff;
@@ -90,6 +93,8 @@ public class ArmSubsystem extends SubsystemBase {
     //nautilus
     private InterpLUT nautilus = new InterpLUT();   //nautilus theta to arm theta
 
+    private boolean nautilusUp = false;
+
 
     //last command store
     Command currentCommand;
@@ -121,9 +126,9 @@ public class ArmSubsystem extends SubsystemBase {
 
         slideKfLut.add(-999999, 0.135);
         slideKfLut.add(7, 0.135);
-        slideKfLut.add(23.9, .2);
-        slideKfLut.add(41, .25);
-        slideKfLut.add(99999999, .25);
+        slideKfLut.add(23.9, .25);
+        slideKfLut.add(41, .35);
+        slideKfLut.add(99999999, .35);
 
         slideKfLut.createLUT();
 
@@ -152,7 +157,10 @@ public class ArmSubsystem extends SubsystemBase {
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
 
-        if(targetAngle<28){
+        if(nautilusUp&&targetAngle<armNautilusMinAngle){
+            targetAngle=armNautilusMinAngle;
+        }
+        if(targetAngle<armNautilusMinAngle){
             nautilusDown();
         }
 
@@ -436,10 +444,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void nautilusUp(){
         endStop.setPosition(0.45);
+        nautilusUp=true;
     }
 
     public void nautilusDown(){
         endStop.setPosition(0.28);
+        nautilusUp=false;
     }
 
 

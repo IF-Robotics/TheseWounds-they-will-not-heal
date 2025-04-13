@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specAr
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specAutoStart;
 
+import android.util.Log;
+
 import androidx.core.math.MathUtils;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -73,6 +75,16 @@ public class sevenSpecAuto extends AutoBase {
 
         schedule(new SequentialCommandGroup(
                 new StartSpecAuto(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+
+                new InstantCommand(()-> {
+                    Log.i("AutoStartX", String.valueOf(driveSubsystem.getPos().getX()));
+                    Log.i("AutoStartY", String.valueOf(driveSubsystem.getPos().getY()));
+                    Log.i("AutoStartR", String.valueOf(driveSubsystem.getPos().getRotation().getDegrees()));
+                    Log.i("AutoTargetX", String.valueOf(driveSubsystem.getTargetPos().getX()));
+                    Log.i("AutoTargetY", String.valueOf(driveSubsystem.getTargetPos().getY()));
+                    Log.i("AutoTargetR", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()));
+                }),
+
                 new ParallelCommandGroup(
                         new InstantCommand(() -> specMechSubsystem.closeClaw()),
                         new InstantCommand(() -> specMechSubsystem.setArm(specArmUp)),
@@ -82,55 +94,84 @@ public class sevenSpecAuto extends AutoBase {
                         new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
                         new InstantCommand(() ->intakeSubsystem.openClaw())
                 ),
-                new InstantCommand(()->secondaryArmSubsystem.setDiffyPitch(SecondaryArmSubsystem.hardStoppedHighPitch)),
+                //servo nudge issue
+                new InstantCommand(()->{
+                    secondaryArmSubsystem.setDiffyPitch(SecondaryArmSubsystem.hardStoppedHighPitch);
+                    specMechSubsystem.closeClaw();
+                }),
                 new WaitCommand(50),
                 new InstantCommand(()->secondaryArmSubsystem.setDiffyPitch(0)),
                 new WaitCommand(100),
-                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
-                        .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
+
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
+                                new WaitCommand(1500).interruptOn(()->driveSubsystem.getTranslationalError()<5),
                                 new WaitCommand(400),
                                 new InstantCommand(() -> specMechSubsystem.openClaw()),
-                                new WaitCommand(200),
+                                new WaitCommand(800),
                                 new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
                         ),
                         new SequentialCommandGroup(
-                                new WaitCommand(200),
+                                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
+                                        .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
                                 new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                                new WaitCommand(20000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getTranslationalError()<0.5),
+                                new WaitCommand(5000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
                                 new WaitCommand(100),
                                 new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
                         )
                 ),
 
                 new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
-                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
-                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
-                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
+//                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
+//                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
+
+                new InstantCommand(()->Log.i("finishParrallelizing", "yes")),
 
 
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
                                 new WaitCommand(500),
+                                new DriveToPointDoubleSupplierCommand(
+                                        driveSubsystem,
+                                        ()->driveSubsystem.getPos().getX(),
+                                        ()->driveSubsystem.getPos().getY()-10,
+                                        new Rotation2d(),
+                                        5,
+                                        5
+                                ),
+                                new InstantCommand(()->Log.i("finishDoubleSupplier", "yes")),
                                 new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 12, 5).withTimeout(1250),
                                 new InstantCommand(()->driveSubsystem.enablePrecisePID(true)), //so we accelerate faster
+                                new InstantCommand(()-> {
+                                    Log.i("AutoStartXS1", String.valueOf(driveSubsystem.getPos().getX()));
+                                    Log.i("AutoStartYS1", String.valueOf(driveSubsystem.getPos().getY()));
+                                    Log.i("AutoStartRS1", String.valueOf(driveSubsystem.getPos().getRotation().getDegrees()));
+                                    Log.i("AutoTargetXS1", String.valueOf(driveSubsystem.getTargetPos().getX()));
+                                    Log.i("AutoTargetYS1", String.valueOf(driveSubsystem.getTargetPos().getY()));
+                                    Log.i("AutoTargetRS1", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()));
+                                }),
                                 new DriveToPointCommand(driveSubsystem, rightSideLeftSpikeFlip, 2, 5).withTimeout(500)
                         ),
-                        new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
-                                .andThen(new WaitCommand(800))
-                                .andThen(new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem))
+                        new SequentialCommandGroup(
+                            new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                            new InstantCommand(()->armSubsystem.setArmPowerCap(0.5)),
+                            new WaitCommand(600),
+                            new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                            new InstantCommand(()->armSubsystem.setArmPowerCap(1.0)),
+                            new InstantCommand(()->intakeSubsystem.setDiffy(15, 0)),
+                            new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
+                            new InstantCommand(()->intakeSubsystem.openClaw()), //so that we save time when we intake later ig
+                            secondaryArmSubsystem.setPitchYawSafe(0,0),
+                            new WaitCommand(50)
+                        )
                 ),
-                new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
-                new WaitCommand(50),
-                secondaryArmSubsystem.intakeSub(),
-                new WaitCommand(50),
+
                 new FlipSpikes(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem, firstWallPickUp),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
-                new AutoSpecimenCycleSlow(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem, firstWallPickUp),
+                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
                 new WaitCommand(300),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
                 new InstantCommand(()->armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),

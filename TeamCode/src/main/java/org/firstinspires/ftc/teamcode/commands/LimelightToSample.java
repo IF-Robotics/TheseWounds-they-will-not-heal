@@ -90,8 +90,8 @@ public class LimelightToSample extends CommandBase {
             Pose2d dtPose = driveSubsystem.getPos();
             Pose2d pose = safeResult.get();
 
-            double heading = dtPose.getRotation().getRadians();
-            if(heading==0){heading+=0.00001;}//bruh
+//            double heading = dtPose.getRotation().getRadians();
+//            if(heading==0){heading+=0.00001;}//bruh
 
 //            Pose2d transformedPose = new Pose2d(
 //                    dtPose.getX() + Math.cos(heading)*pose.getX()*Math.signum(heading)*-1,
@@ -102,7 +102,7 @@ public class LimelightToSample extends CommandBase {
 
             Pose2d transformedPose = new Pose2d(
                 dtPose.getX()+pose.getX(),
-                dtPose.getY()-1.0,
+                dtPose.getY(),
                 dtPose.getRotation()
             );
 

@@ -18,7 +18,7 @@ public class TeleopSpecScore extends SequentialCommandGroup{
         addCommands(
                 new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
-                            new InstantCommand(() -> driveSubsystem.setStartingPos(new Pose2d(wallPickUp.getX(), wallPickUp.getY() + 1, new Rotation2d()))),
+                            new InstantCommand(() -> driveSubsystem.setStartingPos(new Pose2d(wallPickUp.getX(), wallPickUp.getY() + 2, new Rotation2d()))),
                             new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem, secondaryArmSubsystem),
                             new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem, secondaryArmSubsystem),
                             new AutoSpecimenCycleFast(armSubsystem,intakeSubsystem,driveSubsystem, secondaryArmSubsystem),

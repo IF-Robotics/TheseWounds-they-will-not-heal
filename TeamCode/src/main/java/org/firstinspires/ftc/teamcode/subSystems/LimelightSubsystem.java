@@ -202,7 +202,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
             //relative to limelight
             double forward = Math.tan(Math.toRadians(CAMERA_ANGLE + result.getTargetYDegrees())) * CAMERA_HEIGHT;
-            forward += tyCompensation.get(forward);
+//            forward += tyCompensation.get(forward);
 
             telemetry.addData("forwardRaw", forward);
 
