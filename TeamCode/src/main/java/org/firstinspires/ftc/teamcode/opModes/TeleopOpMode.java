@@ -192,11 +192,19 @@ public class TeleopOpMode extends Robot {
         //retract after intaking
         dDown1.whenPressed(new ConditionalCommand(
                 new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                        new SequentialCommandGroup(
-                                new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                                new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                                        new HighBasketCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                                ),
+                                new SequentialCommandGroup(
+                                        new RetractFromBasket(driveSubsystem, armSubsystem, intakeSubsystem),
+                                        new WaitCommand(200),
+                                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                                ),
+                                ()->armSubsystem.getCurrentY()<30
                         ),
-                        () -> teleopSpec == true
+                () -> teleopSpec == true
             )
         );
 //        dDown1.whenPressed(new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
@@ -255,7 +263,7 @@ public class TeleopOpMode extends Robot {
         //dropping sample (into observation zone)
         square2.whenPressed(new ConditionalCommand(
                 new DropCommand(armSubsystem, intakeSubsystem),
-                new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem),
                 () -> parallelizing == false
         ));
 

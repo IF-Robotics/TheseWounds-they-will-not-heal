@@ -98,7 +98,7 @@ public class sixSpecAuto extends AutoBase {
                     new SequentialCommandGroup(
                         new WaitCommand(200),
                         new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                        new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getXError()<0.75),
+                        new WaitCommand(5000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5&&driveSubsystem.getTranslationalError()<0.5),
                         new WaitCommand(100),
                         new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
                     )

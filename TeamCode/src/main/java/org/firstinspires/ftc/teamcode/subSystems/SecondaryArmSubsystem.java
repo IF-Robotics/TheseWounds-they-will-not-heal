@@ -29,7 +29,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
     private double pitchAngle;
     private double yawAngle;
 
-    public static int secondaryPitchAngleOffset = -13;
+    public static int secondaryPitchAngleOffset = -54;
     public static int secondaryYawAngleOffset = 22;
 
     //the value in the parentheses is our desired angle range in degrees
@@ -42,7 +42,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
     public static final double secondaryArmLength = 5.2;
 
-    public static final double extensionOffsetFromMiddle = 0.5;
+    public static final double extensionOffsetFromMiddle = -0.1;
 
 
 

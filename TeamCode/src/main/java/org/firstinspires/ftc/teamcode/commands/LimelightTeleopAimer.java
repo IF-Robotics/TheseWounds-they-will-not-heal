@@ -92,7 +92,7 @@ public class LimelightTeleopAimer extends CommandBase {
 
             double slideExtension = MathUtils.clamp(pose.getY()+ extensionOffsetFromMiddle + slideCompensation, ArmSubsystem.slideRetractMin,30+slideCompensation);
 
-            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY-0.5);
+            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY+1.0);
 
             double angle = pose.getRotation().getDegrees();
 
@@ -111,7 +111,7 @@ public class LimelightTeleopAimer extends CommandBase {
 
             Log.i("anglePost", String.valueOf(angle));
 
-            intakeSubsystem.setDiffy(pitchWhenIntake,angle);
+            intakeSubsystem.setDiffy(pitchWhenIntake+20,angle);
         }
     }
 

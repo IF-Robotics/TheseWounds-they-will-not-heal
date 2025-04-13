@@ -24,6 +24,7 @@ public class RetractAfterIntake extends SequentialCommandGroup{
     public RetractAfterIntake(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
                 //tilts slides down a tad
+                new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)),
                 new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
                 //wait
                 new WaitCommand(300),
@@ -93,6 +94,7 @@ public class RetractAfterIntake extends SequentialCommandGroup{
     //retract after intaking then ready to dropoff to observation zone
     public RetractAfterIntake(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, Boolean specMode){
         addCommands(
+                new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)),
                 //tilts slides down a tad
                 new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
                 //wait

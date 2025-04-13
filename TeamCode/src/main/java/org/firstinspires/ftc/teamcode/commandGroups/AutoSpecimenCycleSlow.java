@@ -45,7 +45,7 @@ public class AutoSpecimenCycleSlow extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                     new RetractAfterWallIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                         new WaitCommand(150)
-                            .andThen(new DriveToPointCommand(driveSubsystem, highChamberCheckpoint, 10, 5).withTimeout(1500))
+//                            .andThen(new DriveToPointCommand(driveSubsystem, highChamberCheckpoint, 10, 5).withTimeout(1500))
                             .andThen(new DriveToPointCommand(driveSubsystem, highChamberRight, 4, 5).withTimeout(2000))
                 )
         );

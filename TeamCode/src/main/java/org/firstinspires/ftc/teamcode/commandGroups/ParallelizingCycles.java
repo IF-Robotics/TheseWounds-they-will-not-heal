@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commandGroups;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberRight;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSpecMech;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUp;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUpCheckpoint;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 
@@ -28,10 +29,11 @@ public class ParallelizingCycles extends SequentialCommandGroup {
         addCommands(
                 new InstantCommand(()->{
                     specMechSubsystem.openClaw();
-                    specMechSubsystem.setArm(specArmWallIntake);
                 }),
                 new ParallelCommandGroup(
                     new WaitCommand(500)
+                        .andThen(new InstantCommand(()->specMechSubsystem.setArm(specArmWallIntake)))
+                        .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUpCheckpoint, 5, 5).withTimeout(1500))
                         .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)),
                     new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
                         .andThen(new WaitCommand(800))
@@ -54,7 +56,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                         new SequentialCommandGroup(
                                 new WaitCommand(400),
                                 new InstantCommand(() -> specMechSubsystem.openClaw()),
-                                new WaitCommand(200),
+                                new WaitCommand(500), //we are parrallelizing so might as well use the time
                                 new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
                         ),
                         new SequentialCommandGroup(

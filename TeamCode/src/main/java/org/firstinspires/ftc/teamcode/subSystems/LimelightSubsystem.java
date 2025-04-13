@@ -44,7 +44,7 @@ public class LimelightSubsystem extends SubsystemBase {
     public static double CAMERA_HEIGHT = 11.23-1.5;//limelight height minus height of sample (limelight detects top of sample), 0.8 for offset cuz works?
     public static double CAMERA_ANGLE = 45.25; //downwards Angle
 
-    Pose2d botToLimelight = new Pose2d(new Translation2d(6.556-0.5, 5.45), new Rotation2d(Math.toRadians(30)));
+    Pose2d botToLimelight = new Pose2d(new Translation2d(6.556, 5.45), new Rotation2d(Math.toRadians(30)));
 
 
 //    public static double TARGET_HEIGHT = ;
@@ -59,6 +59,8 @@ public class LimelightSubsystem extends SubsystemBase {
     InterpLUT aspectLut = new InterpLUT();
 
     InterpLUT aspectLutX = new InterpLUT();
+
+    InterpLUT tyCompensation = new InterpLUT();
 
 
 
@@ -80,10 +82,15 @@ public class LimelightSubsystem extends SubsystemBase {
 
         initializeCamera();
 
-        aspectLut.add(-999999, 4.0/3.0);
-        aspectLut.add(3, 1.0);
-        aspectLut.add(15, 2.0);
-        aspectLut.add(99999999, 2.0);
+        aspectLut.add(-999999, 2.5/2.0);
+        aspectLut.add(-15, 2.5/2.0);
+        aspectLut.add(-10, 3.0/2.5);
+        aspectLut.add(-5, 2.9/2.0);
+        aspectLut.add(0, 2.7/1.7);
+        aspectLut.add(5, 2.3/1.7);
+        aspectLut.add(10, 2.1/1.4);
+        aspectLut.add(14, 1.8/1.2);
+        aspectLut.add(99999999, 1.8/1.2);
 
         aspectLut.createLUT();
 
@@ -93,6 +100,32 @@ public class LimelightSubsystem extends SubsystemBase {
         aspectLutX.add(99999999, 1.5);
 
         aspectLutX.createLUT();
+
+//        tyCompensation.add(-999999, -0.7);
+//        tyCompensation.add(4.9, -0.7);
+//        tyCompensation.add(5.5, -0.3);
+//        tyCompensation.add(6.4, -0.25);
+//        tyCompensation.add(7.4, -0.2);
+//        tyCompensation.add(8.4, -0.15);
+//        tyCompensation.add(9.3, -0.1);
+//        tyCompensation.add(11.0, 0);
+//        tyCompensation.add(9999999, 0);
+
+        tyCompensation.add(-999999, -0.7);
+        tyCompensation.add(4.9, -0.7);
+        tyCompensation.add(5.5, -0.4);
+        tyCompensation.add(6.4, -0.28);
+        tyCompensation.add(7.4, -0.2);
+        tyCompensation.add(8.4, -0.15);
+        tyCompensation.add(9.3, -0.1);
+        tyCompensation.add(11.0, 0);
+        tyCompensation.add(9999999, 0);
+
+
+        tyCompensation.createLUT();
+
+
+
 
 
     } //pipeline 2 is yellow
@@ -169,14 +202,15 @@ public class LimelightSubsystem extends SubsystemBase {
 
             //relative to limelight
             double forward = Math.tan(Math.toRadians(CAMERA_ANGLE + result.getTargetYDegrees())) * CAMERA_HEIGHT;
+            forward += tyCompensation.get(forward);
 
-//            telemetry.addData("forwardRaw", forward);
+            telemetry.addData("forwardRaw", forward);
 
             double hypot = Math.hypot(CAMERA_HEIGHT, forward);
 
             double right = Math.tan(Math.toRadians(result.getTargetXDegrees())) * hypot;
 
-//            telemetry.addData("rightRaw", right);
+            telemetry.addData("rightRaw", right);
 
             List<List<Double>> corners = result.getTargetCorners();
             double angle = 0.0;
@@ -185,14 +219,21 @@ public class LimelightSubsystem extends SubsystemBase {
                 double changeInX = corners.get(0).get(0)-corners.get(2).get(0);
                 double changeInY = corners.get(0).get(1)-corners.get(2).get(1);
 
-                changeInY *= aspectLut.get(forward);
+                telemetry.addData("changeInX", changeInX);
+                telemetry.addData("changeInY", changeInY);
 
-                changeInX *= aspectLutX.get(Math.abs(right));
+
 
                 double aspectRatio = Math.abs(changeInY/changeInX);
+
+                aspectRatio *= aspectLut.get(result.getTargetYDegrees());
+                telemetry.addData("aspectRatio", aspectRatio);
+
                 if(aspectRatio<1.0){
                     angle=90.0;
                 }
+
+                telemetry.addData("praywehittissampleangle", angle);
             }
 
 //            telemetry.addData("anglePre", String.valueOf(angle));

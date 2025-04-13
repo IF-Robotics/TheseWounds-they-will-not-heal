@@ -24,10 +24,11 @@ public class ParallelizingCommand extends SequentialCommandGroup {
                                 new InstantCommand(()->specMechSubsystem.setArm(specArmUp))
                         ),
                         new SequentialCommandGroup(
+                                new InstantCommand(()->intakeSubsystem.setDiffy(15, 0)),
                                 new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
-                                new WaitCommand(150),
                                 new InstantCommand(()->intakeSubsystem.openClaw()), //so that we save time when we intake later ig
                                 secondaryArmSubsystem.setPitchYawSafe(0,0),
+                                new WaitCommand(50),
                                 new InstantCommand(()->armSubsystem.setArm(ArmSubsystem.armMinAngle))
                         )
                 )

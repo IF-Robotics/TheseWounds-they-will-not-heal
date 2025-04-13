@@ -27,10 +27,10 @@ public class RetractFromBasket extends SequentialCommandGroup {
                 //move dt
                 new InstantCommand(() -> driveSubsystem.driveRobotCentric(0, 1, 0)),
                 //wait
-                new WaitCommand(75),
+                new WaitCommand(100),
                 //retract slides
                 new InstantCommand(() -> armSubsystem.setSlide(8)),
-                new WaitCommand(150),
+                new WaitCommand(350),
                 //move arm down
                 new ArmCoordinatesCommand(armSubsystem, armHomeX, armHomeY),
                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, 0, rollWhenArmHome),

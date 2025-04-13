@@ -25,12 +25,12 @@ public class FlipSpikes extends SequentialCommandGroup {
     public FlipSpikes(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
             new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX-1.0),
-            new WaitCommand(500),
+            new WaitCommand(500).interruptOn(()->armSubsystem.getSlideError()<0.3),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                         new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX - 0.5),
-                        new WaitCommand(500)
+                        new WaitCommand(500).interruptOn(()->armSubsystem.getSlideError()<0.3)
                 ),
                 new WaitCommand(450).andThen(new DriveToPointCommand(driveSubsystem, rightSideMiddleSpikeFlip, 2, 5).withTimeout(500))
             ),
@@ -38,7 +38,7 @@ public class FlipSpikes extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
                         new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 155, armReadySubIntakeX-6.0),
-                        new WaitCommand(500)
+                        new WaitCommand(500).interruptOn(()->armSubsystem.getSlideError()<0.3)
                 ),
                 //Wait 1000 so we dont exit boundary while we are still flipping the second sample
                 new WaitCommand(1000).andThen(new DriveToPointCommand(driveSubsystem, rightSideRightSpikeFlip, 2, 5).withTimeout(500))
