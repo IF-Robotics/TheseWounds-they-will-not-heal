@@ -40,7 +40,7 @@ public class ParallelizingDropCommand extends SequentialCommandGroup {
                 //raise arm
                 new WaitForArmCommand(armSubsystem, 80, 45),
                 //move secondaryArm to the side, wait until above the side plates
-                new InstantCommand(()-> secondaryArmSubsystem.setDiffyYaw(90))
+                new InstantCommand(()-> secondaryArmSubsystem.setDiffyYaw(100))
         );
     }
 

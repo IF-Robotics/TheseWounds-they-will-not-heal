@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.LimelightTeleopAimer;
 import org.firstinspires.ftc.teamcode.commands.LimelightToSample;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
 import org.firstinspires.ftc.teamcode.commands.VisionToSampleInterpolate;
@@ -108,12 +109,13 @@ public class sevenSpecAuto extends AutoBase {
                                 new WaitCommand(1500).interruptOn(()->driveSubsystem.getTranslationalError()<5),
                                 new WaitCommand(400),
                                 new InstantCommand(() -> specMechSubsystem.openClaw()),
-                                new WaitCommand(800),
+                                new WaitCommand(1000),
                                 new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
                         ),
                         new SequentialCommandGroup(
                                 new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
                                         .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
+                                new WaitCommand(500),//keep it long for now
                                 new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
                                 new WaitCommand(5000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
                                 new WaitCommand(100),
@@ -157,6 +159,7 @@ public class sevenSpecAuto extends AutoBase {
                             new InstantCommand(()->armSubsystem.setArmPowerCap(0.5)),
                             new WaitCommand(600),
                             new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                            new WaitCommand(100),
                             new InstantCommand(()->armSubsystem.setArmPowerCap(1.0)),
                             new InstantCommand(()->intakeSubsystem.setDiffy(15, 0)),
                             new InstantCommand(()->intakeSubsystem.clawExtraOpen()),

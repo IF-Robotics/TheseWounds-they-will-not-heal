@@ -67,12 +67,12 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new WaitCommand(100),
                 new ParallelCommandGroup(
                         new WaitCommand(250)
-                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMechCheckpoint, 10, 5).withTimeout(1500))
+                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMechCheckpoint, 9, 5).withTimeout(1500))
                                 .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMech, 5, 5).withTimeout(1000))
                                 .andThen(new InstantCommand(()->Log.i("finishHighChamberSpecMech", "yes"))),
                         new SequentialCommandGroup(
                                 new ParallelizingCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem),
-                                new InstantCommand(() -> armSubsystem.setArm(25)),
+                                new InstantCommand(() -> armSubsystem.setArm(27)),
                                 new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
                                 new InstantCommand(() ->intakeSubsystem.openClaw()),
                                 new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
@@ -81,6 +81,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 ),
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
+                            new WaitCommand(500),//keep it long for now
                             new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
                             new WaitCommand(20000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
                             new WaitCommand(100),

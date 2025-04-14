@@ -48,6 +48,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
+
+    private double slidePowerCap = 1;
+
     private double ff;
     private PIDController armController;
     public static double setArmTargetAngle = 0;
@@ -64,7 +67,7 @@ public class ArmSubsystem extends SubsystemBase {
     private PIDController slideController;
     private final double ticksPerIn = 837/20.8; //one tick is about .04" which is about 1mm. This means that we have about 1mm of precision on the slides 738/30.5 / 1.3529
     private int slideTicks = 1;
-    private double slidePower = 0;
+    private double slidePower = 1;
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
     public static final double slideRetractMin = slideWristOffset+0.2;
@@ -212,6 +215,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setArmPowerCap(double cap){
         armPowerCap = cap;
+    }
+
+    public void setSlidePowerCap(double cap){
+        slidePowerCap=cap;
     }
 
     //forward kinematics
@@ -385,6 +392,10 @@ public class ArmSubsystem extends SubsystemBase {
             slideR.setPower(slideManualPower);
         }
         else{
+
+            if(Math.abs(slidePower)>slidePowerCap){
+                slidePower = slidePowerCap * Math.signum(slidePower);
+            }
             slideL.setPower(slidePower);
             slideR.setPower(slidePower);
         }

@@ -31,8 +31,9 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                     new InstantCommand(()->armSubsystem.nautilusUp()),
 
                     new ParallelCommandGroup(
-                        new DriveToPointCommand(driveSubsystem, wallPickUpFastCheckpoint, 5, 5).withTimeout(1500)
-                                .andThen(new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500)),
+//                        new DriveToPointCommand(driveSubsystem, wallPickUpFastCheckpoint, 5, 5).withTimeout(1500)
+//                                .andThen(new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500)),
+                        new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500),
                         secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
                         new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
                         new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
@@ -59,15 +60,7 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                             new SequentialCommandGroup(
                                     new WaitCommand(50),
                                     new InstantCommand(()->driveSubsystem.enablePrecisePID(true)),
-                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500)
-                                            .andThen(new InstantCommand(()-> {
-                                                Log.i("AutoStartXH2", String.valueOf(driveSubsystem.getPos().getX()));
-                                                Log.i("AutoStartYH2", String.valueOf(driveSubsystem.getPos().getY()));
-                                                Log.i("AutoStartRH2", String.valueOf(driveSubsystem.getPos().getRotation().getDegrees()));
-                                                Log.i("AutoTargetXH2", String.valueOf(driveSubsystem.getTargetPos().getX()));
-                                                Log.i("AutoTargetYH2", String.valueOf(driveSubsystem.getTargetPos().getY()));
-                                                Log.i("AutoTargetRH2", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()));
-                                            })),
+                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500),
                                     new DriveToPointCommand(driveSubsystem, highChamberFast, 4, 5).withTimeout(2000),
 //                                    new InstantCommand(()->armSubsystem.nautilusDown()),
                                     new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
@@ -82,16 +75,11 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
     public AutoSpecimenCycleFast(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, Pose2d startingPos) {
         addCommands(
                 new SequentialCommandGroup(
-                        new WaitForSlideCommand(armSubsystem, ArmSubsystem.slideRetractMin, 3),
-                        new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
-                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
-                        new InstantCommand(()->armSubsystem.nautilusUp()),
-
-
                         new ParallelCommandGroup(
                                 new DriveToPointCommand(driveSubsystem, startingPos, 5, 5).withTimeout(1500),
                                 secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
-                                new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
+                                new WaitForSlideCommand(armSubsystem, ArmSubsystem.slideRetractMin, 3)
+                                        .andThen(new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY)),
                                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
                                 new InstantCommand(()->armSubsystem.nautilusUp())
                         ),
@@ -116,15 +104,7 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                                 new SequentialCommandGroup(
                                     new WaitCommand(50),
                                     new InstantCommand(()->driveSubsystem.enablePrecisePID(true)),
-                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500)
-                                            .andThen(new InstantCommand(()-> {
-                                                Log.i("AutoStartXH1", String.valueOf(driveSubsystem.getPos().getX()));
-                                                Log.i("AutoStartYH1", String.valueOf(driveSubsystem.getPos().getY()));
-                                                Log.i("AutoStartRH1", String.valueOf(driveSubsystem.getPos().getRotation().getDegrees()));
-                                                Log.i("AutoTargetXH1", String.valueOf(driveSubsystem.getTargetPos().getX()));
-                                                Log.i("AutoTargetYH1", String.valueOf(driveSubsystem.getTargetPos().getY()));
-                                                Log.i("AutoTargetRH1", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()));
-                                            })),
+                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500),
                                     new DriveToPointCommand(driveSubsystem, highChamberFast, 4, 5).withTimeout(2000),
 //                                    new InstantCommand(()->armSubsystem.nautilusDown()),
                                     new InstantCommand(()->driveSubsystem.enablePrecisePID(false))

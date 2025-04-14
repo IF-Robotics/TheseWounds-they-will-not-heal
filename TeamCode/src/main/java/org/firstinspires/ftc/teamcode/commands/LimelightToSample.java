@@ -109,7 +109,7 @@ public class LimelightToSample extends CommandBase {
             driveSubsystem.driveToPoint(transformedPose);
 
             double slideExtension = MathUtils.clamp(pose.getY()+extensionOffsetFromMiddle, ArmSubsystem.slideRetractMin, 30);
-            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY+0.75);
+            armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY+0.5);
 
             double angle = pose.getRotation().getDegrees();
 
