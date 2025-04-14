@@ -459,7 +459,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void nautilusUp(){
         //32.1 degrees
-        endStop.setPosition(0.95);
+        endStop.setPosition(0.943);
         nautilusUp=true;
     }
 

@@ -75,7 +75,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
                             new WaitCommand(500),//keep it long for now
-                            new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
+                            new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(1000),
                             new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
                             new WaitCommand(100),
                             new InstantCommand(()->driveSubsystem.enablePrecisePID(false)),
