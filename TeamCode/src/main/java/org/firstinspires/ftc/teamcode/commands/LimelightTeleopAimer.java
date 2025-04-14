@@ -69,7 +69,7 @@ public class LimelightTeleopAimer extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if(optionalResult.isPresent() && timer.milliseconds()>250 && armSubsystem.getArmAngle()>20 && armSubsystem.getSlideExtention()<10){
+        if(optionalResult.isPresent() && timer.milliseconds()>200 && armSubsystem.getArmAngle()>20 && armSubsystem.getSlideExtention()<10){
             safeResult = optionalResult;
             return true;
         }

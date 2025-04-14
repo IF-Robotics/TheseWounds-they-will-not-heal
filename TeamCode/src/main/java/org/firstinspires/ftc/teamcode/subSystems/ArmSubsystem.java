@@ -87,6 +87,8 @@ public class ArmSubsystem extends SubsystemBase {
     private double armManualPower;
     private double slideManualPower;
 
+    private boolean manualNautilus = false;
+
     //intakeFromWall
     private boolean wallActive;
 
@@ -170,7 +172,7 @@ public class ArmSubsystem extends SubsystemBase {
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
 
-        if(targetAngle<armNautilusMaxAngle){
+        if(targetAngle<armNautilusMaxAngle && !manualNautilus){
             setNautilus(nautilus.get(targetAngle+1.5));
             nautilusUp=false;
         }
@@ -470,6 +472,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setNautilus (double position){
         endStop.setPosition(position);
+    }
+
+    public void manualNautilus(boolean enable){
+        manualNautilus=enable;
     }
 
 

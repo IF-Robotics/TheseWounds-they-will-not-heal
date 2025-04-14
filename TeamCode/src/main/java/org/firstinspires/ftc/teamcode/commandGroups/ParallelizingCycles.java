@@ -37,7 +37,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new InstantCommand(()-> specMechSubsystem.openClaw()),
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
-                        new WaitCommand(500),
+                        new WaitCommand(400),
                         new DriveToPointDoubleSupplierCommand(
                                 driveSubsystem,
                                 ()->driveSubsystem.getPos().getX(),
@@ -50,7 +50,8 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                         new DriveToPointCommand(driveSubsystem, specMechPickUpCheckpoint, 10, 5).withTimeout(1500),
                         new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)
                     ),
-                    new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
+                    new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem, true)
+                        .andThen(new InstantCommand(()->armSubsystem.manualNautilus(false)))
                         .andThen(new WaitCommand(800))
                         .andThen(new InstantCommand(()->armSubsystem.setArmPowerCap(0.5)))
                         .andThen(new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem))
@@ -72,11 +73,13 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                                 new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30))
                         )
                 ),
+                new InstantCommand(()-> armSubsystem.manualNautilus(true)),
+                new InstantCommand(()->armSubsystem.nautilusDown()),
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
-                            new WaitCommand(500),//keep it long for now
+                            new WaitCommand(200),//keep it long for now
                             new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(1000),
-                            new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
+                            new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.5),
                             new WaitCommand(100),
                             new InstantCommand(()->driveSubsystem.enablePrecisePID(false)),
                             new InstantCommand(()->Log.i("finishLimelight", "yes"))

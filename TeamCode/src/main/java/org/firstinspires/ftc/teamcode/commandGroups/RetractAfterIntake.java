@@ -126,4 +126,28 @@ public class RetractAfterIntake extends SequentialCommandGroup{
         CommandScheduler.getInstance().schedule(new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem));
     }
 
+    public RetractAfterIntake(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, boolean isAuto){
+        addCommands(
+                //tilts slides down a tad
+                new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)),
+                new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
+                //wait
+                new WaitCommand(200),
+                //grab the sample
+                new InstantCommand(() -> intakeSubsystem.closeClaw()),
+                //wait
+                new WaitCommand(150),
+                new InstantCommand(()->intakeSubsystem.setDiffy(0,90)),
+                new InstantCommand(()-> armSubsystem.setArm(5)),
+                new ParallelCommandGroup(
+                        //retract slides
+                        new WaitForSlideCommand(armSubsystem, 8, 5),
+                        //move intake out of the way
+                        secondaryArmSubsystem.setPitchYawSafe(0,0)
+                )
+        );
+
+        addRequirements(armSubsystem, intakeSubsystem);
+    }
+
 }
