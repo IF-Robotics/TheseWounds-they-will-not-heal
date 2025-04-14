@@ -114,8 +114,8 @@ public class sevenSpecAuto extends AutoBase {
                 new DriveToPointDoubleSupplierCommand(driveSubsystem, ()->firstHighChamberRight.getX()+subX1, ()->firstHighChamberRight.getY(), firstHighChamberRight.getRotation(), 5, 5).withTimeout(1500)
 //                                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
                         .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
-                new InstantCommand(()->armSubsystem.manualNautilus(true)),
-                new InstantCommand(()->armSubsystem.nautilusDown()),
+//                new InstantCommand(()->armSubsystem.manualNautilus(true)),
+//                new InstantCommand(()->armSubsystem.nautilusDown()),
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
                                 new WaitCommand(200),
@@ -133,6 +133,8 @@ public class sevenSpecAuto extends AutoBase {
                 ),
 
                 new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
+//                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
+//                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
 //                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
 //                new ParallelizingCycles(driveSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, specMechSubsystem, limelightSubsystem),
 

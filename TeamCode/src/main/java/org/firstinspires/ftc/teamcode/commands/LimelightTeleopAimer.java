@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeY;
+import static org.firstinspires.ftc.teamcode.other.Globals.armSubIntakeY;
 import static org.firstinspires.ftc.teamcode.other.Globals.pitchWhenIntake;
 import static org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem.extensionOffsetFromMiddle;
 
@@ -69,7 +70,9 @@ public class LimelightTeleopAimer extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if(optionalResult.isPresent() && timer.milliseconds()>200 && armSubsystem.getArmAngle()>20 && armSubsystem.getSlideExtention()<10){
+        if(optionalResult.isPresent() && timer.milliseconds()>200
+                && armSubsystem.getArmAngle()>20 && armSubsystem.getSlideExtention()<10
+        ){
             safeResult = optionalResult;
             return true;
         }

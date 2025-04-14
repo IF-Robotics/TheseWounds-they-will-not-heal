@@ -45,7 +45,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                                 new Rotation2d(),
                                 5,
                                 5
-                        ),
+                        ).withTimeout(800),
                         new InstantCommand(()->specMechSubsystem.setArm(specArmWallIntake)),
                         new DriveToPointCommand(driveSubsystem, specMechPickUpCheckpoint, 10, 5).withTimeout(1500),
                         new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)
@@ -73,8 +73,8 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                                 new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30))
                         )
                 ),
-                new InstantCommand(()-> armSubsystem.manualNautilus(true)),
-                new InstantCommand(()->armSubsystem.nautilusDown()),
+//                new InstantCommand(()-> armSubsystem.manualNautilus(true)),
+//                new InstantCommand(()->armSubsystem.nautilusDown()),
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
                             new WaitCommand(200),//keep it long for now
