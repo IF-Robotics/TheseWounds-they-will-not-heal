@@ -170,7 +170,7 @@ public class TeleopOpMode extends Robot {
 
         //intake close
         dRight1.whenPressed(new IntakeCloseCommand(armSubsystem, intakeSubsystem));
-        dRight2.whenPressed(new IntakeCloseCommand(armSubsystem, intakeSubsystem));
+//        dRight2.whenPressed(new IntakeCloseCommand(armSubsystem, intakeSubsystem));
 
         stickButtonLeft2.whenPressed(new InstantCommand(() -> {
             secondaryArmSubsystem.setDiffyYaw(0);
@@ -178,7 +178,7 @@ public class TeleopOpMode extends Robot {
         }));
 
         //In-sub adjuster for secondary
-        new Trigger(()->Math.abs(m_driverOp.getLeftX()) > .1).or(new Trigger(()->Math.abs(m_driverOp.getRightY()) > .1))
+        new Trigger(()->Math.abs(m_driverOp.getLeftX()) > .2).or(new Trigger(()->Math.abs(m_driverOp.getRightY()) > .2))
                 .whenActive(
                     new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake))
                         .andThen(new JacobSlideValorantAimer(armSubsystem, intakeSubsystem, secondaryArmSubsystem, m_driverOp::getRightY, ()->m_driverOp.getLeftX()))

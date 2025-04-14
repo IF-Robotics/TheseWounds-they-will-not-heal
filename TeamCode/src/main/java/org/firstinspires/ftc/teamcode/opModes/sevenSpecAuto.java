@@ -54,8 +54,13 @@ import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
 public class sevenSpecAuto extends AutoBase {
 
-    private double subX = 0;
-    private double subY = 7.5;
+    private double subX1 = 0;
+    private double subY1 = 7.5;
+
+    private double subX2 = 0;
+    private double subY2 = 7.5;
+
+    int currentSubIndex = 1;
 
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad currentGamepad2 = new Gamepad();
@@ -67,11 +72,13 @@ public class sevenSpecAuto extends AutoBase {
     public void initialize() {
         super.initialize();
 
-        intakeSubsystem.setDiffy(0,0);
+        intakeSubsystem.setDiffy(-20,0);
         secondaryArmSubsystem.setDiffy(90, 0);
 
         specMechSubsystem.closeClaw();
         specMechSubsystem.setArm(specAutoStart);
+
+        limelightSubsystem.initializeCamera();
 
 
         schedule(new SequentialCommandGroup(
@@ -91,7 +98,7 @@ public class sevenSpecAuto extends AutoBase {
                         new InstantCommand(() -> specMechSubsystem.setArm(specArmUp)),
                         new InstantCommand(() -> armSubsystem.setArm(25)),
                         new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
-                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, 0)),
+                        new InstantCommand(() -> secondaryArmSubsystem.setDiffy(-20, 0)),
                         new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
                         new InstantCommand(() ->intakeSubsystem.openClaw())
                 ),
@@ -104,20 +111,21 @@ public class sevenSpecAuto extends AutoBase {
                 new InstantCommand(()->secondaryArmSubsystem.setDiffyPitch(0)),
                 new WaitCommand(100),
 
+                new DriveToPointDoubleSupplierCommand(driveSubsystem, ()->firstHighChamberRight.getX()+subX1, ()->firstHighChamberRight.getY(), firstHighChamberRight.getRotation(), 5, 5).withTimeout(1500)
+//                                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
+                        .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
+
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
-                                new WaitCommand(1500).interruptOn(()->driveSubsystem.getTranslationalError()<5),
-                                new WaitCommand(400),
-                                new InstantCommand(() -> specMechSubsystem.openClaw()),
-                                new WaitCommand(1000),
-                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                                new WaitCommand(200),
+                                new InstantCommand(() -> specMechSubsystem.openClaw())
+//                                new WaitCommand(1000),
+//                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
                         ),
                         new SequentialCommandGroup(
-                                new DriveToPointCommand(driveSubsystem, firstHighChamberRight,5, 5).withTimeout(1500)
-                                        .alongWith(new WaitCommand(300).andThen(new InstantCommand(() -> secondaryArmSubsystem.setDiffy(0, -30)))),
                                 new WaitCommand(500),//keep it long for now
-                                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                                new WaitCommand(5000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
+                                new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
+                                new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
                                 new WaitCommand(100),
                                 new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
                         )
@@ -175,6 +183,7 @@ public class sevenSpecAuto extends AutoBase {
                 new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
                 new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
                 new AutoSpecimenCycleFast(armSubsystem, intakeSubsystem, driveSubsystem, secondaryArmSubsystem),
+                new InstantCommand(()->armSubsystem.setSlidePower(1.00)),
                 new WaitCommand(300),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
                 new InstantCommand(()->armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
@@ -188,24 +197,36 @@ public class sevenSpecAuto extends AutoBase {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
-            if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
-                subX -= 1;
-                MathUtils.clamp(subX, -8, 6);
-            }
+            if(currentSubIndex==1){
+                if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
+                    subX1 -= 1;
+                    MathUtils.clamp(subX1, -8, 6);
+                }
 
-            if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
-                subX += 1;
-                subX = MathUtils.clamp(subX, -8, 6);
+                if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
+                    subX1 += 1;
+                    subX1 = MathUtils.clamp(subX1, -8, 6);
+                }
+            } else if (currentSubIndex==2) {
+                if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
+                    subX2 -= 1;
+                    MathUtils.clamp(subX2, -8, 6);
+                }
+
+                if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
+                    subX2 += 1;
+                    subX2 = MathUtils.clamp(subX2, -8, 6);
+                }
             }
 
             if(currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
-                subY += 1;
-                subY = MathUtils.clamp(subY, 0, 15);
+                currentSubIndex+=1;
+                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
             }
 
             if(currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
-                subY -= 1;
-                subY = MathUtils.clamp(subY, 0, 15);
+                currentSubIndex-=1;
+                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
             }
 
             //change spec mode
@@ -213,8 +234,12 @@ public class sevenSpecAuto extends AutoBase {
                 teleopSpec = !teleopSpec;
             }
 
-            telemetry.addData("subX (-8,6)", subX);
-            telemetry.addData("subY(offesetFromBarrier)(0,15)", subY);
+            telemetry.addData("currentSubIndex", currentSubIndex);
+
+            telemetry.addData("subX1 (-8,6)", subX1);
+
+            telemetry.addData("subX2 (-8,6)", subX2);
+
 
             //specMode
             if(teleopSpec){

@@ -42,7 +42,7 @@ public class SecondaryArmSubsystem extends SubsystemBase {
 
     public static final double secondaryArmLength = 5.2;
 
-    public static final double extensionOffsetFromMiddle = -0.7;
+    public static final double extensionOffsetFromMiddle = -0.83;
 
 
 

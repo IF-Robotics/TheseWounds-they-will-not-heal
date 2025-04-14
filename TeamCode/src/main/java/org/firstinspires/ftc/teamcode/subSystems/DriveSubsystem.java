@@ -178,7 +178,7 @@ public class DriveSubsystem extends SubsystemBase {
             power = 1;
         }
 
-        rawErrorHeading = currentPos.getRotation().getDegrees() - targetPos.getRotation().getDegrees();
+        rawErrorHeading = currentPos.getRotation().getDegrees() - desiredHeading.getDegrees();
         rawErrorHeading = rawErrorHeading % 360;
 
         if (rawErrorHeading < -180) {

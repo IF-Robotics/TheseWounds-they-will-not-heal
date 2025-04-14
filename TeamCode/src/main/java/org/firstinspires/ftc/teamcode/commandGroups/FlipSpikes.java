@@ -26,7 +26,7 @@ public class FlipSpikes extends SequentialCommandGroup {
 
     public FlipSpikes(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
-            new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX-1.0-1.0),
+            new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX-1.0-0.5),
             new WaitCommand(800).interruptOn(()->armSubsystem.getSlideError()<0.5),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(

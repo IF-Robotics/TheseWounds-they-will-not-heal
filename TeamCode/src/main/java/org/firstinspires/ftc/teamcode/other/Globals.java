@@ -89,7 +89,7 @@ public class Globals {
     public static double armBackY = 21;
 
     public static double armFastX = 25+0.86;
-    public static double armFastY = 21.75;
+    public static double armFastY = 22.75;
     //arm basket
     public static double armHighBasketX = -2;
     public static double  armHighBasketY = 42.5;
@@ -108,7 +108,7 @@ public class Globals {
     public static double armAutoSpikeX = 23;
     public static double armReadySubIntakeX = 28;
     public static double armSubIntakeY = 3;
-    public static double armReadySubIntakeY = 9.75;
+    public static double armReadySubIntakeY = 9.0;
     //arm when close (distance) intake
     public static double armCloseIntakeX = 15;
     public static double armCloseIntakeY = 8;

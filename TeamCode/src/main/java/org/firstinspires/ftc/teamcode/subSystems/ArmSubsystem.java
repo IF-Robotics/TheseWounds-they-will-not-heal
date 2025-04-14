@@ -37,14 +37,15 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     //arm PIDF
-    public static double kParm = 0.17, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1.2; //kF is gain scheduling, kG is gravity ff
+    public static double kParm = 0.17, kIarm = 0, kDarm = 0.01, kFarm = 1, kGarm = 1; //kF is gain scheduling, kG is gravity ff
     public static double armWeakKP = 0.01;
-    public static double armAngleOffset = -67;
+    public static double armAngleOffset = -256;
 
-    public static double armMinAngle = 5.5;
+    public static double armMinAngle = 6.5;
     public static double armMaxAngle = 90;
 
-    public static double armNautilusMinAngle = 29.0;
+    public static double armNautilusMinAngle = 31.0; //min on the high end
+    public static double armNautilusMaxAngle = 21.4; //max on the low end
 
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
@@ -115,20 +116,18 @@ public class ArmSubsystem extends SubsystemBase {
 
 //TODO: tune the slide gain scheduling
         //Adding each val with a key
-        slideKgLut.add(-999999, 0);
-        slideKgLut.add(9, 0);
-        slideKgLut.add(20, 0.05);
-        slideKgLut.add(25, .1);
-        slideKgLut.add(30, .3);
-        slideKgLut.add(35,.4);
-        slideKgLut.add(40, .5);
-        slideKgLut.add(9999999, .5);
+        slideKgLut.add(-999999, 0.05);
+        slideKgLut.add(9, 0.05);
+        slideKgLut.add(20, 0.2);
+        slideKgLut.add(30, .45);
+        slideKgLut.add(40, .6);
+        slideKgLut.add(9999999, .6);
         //generating final equation
 
         slideKgLut.createLUT();
 
         slideKfLut.add(-999999, 0.135);
-        slideKfLut.add(7, 0.135);
+        slideKfLut.add(7, 0.12);
         slideKfLut.add(23.9, .25);
         slideKfLut.add(41, .35);
         slideKfLut.add(99999999, .35);
@@ -136,10 +135,21 @@ public class ArmSubsystem extends SubsystemBase {
         slideKfLut.createLUT();
 
         //nautilus lut
-        nautilus.add(-999999,0);
-        nautilus.add(0,0);
-        nautilus.add(30,360);
-        nautilus.add(999999,360);
+
+        //-0.02909x+0.7582
+        nautilus.add(-999999,0.81);
+        nautilus.add(-2.1,0.81);
+        nautilus.add(0.7,0.74);
+        nautilus.add(2.4,0.69);
+        nautilus.add(4.5,0.63);
+        nautilus.add(6.9,0.56);
+        nautilus.add(9.3,0.49);
+        nautilus.add(11.7,0.42);
+        nautilus.add(14.1,0.35);
+        nautilus.add(17.1,0.26);
+        nautilus.add(19.2,0.2);
+        nautilus.add(21.4,0.13);
+        nautilus.add(999999,0.13);
         nautilus.createLUT();
 
         nautilusDown();
@@ -160,11 +170,9 @@ public class ArmSubsystem extends SubsystemBase {
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
 
-        if(nautilusUp&&targetAngle<armNautilusMinAngle){
-            targetAngle=armNautilusMinAngle;
-        }
-        if(targetAngle<armNautilusMinAngle){
-            nautilusDown();
+        if(targetAngle<armNautilusMaxAngle){
+            setNautilus(nautilus.get(targetAngle+1.5));
+            nautilusUp=false;
         }
 
         setArmTargetAngle = targetAngle;
@@ -204,10 +212,6 @@ public class ArmSubsystem extends SubsystemBase {
         setArmCoordinates(targetX, targetY);
     }
 
-    //set nautilus
-    public void setNautilus(double theta){
-        setArm(nautilus.get(theta));
-    }
 
     public void setArmP(double p){
         armController.setP(p);
@@ -454,13 +458,18 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void nautilusUp(){
-        endStop.setPosition(0.45);
+        //32.1 degrees
+        endStop.setPosition(0.95);
         nautilusUp=true;
     }
 
     public void nautilusDown(){
-        endStop.setPosition(0.28);
+        endStop.setPosition(0.81);
         nautilusUp=false;
+    }
+
+    public void setNautilus (double position){
+        endStop.setPosition(position);
     }
 
 

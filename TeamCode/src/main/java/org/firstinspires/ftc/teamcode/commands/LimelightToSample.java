@@ -84,6 +84,7 @@ public class LimelightToSample extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
+        limelightSubsystem.pauseLimelight(false);
         if (safeResult.isPresent()) {
             driveSubsystem.enablePrecisePID(false);
             secondaryArmSubsystem.setDiffy(0,0);

@@ -49,7 +49,7 @@ public class LimelightTeleopAimer extends CommandBase {
         armSubsystem.setArm(25);
         armSubsystem.setSlide(ArmSubsystem.slideRetractMin);
         secondaryArmSubsystem.setDiffy(0, -30);
-        intakeSubsystem.setDiffy(0,0);
+        intakeSubsystem.setDiffy(-20,0);
         intakeSubsystem.openClaw();
 
         optionalResult = Optional.empty();
@@ -69,7 +69,7 @@ public class LimelightTeleopAimer extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if(optionalResult.isPresent() && timer.milliseconds()>750 && armSubsystem.getArmAngle()>20){
+        if(optionalResult.isPresent() && timer.milliseconds()>250 && armSubsystem.getArmAngle()>20 && armSubsystem.getSlideExtention()<10){
             safeResult = optionalResult;
             return true;
         }
@@ -79,6 +79,7 @@ public class LimelightTeleopAimer extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
+        limelightSubsystem.pauseLimelight(false);
         if (safeResult.isPresent()) {
             secondaryArmSubsystem.setDiffy(0,0);
             Pose2d pose = safeResult.get();
@@ -90,7 +91,7 @@ public class LimelightTeleopAimer extends CommandBase {
 
             double slideCompensation = secondaryArmSubsystem.getSlideCompensation(yaw);
 
-            double slideExtension = MathUtils.clamp(pose.getY()+ extensionOffsetFromMiddle + slideCompensation, ArmSubsystem.slideRetractMin,30+slideCompensation);
+            double slideExtension = MathUtils.clamp(pose.getY()+ extensionOffsetFromMiddle + slideCompensation+0.5, ArmSubsystem.slideRetractMin,30+slideCompensation);
 
             armSubsystem.setArmCoordinates(slideExtension, armReadySubIntakeY);
 

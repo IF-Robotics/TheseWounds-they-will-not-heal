@@ -22,6 +22,7 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand;
+import org.firstinspires.ftc.teamcode.commands.LimelightTeleopAimer;
 import org.firstinspires.ftc.teamcode.commands.LimelightToSample;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
@@ -33,30 +34,22 @@ import org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem;
 public class ParallelizingCycles extends SequentialCommandGroup {
     public ParallelizingCycles(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, SpecMechSubsystem specMechSubsystem, LimelightSubsystem limelightSubsystem){
         addCommands(
-                new InstantCommand(()->{
-                    specMechSubsystem.openClaw();
-                }),
+                new InstantCommand(()-> specMechSubsystem.openClaw()),
                 new ParallelCommandGroup(
-                    new WaitCommand(500)
-                        .andThen(new InstantCommand(()->specMechSubsystem.setArm(specArmWallIntake)))
-                        .andThen(new DriveToPointDoubleSupplierCommand(
+                    new SequentialCommandGroup(
+                        new WaitCommand(500),
+                        new DriveToPointDoubleSupplierCommand(
                                 driveSubsystem,
                                 ()->driveSubsystem.getPos().getX(),
                                 ()->driveSubsystem.getPos().getY()-10,
                                 new Rotation2d(),
                                 5,
                                 5
-                        ))
-                        .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUpCheckpoint, 10, 5).withTimeout(1500))
-                        .andThen(new InstantCommand(()-> {
-                            Log.i("AutoStartX1", String.valueOf(driveSubsystem.getPos().getX()));
-                            Log.i("AutoStartY1", String.valueOf(driveSubsystem.getPos().getY()));
-                            Log.i("AutoStartR1", String.valueOf(driveSubsystem.getPos().getRotation().getDegrees()));
-                            Log.i("AutoTargetX1", String.valueOf(driveSubsystem.getTargetPos().getX()));
-                            Log.i("AutoTargetY1", String.valueOf(driveSubsystem.getTargetPos().getY()));
-                            Log.i("AutoTargetR1", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()));
-                        }))
-                        .andThen(new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)),
+                        ),
+                        new InstantCommand(()->specMechSubsystem.setArm(specArmWallIntake)),
+                        new DriveToPointCommand(driveSubsystem, specMechPickUpCheckpoint, 10, 5).withTimeout(1500),
+                        new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)
+                    ),
                     new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem)
                         .andThen(new WaitCommand(800))
                         .andThen(new InstantCommand(()->armSubsystem.setArmPowerCap(0.5)))
@@ -67,7 +60,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new WaitCommand(100),
                 new ParallelCommandGroup(
                         new WaitCommand(250)
-                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMechCheckpoint, 9, 5).withTimeout(1500))
+                                .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMechCheckpoint, 5, 5).withTimeout(1500))
                                 .andThen(new DriveToPointCommand(driveSubsystem, highChamberSpecMech, 5, 5).withTimeout(1000))
                                 .andThen(new InstantCommand(()->Log.i("finishHighChamberSpecMech", "yes"))),
                         new SequentialCommandGroup(
@@ -82,17 +75,17 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
                             new WaitCommand(500),//keep it long for now
-                            new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
-                            new WaitCommand(20000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
+                            new LimelightTeleopAimer(armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem).withTimeout(2000),
+                            new WaitCommand(1000).interruptOn(()->Math.abs(armSubsystem.getSlideError())<0.3&&driveSubsystem.getTranslationalError()<0.3),
                             new WaitCommand(100),
                             new InstantCommand(()->driveSubsystem.enablePrecisePID(false)),
                             new InstantCommand(()->Log.i("finishLimelight", "yes"))
                     ),
                     new SequentialCommandGroup(
                             new WaitCommand(600),
-                            new InstantCommand(() -> specMechSubsystem.openClaw()),
-                            new WaitCommand(500), //we are parrallelizing so might as well use the time
-                            new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                            new InstantCommand(() -> specMechSubsystem.openClaw())
+//                            new WaitCommand(500), //we are parrallelizing so might as well use the time
+//                            new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
                     )
                 )
         );

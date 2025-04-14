@@ -25,17 +25,15 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
     public AutoSpecimenCycleFast(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, SecondaryArmSubsystem secondaryArmSubsystem) {
             addCommands(
                 new SequentialCommandGroup(
-                    new WaitForSlideCommand(armSubsystem, ArmSubsystem.slideRetractMin, 3),
-                    new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
-                    new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
-                    new InstantCommand(()->armSubsystem.nautilusUp()),
-
-                    new ParallelCommandGroup(
-//                        new DriveToPointCommand(driveSubsystem, wallPickUpFastCheckpoint, 5, 5).withTimeout(1500)
-//                                .andThen(new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500)),
-                        new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500),
-                        secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
-                        new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY),
+                        new InstantCommand(()->armSubsystem.setSlidePower(1.00)),
+                        new ParallelCommandGroup(
+                        new DriveToPointCommand(driveSubsystem, wallPickUpFastCheckpoint, 5, 5).withTimeout(1500)
+                                .andThen(new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500)),
+//                        new DriveToPointCommand(driveSubsystem, wallPickUp, 5, 5).withTimeout(1500),
+                        new WaitCommand(400)
+                                .andThen(secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake)),
+                        new WaitForSlideCommand(armSubsystem, ArmSubsystem.slideRetractMin, 3)
+                                .andThen(new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY)),
                         new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
                         new InstantCommand(()->armSubsystem.nautilusUp())
                     ),
@@ -43,15 +41,18 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                     // Intake specimen from wall
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
+
                                     //grab the specimen
                                     new InstantCommand(()->intakeSubsystem.closeClaw()),
                                     new WaitCommand(50),
                                     //flip up the intake
                                     new InstantCommand(()->armSubsystem.setSlide(12)),
                                     secondaryArmSubsystem.setPitchSafe(0),
-                                    new WaitForArmCommand(armSubsystem, 30, 15).withTimeout(500),
+                                    new WaitForArmCommand(armSubsystem, 30, 10).withTimeout(500),
+                                    new InstantCommand(()->armSubsystem.setSlidePower(0.75)),
                                     new ParallelCommandGroup(
-                                            new ArmCoordinatesCommand(armSubsystem, armFastX, armFastY), //wait for secondary arm yaw to clear nautilus
+                                            new WaitCommand(1500).interruptOn(()->driveSubsystem.getPos().getX()<35)
+                                                    .andThen(new ArmCoordinatesCommand(armSubsystem, armFastX, armFastY)), //wait for secondary arm yaw to clear nautilus
                                             new WaitCommand(50).andThen(new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(5))), //wait for sample to rotate
                                             new InstantCommand(()->intakeSubsystem.setDiffy(50, 0))
                                     )
@@ -59,9 +60,10 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
 
                             new SequentialCommandGroup(
                                     new WaitCommand(50),
-                                    new InstantCommand(()->driveSubsystem.enablePrecisePID(true)),
-                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500),
+                                    new InstantCommand(()->driveSubsystem.enablePrecisePID(false)),
+//                                    new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500),
                                     new DriveToPointCommand(driveSubsystem, highChamberFast, 4, 5).withTimeout(2000),
+                                    new WaitCommand(300),
 //                                    new InstantCommand(()->armSubsystem.nautilusDown()),
                                     new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
                             )
@@ -93,9 +95,10 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                                         //flip up the intake
                                         new InstantCommand(()->armSubsystem.setSlide(12)),
                                         secondaryArmSubsystem.setPitchSafe(0),
-                                        new WaitForArmCommand(armSubsystem, 30, 15).withTimeout(500),
+                                        new WaitForArmCommand(armSubsystem, 30, 10).withTimeout(500),
                                         new ParallelCommandGroup(
-                                                new ArmCoordinatesCommand(armSubsystem, armFastX, armFastY), //wait for secondary arm yaw to clear nautilus
+                                                new WaitCommand(1500).interruptOn(()->driveSubsystem.getPos().getX()<33)
+                                                        .andThen(new ArmCoordinatesCommand(armSubsystem, armFastX, armFastY)), //wait for secondary arm yaw to clear nautilus
                                                 new WaitCommand(50).andThen(new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(5))), //wait for sample to rotate
                                                 new InstantCommand(()->intakeSubsystem.setDiffy(50, 0))
                                         )
@@ -103,9 +106,11 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
 
                                 new SequentialCommandGroup(
                                     new WaitCommand(50),
-                                    new InstantCommand(()->driveSubsystem.enablePrecisePID(true)),
+                                    new InstantCommand(()->driveSubsystem.enablePrecisePID(false)),
+                                    //checkpoint is just pickup pos
                                     new DriveToPointCommand(driveSubsystem, highChamberFastCheckpoint, 5, 5).withTimeout(1500),
-                                    new DriveToPointCommand(driveSubsystem, highChamberFast, 4, 5).withTimeout(2000),
+                                    new DriveToPointCommand(driveSubsystem, firstHighChamberFast, 4, 5).withTimeout(2000),
+                                    new WaitCommand(300),
 //                                    new InstantCommand(()->armSubsystem.nautilusDown()),
                                     new InstantCommand(()->driveSubsystem.enablePrecisePID(false))
                                 )

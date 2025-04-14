@@ -138,27 +138,27 @@ public class LimelightSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(camera.isRunning()){
-            telemetry.addData("cameraNotRunning", "false");
-            camera.updatePythonInputs(new double[] {sampleColor, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-            Optional<LLResult> optionalResult = getResult(); // call this to get the limelight results
-            if(optionalResult.isPresent()) {
-                Log.i("limelightValid", "true");
-                LLResult result = optionalResult.get();
-                long staleness = result.getStaleness();
-                isDataOld = staleness >= 100; //100 ms
-            }
-        }
-        else{
-            telemetry.addData("cameraNotRunning", "true");
-        }
-
-        Optional<Pose2d> pose = getPose();
-        if(pose.isPresent()) {
-            telemetry.addData("right", pose.get().getX());
-            telemetry.addData("forward", pose.get().getY());
-            telemetry.addData("angle", pose.get().getRotation().getDegrees());
-        }
+//        if(camera.isRunning()){
+//            telemetry.addData("cameraNotRunning", "false");
+//            camera.updatePythonInputs(new double[] {sampleColor, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+//            Optional<LLResult> optionalResult = getResult(); // call this to get the limelight results
+//            if(optionalResult.isPresent()) {
+//                Log.i("limelightValid", "true");
+//                LLResult result = optionalResult.get();
+//                long staleness = result.getStaleness();
+//                isDataOld = staleness >= 100; //100 ms
+//            }
+//        }
+//        else{
+//            telemetry.addData("cameraNotRunning", "true");
+//        }
+//
+//        Optional<Pose2d> pose = getPose();
+//        if(pose.isPresent()) {
+//            telemetry.addData("right", pose.get().getX());
+//            telemetry.addData("forward", pose.get().getY());
+//            telemetry.addData("angle", pose.get().getRotation().getDegrees());
+//        }
 
     }
 
@@ -270,13 +270,26 @@ public class LimelightSubsystem extends SubsystemBase {
         Pose2d best = new Pose2d();
         double lowestX = Double.MAX_VALUE;
         for (Pose2d pose : poses){
-            if (Math.abs(pose.getX())*2 + pose.getY()-ArmSubsystem.slideRetractMin<lowestX){
-                lowestX = Math.abs(pose.getX())*2 + pose.getY()-ArmSubsystem.slideRetractMin;
+            double score = Math.abs(pose.getX()) + pose.getY()-ArmSubsystem.slideRetractMin;
+            if(Math.abs(pose.getX())>SecondaryArmSubsystem.secondaryArmLength-0.5){
+                score+=99999;
+            }
+            if (score<lowestX){
+                lowestX = score;
                 best = pose;
             }
         }
 
         return Optional.of(best);
+    }
+
+    public void pauseLimelight(boolean pause){
+        if(pause){
+            camera.pause();
+        }
+        else{
+            camera.start();
+        }
     }
 }
 
