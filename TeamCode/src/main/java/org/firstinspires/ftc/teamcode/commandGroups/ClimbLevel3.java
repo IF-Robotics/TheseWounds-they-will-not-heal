@@ -46,14 +46,14 @@ public class ClimbLevel3 extends SequentialCommandGroup {
                 new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<32.5),
 //                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.8,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<12),
                 new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.2,0), driveSubsystem).withTimeout(1500),
-                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<12),
+                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<10.5),
 
 
 //                new WaitCommand(1500),
 
                 new ParallelCommandGroup(
-                        new RunCommand(()->driveSubsystem.setPower(-(armSubsystem.getSlideExtention()-9)/6.0+0.6), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<9.5)
-                            .andThen(new RunCommand(()->driveSubsystem.setPower(-0.1))),
+                        new RunCommand(()->driveSubsystem.driveRobotCentric(0,-(armSubsystem.getSlideExtention()-9)/6.0-0.4, 0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<9.1)
+                            .andThen(new RunCommand(()->driveSubsystem.driveRobotCentric(0,-0.1,0))),
                         new RunCommand(()->armSubsystem.manualArm(1.0,0), armSubsystem)
                 )
 

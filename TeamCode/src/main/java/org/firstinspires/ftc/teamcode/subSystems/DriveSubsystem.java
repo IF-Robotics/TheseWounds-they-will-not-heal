@@ -81,16 +81,16 @@ public class DriveSubsystem extends SubsystemBase {
 
 
 
-    //constructor for auto
-    public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, MecanumDrive mecanumDrive, Telemetry telemetry, GoBildaPinpointDriver pinpoint) {
-        this.FR = FR;
-        this.FL = FL;
-        this.BR = BR;
-        this.BL = BL;
-        this.mecanumDrive = mecanumDrive;
-        this.telemetry = telemetry;
-        this.pinpoint = pinpoint;
-    }
+//    //constructor for auto
+//    public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, MecanumDrive mecanumDrive, Telemetry telemetry, GoBildaPinpointDriver pinpoint) {
+//        this.FR = FR;
+//        this.FL = FL;
+//        this.BR = BR;
+//        this.BL = BL;
+//        this.mecanumDrive = mecanumDrive;
+//        this.telemetry = telemetry;
+//        this.pinpoint = pinpoint;
+//    }
 
     //constructor for teleop
     public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, MecanumDrive mecanumDrive, Servo ptoServo, Telemetry telemtry, GoBildaPinpointDriver pinpoint) {
@@ -102,6 +102,8 @@ public class DriveSubsystem extends SubsystemBase {
         this.ptoServo = ptoServo;
         this.telemetry = telemtry;
         this.pinpoint = pinpoint;
+
+        engagePto(false);
     }
 
     public void stopDrive(){

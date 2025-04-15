@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specClimb;
 
 import android.util.Log;
 
