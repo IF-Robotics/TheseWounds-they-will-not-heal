@@ -396,9 +396,18 @@ public class TeleopOpMode extends Robot {
         );
 
 //        //climbing
-//        bRight2.whenPressed(new ParallelCommandGroup(
-//                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchFrontHighChamber, rollFrontHighChamber), armPositionToClimb));
-//        bRight2.whenReleased(new ClimbLevel3(armSubsystem, intakeSubsystem, gyro));
+        bRight2.whenPressed(new SequentialCommandGroup(
+                new InstantCommand(()->driveSubsystem.engagePto(false)),
+                new InstantCommand(()->secondaryArmSubsystem.setDiffy(0,0)),
+                new InstantCommand(()->specMechSubsystem.setArm(specArmUp)),
+                new InstantCommand(()->{
+                    manualArm=false;
+                    manualSlides = false;
+                }),
+                new WaitForArmCommand(armSubsystem,93,10),
+                new ArmCoordinatesCommand(armSubsystem, -1, 46)
+        ));
+        bRight2.whenReleased(new ClimbLevel3(driveSubsystem,armSubsystem));
 
         //testing
         start2.whenPressed(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, pitchWhenBasket, rollWhenBasket));

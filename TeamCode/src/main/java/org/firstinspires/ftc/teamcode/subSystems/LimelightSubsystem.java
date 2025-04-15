@@ -208,7 +208,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
             double hypot = Math.hypot(CAMERA_HEIGHT, forward);
 
-            double right = Math.tan(Math.toRadians(result.getTargetXDegrees())) * hypot;
+            double right = Math.tan(Math.toRadians(result.getTargetXDegrees())) * forward;
 
             telemetry.addData("rightRaw", right);
 

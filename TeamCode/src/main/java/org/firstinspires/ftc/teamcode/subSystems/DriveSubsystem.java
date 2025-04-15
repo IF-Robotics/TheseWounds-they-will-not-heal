@@ -93,14 +93,15 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     //constructor for teleop
-    public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, Servo defensePad, Servo ptoServo, Telemetry telemtry) {
+    public DriveSubsystem(MotorEx FR, MotorEx FL, MotorEx BR, MotorEx BL, MecanumDrive mecanumDrive, Servo ptoServo, Telemetry telemtry, GoBildaPinpointDriver pinpoint) {
         this.FR = FR;
         this.FL = FL;
         this.BR = BR;
         this.BL = BL;
-        this.defensePad = defensePad;
+        this.mecanumDrive = mecanumDrive;
         this.ptoServo = ptoServo;
         this.telemetry = telemtry;
+        this.pinpoint = pinpoint;
     }
 
     public void stopDrive(){
@@ -387,6 +388,14 @@ public class DriveSubsystem extends SubsystemBase {
             ptoServo.setPosition(dtPTOEngaged);
         } else
             ptoServo.setPosition(dtPTODisengaged);
+    }
+
+    public void setPower(double power){
+        FL.set(power);
+        FR.set(power);
+        BL.set(power);
+        BR.set(power);
+
     }
 
     @Override

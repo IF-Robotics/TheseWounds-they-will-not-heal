@@ -82,7 +82,7 @@ public abstract class Robot extends CommandOpMode {
     public AnalogInput armEncoder;
     public GoBildaPinpointDriver pinpoint;
     private MecanumDrive mecanumDrive;
-    public IMU gyro;
+//    public IMU gyro;
     public RevColorSensorV3 sensor, distance;
 
     public AnalogInput analog0, analog1;
@@ -169,16 +169,16 @@ public abstract class Robot extends CommandOpMode {
         BL.setInverted(true);
 
         mecanumDrive = new MecanumDrive(FL, FR, BL, BR);
-        gyro = hardwareMap.get(IMU.class, "imu");
-        gyro.initialize(
-                new IMU.Parameters(
-                        new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                                RevHubOrientationOnRobot.UsbFacingDirection.UP)
-                )
-        );
+//        gyro = hardwareMap.get(IMU.class, "imu");
+//        gyro.initialize(
+//                new IMU.Parameters(
+//                        new RevHubOrientationOnRobot(
+//                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                                RevHubOrientationOnRobot.UsbFacingDirection.UP)
+//                )
+//        );
 
-        driveSubsystem = new DriveSubsystem(FR, FL, BR, BL, mecanumDrive, telemetry, pinpoint);
+        driveSubsystem = new DriveSubsystem(FR, FL, BR, BL, mecanumDrive, ptoServo, telemetry, pinpoint);
         register(driveSubsystem);
 
         //arm

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem.*;
 
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -16,21 +17,45 @@ import org.firstinspires.ftc.teamcode.commands.ArmManualCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
 
 public class ClimbLevel3 extends SequentialCommandGroup {
 
-    public ClimbLevel3(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, IMU gyro){
+    public ClimbLevel3(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem){
         addCommands(
 
                 //engage hooks intially
-                new InstantCommand(() -> armSubsystem.setSlide(armSubsystem.slideWristOffset)),
+                new InstantCommand(() -> armSubsystem.setSlide(34.5)),
 
                 //wait
                 new WaitCommand(500),
 
                 //engage the pto
-                new InstantCommand()
+                new InstantCommand(()->driveSubsystem.engagePto(true)),
+
+
+                new InstantCommand(()->{
+                    manualArm=true;
+                    manualSlides = true;
+                }),
+
+                new InstantCommand(()->armSubsystem.manualArm(0,0)),
+                new WaitCommand(500),
+
+                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<32.5),
+//                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.8,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<12),
+                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.2,0), driveSubsystem).withTimeout(1500),
+                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<12),
+
+
+//                new WaitCommand(1500),
+
+                new ParallelCommandGroup(
+                        new RunCommand(()->driveSubsystem.setPower(-(armSubsystem.getSlideExtention()-9)/6.0+0.6), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<9.5)
+                            .andThen(new RunCommand(()->driveSubsystem.setPower(-0.1))),
+                        new RunCommand(()->armSubsystem.manualArm(1.0,0), armSubsystem)
+                )
 
 
 
@@ -74,6 +99,6 @@ public class ClimbLevel3 extends SequentialCommandGroup {
 //                new ArmManualCommand(armSubsystem, () -> 1, () -> -.5).withTimeout(2000),
 //                new ArmCoordinatesCommand(armSubsystem, armFoldX, armFoldY)
         );
-        addRequirements(armSubsystem, intakeSubsystem);
+        addRequirements(driveSubsystem, armSubsystem);
     }
 }

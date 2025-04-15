@@ -41,8 +41,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static double armWeakKP = 0.01;
     public static double armAngleOffset = -256;
 
-    public static double armMinAngle = 6.5;
-    public static double armMaxAngle = 90;
+    public static double armMinAngle = 5;
+    public static double armMaxAngle = 93;
 
     public static double armNautilusMinAngle = 31.0; //min on the high end
     public static double armNautilusMaxAngle = 21.4; //max on the low end
@@ -72,7 +72,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
     public static final double slideRetractMin = slideWristOffset+0.2;
-    public static final double slideRetractMax = 36.5;
+    public static final double slideRetractMax = 40.5;
     public static double setSlideTarget = slideRetractMin;
     private double slideError = 0;
 
@@ -168,7 +168,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setArm(double targetAngle) {
         //this is kind of sus
-        if(getSlideTarget()<10){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
+        if(getSlideTarget()<11){targetAngle = MathUtils.clamp(targetAngle, armMinAngle, armMaxAngle);}
         //allow for intake sub to go lower when the arm is extended out
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
 

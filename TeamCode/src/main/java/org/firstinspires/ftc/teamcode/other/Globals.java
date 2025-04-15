@@ -137,8 +137,8 @@ public class Globals {
     public static double defensePadUp = 0;
 
     //dt pto
-    public static double dtPTOEngaged = 0;
-    public static double dtPTODisengaged = 0;
+    public static double dtPTOEngaged = 0.7;
+    public static double dtPTODisengaged = 0.4;
 
     //arm when climbing
     //climbing to first rung
