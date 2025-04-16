@@ -87,7 +87,7 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                                 new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall),
                                 new InstantCommand(()->armSubsystem.nautilusUp())
                         ),
-
+                        new WaitCommand(00),
                         // Intake specimen from wall
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
@@ -140,6 +140,7 @@ public class AutoSpecimenCycleFast extends SequentialCommandGroup {
                                         .andThen(new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall))
                                         .andThen(new InstantCommand(()->armSubsystem.nautilusUp()))
                         ),
+                        new WaitCommand(200),
 
                         // Intake specimen from wall
                         new ParallelCommandGroup(

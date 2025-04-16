@@ -22,7 +22,7 @@ public class FlipSample extends SequentialCommandGroup {
                 //tilts slides down a tad
                 new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
                 //wait
-                new WaitCommand(100),
+                new WaitCommand(350),
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
@@ -45,7 +45,7 @@ public class FlipSample extends SequentialCommandGroup {
                 //tilts slides down a tad
                 new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
                 //wait
-                new WaitCommand(100),
+                new WaitCommand(350),
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
@@ -57,7 +57,7 @@ public class FlipSample extends SequentialCommandGroup {
                         new FullRetractSlidesUntil(armSubsystem, 13.5).withTimeout(500)
                             .andThen(new WaitForArmCommand(armSubsystem, desiredArmAngle, 5).withTimeout(300))
                 ),
-                new WaitCommand(150),
+                new WaitCommand(50),
 //                new WaitForSlideCommand(armSubsystem, 8,5),
 //                new InstantCommand(() -> intakeSubsystem.openClaw())
                 new InstantCommand(()->intakeSubsystem.clawExtraOpen())

@@ -305,16 +305,31 @@ public class TeleopOpMode extends Robot {
                         ),
                         new SequentialCommandGroup(
                                 //ramSpec
-                                new InstantCommand(() -> specMechSubsystem.closeClaw()),
-                                new WaitCommand(200),
-                                new InstantCommand(() -> specMechSubsystem.setArm(specArmUp))
+                                new InstantCommand(() -> specMechSubsystem.closeClaw())
+//                                new WaitCommand(200),
+//                                new InstantCommand(() -> specMechSubsystem.setArm(specArmUp))
                         ),
                         () -> {
                             specMechSubsystem.toggle();
                             return specMechSubsystem.active();
                         }
                 )
-        );
+        )
+        .whenReleased(
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                                //wallIntake
+//                                new InstantCommand(() -> specMechSubsystem.openClaw()),
+//                                new WaitCommand(200),
+                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                        ),
+                        new InstantCommand(()->{}),
+                        () -> {
+                            return specMechSubsystem.active();
+                        }
+                )
+        )
+        ;
 
         circle2.whenPressed(
                 new ConditionalCommand(

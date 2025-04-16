@@ -52,6 +52,7 @@ public class JacobSlideValorantAimer extends CommandBase {
 
         if(timer.seconds()>timeToInvalidation&&Math.abs(yVelocity)>0.1) {
             desiredY += yVelocity * timeToInvalidation * maxChangePerSecond;
+            desiredY = MathUtils.clamp(desiredY, ArmSubsystem.slideRetractMin,28);
             timer.reset();
         }
 
@@ -67,7 +68,7 @@ public class JacobSlideValorantAimer extends CommandBase {
         double desiredPosition = desiredY+slideCompensation;
 
 
-        desiredPosition = MathUtils.clamp(desiredPosition, ArmSubsystem.slideRetractMin, 30+slideCompensation);
+        desiredPosition = MathUtils.clamp(desiredPosition, ArmSubsystem.slideRetractMin, Math.min(28+slideCompensation, 28+SecondaryArmSubsystem.secondaryArmLength-2));
 
 
         armSubsystem.setArmX(desiredPosition);

@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.commandGroups;
 
 import static org.firstinspires.ftc.teamcode.other.Globals.armReadySubIntakeX;
-import static org.firstinspires.ftc.teamcode.other.Globals.pitchIntakeWall;
 import static org.firstinspires.ftc.teamcode.other.Globals.secondaryPitchWallIntake;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.firstWallPickUp;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.rightSideLeftSpikeFlip;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.rightSideLeftSpikePush;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.rightSideMiddleSpikeFlip;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.rightSideRightSpikeFlip;
 
@@ -14,6 +14,8 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
@@ -22,19 +24,28 @@ import org.firstinspires.ftc.teamcode.subSystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
 
-public class FlipSpikes extends SequentialCommandGroup {
+public class PushSpikes extends SequentialCommandGroup {
 
-    public FlipSpikes(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
+    public PushSpikes(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem){
         addCommands(
                 new InstantCommand(()->driveSubsystem.enablePrecisePID(true)),
-            new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX-1.0-0.5),
-            new WaitCommand(800).interruptOn(()->armSubsystem.getSlideError()<0.5),
-            new ParallelCommandGroup(
-                new SequentialCommandGroup(
-                        new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                        new IntakeSub(armSubsystem, intakeSubsystem, secondaryArmSubsystem, 0, armReadySubIntakeX - 0.5 - 1.0),
-                        new WaitCommand(800).interruptOn(()->armSubsystem.getSlideError()<0.5)
-                ),
+                new DriveToPointCommand(driveSubsystem, rightSideLeftSpikePush, 2, 5).withTimeout(500),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(51.25, -5, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(51.25, -53, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(51.25, -5, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(61.25, -5, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(61.25, -53, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(61.25,-5, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(65.25, -5, Rotation2d.fromDegrees(0)),2 ,5 ),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(65.25, -53, Rotation2d.fromDegrees(0)),2 ,5 ),
+
+
+
+
+
+
+
+
                 new WaitCommand(450).andThen(new DriveToPointCommand(driveSubsystem, rightSideMiddleSpikeFlip, 2, 5).withTimeout(500))
                         .andThen(new InstantCommand(()-> {
                             Log.i("AutoStartXS2", String.valueOf(driveSubsystem.getPos().getX()));
@@ -43,8 +54,8 @@ public class FlipSpikes extends SequentialCommandGroup {
                             Log.i("AutoTargetXS2", String.valueOf(driveSubsystem.getTargetPos().getX()));
                             Log.i("AutoTargetYS2", String.valueOf(driveSubsystem.getTargetPos().getY()));
                             Log.i("AutoTargetRS2", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()));
-                        }))
-            ),
+                        })),
+
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new FlipSample(armSubsystem, intakeSubsystem, secondaryArmSubsystem),

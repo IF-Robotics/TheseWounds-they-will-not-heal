@@ -37,7 +37,7 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                 new InstantCommand(()-> specMechSubsystem.openClaw()),
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
-                        new WaitCommand(400),
+                        new WaitCommand(700),
                         new DriveToPointDoubleSupplierCommand(
                                 driveSubsystem,
                                 ()->driveSubsystem.getPos().getX(),
@@ -85,9 +85,9 @@ public class ParallelizingCycles extends SequentialCommandGroup {
                             new InstantCommand(()->Log.i("finishLimelight", "yes"))
                     ),
                     new SequentialCommandGroup(
-                            new WaitCommand(600),
+                            new WaitCommand(300),
                             new InstantCommand(() -> specMechSubsystem.openClaw())
-//                            new WaitCommand(500), //we are parrallelizing so might as well use the time
+//                            new WaitCommand(300), //we are parrallelizing so might as well use the time
 //                            new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
                     )
                 )

@@ -132,11 +132,11 @@ public class RetractAfterIntake extends SequentialCommandGroup{
                 new InstantCommand(()->intakeSubsystem.setPitch(pitchWhenIntake)),
                 new InstantCommand(() -> armSubsystem.setArmY(armSubIntakeY)),
                 //wait
-                new WaitCommand(200),
+                new WaitCommand(400),
                 //grab the sample
                 new InstantCommand(() -> intakeSubsystem.closeClaw()),
                 //wait
-                new WaitCommand(150),
+                new WaitCommand(250),
                 new InstantCommand(()->intakeSubsystem.setDiffy(0,90)),
                 new InstantCommand(()-> armSubsystem.setArm(5)),
                 new ParallelCommandGroup(

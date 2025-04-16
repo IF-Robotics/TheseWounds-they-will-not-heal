@@ -45,7 +45,10 @@ public class ArmSubsystem extends SubsystemBase {
     public static double armMaxAngle = 93;
 
     public static double armNautilusMinAngle = 31.0; //min on the high end
-    public static double armNautilusMaxAngle = 21.4; //max on the low end
+    public static double armNautilusMaxAngle = 14-0.7; //max on the low end
+
+//    public static double armNautilusMaxAngle = 10; //max on the low end
+
 
     public static double climbingArmP = .03;
     private double armPowerCap = 1;
@@ -148,10 +151,13 @@ public class ArmSubsystem extends SubsystemBase {
         nautilus.add(9.3,0.49);
         nautilus.add(11.7,0.42);
         nautilus.add(14.1,0.35);
-        nautilus.add(17.1,0.26);
-        nautilus.add(19.2,0.2);
-        nautilus.add(21.4,0.13);
-        nautilus.add(999999,0.13);
+        nautilus.add(99999,0.35);
+
+
+//        nautilus.add(17.1,0.26);
+//        nautilus.add(19.2,0.2);
+//        nautilus.add(21.4,0.13);
+//        nautilus.add(999999,0.13);
         nautilus.createLUT();
 
         nautilusDown();
@@ -173,9 +179,11 @@ public class ArmSubsystem extends SubsystemBase {
         else{targetAngle = MathUtils.clamp(targetAngle, 0, armMaxAngle);}
 
         if(targetAngle<armNautilusMaxAngle && !manualNautilus){
-            setNautilus(nautilus.get(targetAngle+1.5));
+
+            setNautilus(nautilus.get(targetAngle+0.8)-0.34);
             nautilusUp=false;
         }
+
 
         setArmTargetAngle = targetAngle;
     }
@@ -461,12 +469,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void nautilusUp(){
         //32.1 degrees
-        endStop.setPosition(0.943);
+        endStop.setPosition(0.943-0.34);
         nautilusUp=true;
     }
 
     public void nautilusDown(){
-        endStop.setPosition(0.81);
+        endStop.setPosition(0.81-0.34);
         nautilusUp=false;
     }
 
