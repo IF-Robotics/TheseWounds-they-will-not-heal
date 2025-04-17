@@ -8,12 +8,15 @@ import static org.firstinspires.ftc.teamcode.other.Globals.secondaryPitchWallInt
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.firstHighChamberRight;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.firstWallPickUp;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSafeScore;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSafeScoreCheckpoint;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSpecMech;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.rightSideLeftSpikeFlip;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUp;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUpCheckpoint;
 
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUp;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUpSafe;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUpSafeCheckpoint;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specAutoStart;
@@ -44,6 +47,7 @@ import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.LimelightTeleopAimer;
 import org.firstinspires.ftc.teamcode.commands.SecondaryArmCommand;
+import org.firstinspires.ftc.teamcode.commands.WaitForArmCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.other.AutoBase;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
@@ -55,21 +59,26 @@ public class SixSpecSafeScore extends SequentialCommandGroup {
 
     public SixSpecSafeScore(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, DriveSubsystem driveSubsystem) {
         addCommands(
-                new InstantCommand(()->driveSubsystem.driveToPoint(wallPickUp)),
                 new ParallelCommandGroup( //Positions for intaking from wall
-                        secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
-                        new WaitForSlideCommand(armSubsystem, ArmSubsystem.slideRetractMin, 3)
-                                .andThen(new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY)),
-                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall)
+                        new DriveToPointCommand(driveSubsystem, wallPickUpSafeCheckpoint, 5, 5).withTimeout(1500)
+                                .andThen(new WaitCommand(200))
+                                .andThen(new DriveToPointCommand(driveSubsystem,wallPickUpSafe,5,5).withTimeout(500)),
+                        new ArmCoordinatesCommand(armSubsystem, 8,10),
+                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, -30, 180),
+                        new InstantCommand(()->secondaryArmSubsystem.setDiffyPitch(0))
                 ),
                 new InstantCommand(()->intakeSubsystem.closeClaw()), //Moving the secondary to the score position
                 new WaitCommand(50),
                 //flip up the intake
-                new InstantCommand(() -> intakeSubsystem.setDiffy(90,0)),
-                new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(0)),
-                new ArmCoordinatesCommand(armSubsystem, 0, 0), //change later  (bring the slides up)
-                new DriveToPointCommand(driveSubsystem, highChamberSafeScore, 3, 5),
-                new ArmCoordinatesCommand(armSubsystem, 0, 0), //change later (Bring the slides down)
+                new InstantCommand(() -> intakeSubsystem.setDiffy(80,0)),
+                new InstantCommand(()->secondaryArmSubsystem.setDiffy(35,0)),
+                new ParallelCommandGroup(
+                        new DriveToPointCommand(driveSubsystem, highChamberSafeScore, 5, 5),
+                        new WaitForArmCommand(armSubsystem, 90, 5)
+                            .andThen(new ArmCoordinatesCommand(armSubsystem, 0, 22))
+                ),
+                new ArmCoordinatesCommand(armSubsystem, 0, 13), //change later (Bring the slides down)
+                new WaitCommand(300),
                 new InstantCommand(()->intakeSubsystem.openClaw())
 
 
@@ -78,21 +87,31 @@ public class SixSpecSafeScore extends SequentialCommandGroup {
     }
     public SixSpecSafeScore(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, DriveSubsystem driveSubsystem, Pose2d startingPos) {
         addCommands(
-                new InstantCommand(()->driveSubsystem.driveToPoint(startingPos)),
                 new ParallelCommandGroup( //Positions for intaking from wall
-                        secondaryArmSubsystem.setPitchSafe(secondaryPitchWallIntake),
-                        new WaitForSlideCommand(armSubsystem, ArmSubsystem.slideRetractMin, 3)
-                                .andThen(new ArmCoordinatesCommand(armSubsystem, armIntakeWallX, armIntakeWallY)),
-                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.EXTRAOPEN, pitchIntakeWall, rollIntakeWall)
+                        new DriveToPointCommand(driveSubsystem,startingPos,5,5).withTimeout(1500),
+                        new ArmCoordinatesCommand(armSubsystem, 8,10),
+                        new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, -30, 180)
                 ),
+                new InstantCommand(()->Log.i("safespectargetposx", String.valueOf(driveSubsystem.getTargetPos().getX()))),
+                new InstantCommand(()->Log.i("safespectargetposy", String.valueOf(driveSubsystem.getTargetPos().getY()))),
+                new InstantCommand(()->Log.i("safespectargetposheading", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()))),
                 new InstantCommand(()->intakeSubsystem.closeClaw()), //Moving the secondary to the score position
                 new WaitCommand(50),
                 //flip up the intake
-                new InstantCommand(() -> intakeSubsystem.setDiffy(90,0)),
-                new InstantCommand(()->secondaryArmSubsystem.setDiffyYaw(0)),
-                new ArmCoordinatesCommand(armSubsystem, 0, 28), //change later  (bring the slides up)
-                new DriveToPointCommand(driveSubsystem, highChamberSafeScore, 3, 5),
-                new ArmCoordinatesCommand(armSubsystem, 0, 23), //change later (Bring the slides down)
+                new InstantCommand(() -> intakeSubsystem.setDiffy(80,0)),
+                new InstantCommand(()->secondaryArmSubsystem.setDiffy(35, 0)),
+                new ParallelCommandGroup(
+                    new DriveToPointCommand(driveSubsystem, highChamberSafeScoreCheckpoint, 5, 5)
+                        .andThen(new DriveToPointCommand(driveSubsystem, highChamberSafeScore, 5, 5)),
+                    new WaitForArmCommand(armSubsystem, 90, 5)
+                        .andThen(new ArmCoordinatesCommand(armSubsystem, 0, 22))
+                ),
+                new InstantCommand(()->Log.i("safespectargetposx", String.valueOf(driveSubsystem.getTargetPos().getX()))),
+                new InstantCommand(()->Log.i("safespectargetposy", String.valueOf(driveSubsystem.getTargetPos().getY()))),
+                new InstantCommand(()->Log.i("safespectargetposheading", String.valueOf(driveSubsystem.getTargetPos().getRotation().getDegrees()))),
+
+                new ArmCoordinatesCommand(armSubsystem, 0, 13), //change later (Bring the slides down)
+                new WaitCommand(300),
                 new InstantCommand(()->intakeSubsystem.openClaw())
 
 

@@ -45,6 +45,7 @@ import org.firstinspires.ftc.teamcode.commandGroups.ScoreHighChamberCommand;
 import org.firstinspires.ftc.teamcode.commandGroups.HighBasketCommand;
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.ArmManualCommand;
+import org.firstinspires.ftc.teamcode.commands.AutoDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.JacobSlideValorantAimer;
 import org.firstinspires.ftc.teamcode.commands.LimelightTeleopAimer;
@@ -239,8 +240,8 @@ public class TeleopOpMode extends Robot {
                         ),
                         new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem),
                         ()-> armSubsystem.getArmAngle()>7 || armSubsystem.getSlideExtention()>11
-                )
-                );
+            ))
+                    .whileActiveContinuous(new holdDTPosCommand(driveSubsystem));
 //        //chambers
 //        square2.whenPressed(new HighChamberCommand(armSubsystem, intakeSubsystem));
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));

@@ -274,6 +274,9 @@ public class LimelightSubsystem extends SubsystemBase {
             if(Math.abs(pose.getX())>SecondaryArmSubsystem.secondaryArmLength-0.5){
                 score+=99999;
             }
+            if(pose.getY()<11.5){
+                score+=999;
+            }
             if (score<lowestX){
                 lowestX = score;
                 best = pose;

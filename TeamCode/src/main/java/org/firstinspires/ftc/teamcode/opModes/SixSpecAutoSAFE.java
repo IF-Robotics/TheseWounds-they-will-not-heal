@@ -8,11 +8,13 @@ import static org.firstinspires.ftc.teamcode.other.Globals.rollIntakeWall;
 import static org.firstinspires.ftc.teamcode.other.Globals.secondaryPitchWallIntake;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.firstHighChamberRight;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.firstWallPickUp;
+import static org.firstinspires.ftc.teamcode.other.PosGlobals.firstWallPickUpSafe;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSafeScore;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.highChamberSpecMech;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.rightSideLeftSpikeFlip;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUp;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.specMechPickUpCheckpoint;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmStow;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specAutoStart;
@@ -38,6 +40,7 @@ import org.firstinspires.ftc.teamcode.commandGroups.PushSpikes;
 import org.firstinspires.ftc.teamcode.commandGroups.RetractAfterIntake;
 import org.firstinspires.ftc.teamcode.commandGroups.SixSpecSafeScore;
 import org.firstinspires.ftc.teamcode.commandGroups.StartSpecAuto;
+import org.firstinspires.ftc.teamcode.commands.ArmCommand;
 import org.firstinspires.ftc.teamcode.commands.ArmCoordinatesCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveToPointDoubleSupplierCommand;
@@ -48,6 +51,7 @@ import org.firstinspires.ftc.teamcode.commands.WaitForSlideCommand;
 import org.firstinspires.ftc.teamcode.other.AutoBase;
 import org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subSystems.SecondaryArmSubsystem;
+import org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem;
 
 @Autonomous(name="6+0 SAFE \uD83E\uDDBA\uD83E\uDDBA\uD83E\uDDBA\uD83E\uDDBA\uD83E\uDDBA\uD83D\uDE2D\uD83D\uDE2D\uD83D\uDE4F\uD83D\uDE4F\uD83D\uDC02\uD83D\uDCA9")
 
@@ -128,24 +132,28 @@ public class SixSpecAutoSAFE extends AutoBase {
                                     5,
                                     5
                             ),
-                            new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500),
+                            new DriveToPointCommand(driveSubsystem, new Pose2d(40.9, -52.2, Rotation2d.fromDegrees(-157)), 3, 5),
+                            new InstantCommand(()->intakeSubsystem.setDiffy(180)),
                             new WaitCommand(200),
+                            new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
                             new PushSpikes(driveSubsystem)
                             ),
                         new SequentialCommandGroup(
                             new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem, true),
                             new WaitCommand(600),
-                            new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                            new ArmCoordinatesCommand(armSubsystem, 8,10),
                             new WaitCommand(200),
-
-                            new InstantCommand(()->intakeSubsystem.setDiffy(15, 0)),
-                            new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
+//                            new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.OPEN, -30, 0),
+                            new InstantCommand(()->intakeSubsystem.setDiffy(-30, 0)),
+                            new InstantCommand(() -> specMechSubsystem.setArm(specArmStow)),
+//                            new ArmCoordinatesCommand(armSubsystem, 8,10),
 //                            new InstantCommand(()->intakeSubsystem.openClaw()), //so that we save time when we intake later ig
                             secondaryArmSubsystem.setPitchYawSafe(0,0)
                         )
                 ),
-
-                new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem, firstWallPickUp),
+                new WaitCommand(500),
+                new IntakeCommand(intakeSubsystem, IntakeCommand.Claw.CLOSE, -30, 180),
+                new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem, firstWallPickUpSafe),
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem),
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem),
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem),

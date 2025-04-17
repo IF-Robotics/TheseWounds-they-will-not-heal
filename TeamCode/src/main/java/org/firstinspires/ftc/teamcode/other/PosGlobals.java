@@ -25,7 +25,9 @@ public class PosGlobals {
 
     public static Pose2d highChamberRight = new Pose2d(7, -33.76, Rotation2d.fromDegrees(12));
     public static Pose2d highChamberSpecMech = new Pose2d(6, -30+0.5, new Rotation2d());
-    public static Pose2d highChamberSafeScore = new Pose2d(6, -30+0.5, new Rotation2d(180));
+    public static Pose2d highChamberSafeScore = new Pose2d(6, -32, Rotation2d.fromDegrees(180));
+    public static Pose2d highChamberSafeScoreCheckpoint = new Pose2d(4, -26, Rotation2d.fromDegrees(180));
+
 
     public static Pose2d highChamberSpecMechCheckpoint = new Pose2d(8, -41, new Rotation2d());
 
@@ -68,7 +70,13 @@ public class PosGlobals {
     public static Pose2d firstWallPickUp = new Pose2d(62, -60+4-1, Rotation2d.fromDegrees(0));
 
     public static Pose2d wallPickUp = new Pose2d(37, -61, Rotation2d.fromDegrees(0));
-    public static Pose2d wallPickUpFastCheckpoint = new Pose2d(38-5, -58.5+6, Rotation2d.fromDegrees(0));
+
+    public static Pose2d firstWallPickUpSafe = new Pose2d(62, -60+3, Rotation2d.fromDegrees(180));
+
+    public static Pose2d wallPickUpSafe = new Pose2d(37, -61, Rotation2d.fromDegrees(180));
+    public static Pose2d wallPickUpSafeCheckpoint = new Pose2d(37-3, -61+21, Rotation2d.fromDegrees(180));
+
+    public static Pose2d wallPickUpFastCheckpoint = new Pose2d(38-5, -58.5+7, Rotation2d.fromDegrees(0));
 
 
 
