@@ -25,21 +25,21 @@ public class PushSpikes extends SequentialCommandGroup{
 
     public PushSpikes(DriveSubsystem driveSubsystem){
         addCommands(
-                new DriveToPointCommand(driveSubsystem, new Pose2d(26, -37, Rotation2d.fromDegrees(-37)), 3, 5),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(26, -5, Rotation2d.fromDegrees(-37)), 3, 5),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(32, -5, Rotation2d.fromDegrees(-37)), 3, 5),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(32, -37, Rotation2d.fromDegrees(-37)), 3, 5),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(32, -5, Rotation2d.fromDegrees(-37)), 3, 5),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(38, -5, Rotation2d.fromDegrees(-37)), 3, 5),
-                new DriveToPointCommand(driveSubsystem, new Pose2d(38, -37, Rotation2d.fromDegrees(-37)), 3, 5)
-
-
-
+                new DriveToPointCommand(driveSubsystem, new Pose2d(40.5, -60, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(38.5, -13.5, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(50, -14, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(50, -51.5, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(50, -13, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(60, -14, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(57.4, -51, Rotation2d.fromDegrees(0)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(57.4, -14, Rotation2d.fromDegrees(180)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(64, -14, Rotation2d.fromDegrees(180)), 3, 5),
+                new DriveToPointCommand(driveSubsystem, new Pose2d(64, -55, Rotation2d.fromDegrees(180)), 3, 5)
 
 
                 );
 
-        addRequirements(driveSubsystem);
+        addRequirements();
         }
 }
 

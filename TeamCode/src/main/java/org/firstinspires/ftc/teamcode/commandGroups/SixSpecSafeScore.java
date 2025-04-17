@@ -74,7 +74,7 @@ public class SixSpecSafeScore extends SequentialCommandGroup {
 
 
         );
-        addRequirements(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem);
+        addRequirements(armSubsystem, intakeSubsystem, secondaryArmSubsystem);
     }
     public SixSpecSafeScore(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, SecondaryArmSubsystem secondaryArmSubsystem, DriveSubsystem driveSubsystem, Pose2d startingPos) {
         addCommands(
@@ -97,7 +97,7 @@ public class SixSpecSafeScore extends SequentialCommandGroup {
 
 
         );
-        addRequirements(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem);
+        addRequirements(armSubsystem, intakeSubsystem, secondaryArmSubsystem);
     }
 
 

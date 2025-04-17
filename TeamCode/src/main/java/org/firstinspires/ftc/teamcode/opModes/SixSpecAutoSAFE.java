@@ -117,12 +117,34 @@ public class SixSpecAutoSAFE extends AutoBase {
                         )
                 ),
 
-                        new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500)), //dropping off
-                new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
-                new SecondaryArmCommand(secondaryArmSubsystem, secondaryPitchWallIntake),
-                new InstantCommand(intakeSubsystem::clawExtraOpen),
-                new WaitCommand(800),
-                new PushSpikes(driveSubsystem),
+                new ParallelCommandGroup(
+                        new SequentialCommandGroup(
+                            new WaitCommand(400),
+                            new DriveToPointDoubleSupplierCommand(
+                                    driveSubsystem,
+                                    ()->driveSubsystem.getPos().getX(),
+                                    ()->driveSubsystem.getPos().getY()-10,
+                                    new Rotation2d(),
+                                    5,
+                                    5
+                            ),
+                            new DriveToPointCommand(driveSubsystem, specMechPickUp, 3, 5).withTimeout(1500),
+                            new WaitCommand(200),
+                            new PushSpikes(driveSubsystem)
+                            ),
+                        new SequentialCommandGroup(
+                            new RetractAfterIntake(armSubsystem, intakeSubsystem, secondaryArmSubsystem, true),
+                            new WaitCommand(600),
+                            new ParallelizingDropCommand(armSubsystem, intakeSubsystem, secondaryArmSubsystem),
+                            new WaitCommand(200),
+
+                            new InstantCommand(()->intakeSubsystem.setDiffy(15, 0)),
+                            new InstantCommand(()->intakeSubsystem.clawExtraOpen()),
+//                            new InstantCommand(()->intakeSubsystem.openClaw()), //so that we save time when we intake later ig
+                            secondaryArmSubsystem.setPitchYawSafe(0,0)
+                        )
+                ),
+
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem, firstWallPickUp),
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem),
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem),
@@ -130,7 +152,55 @@ public class SixSpecAutoSAFE extends AutoBase {
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem),
                 new SixSpecSafeScore(armSubsystem, intakeSubsystem, secondaryArmSubsystem, driveSubsystem)
 
-        );
+        ));
+        while(!isStarted() && !isStopRequested()) {
+            previousGamepad1.copy(currentGamepad1);
+            previousGamepad2.copy(currentGamepad2);
+            currentGamepad1.copy(gamepad1);
+            currentGamepad2.copy(gamepad2);
+
+            if (currentSubIndex == 1) {
+                if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
+                    subX1 -= 1;
+                    MathUtils.clamp(subX1, -8, 6);
+                }
+
+                if (currentGamepad1.dpad_right && !previousGamepad1.dpad_right) {
+                    subX1 += 1;
+                    subX1 = MathUtils.clamp(subX1, -8, 6);
+                }
+            }
+
+            if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                currentSubIndex += 1;
+                currentSubIndex = MathUtils.clamp(currentSubIndex, 1, 2);
+            }
+
+            if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                currentSubIndex -= 1;
+                currentSubIndex = MathUtils.clamp(currentSubIndex, 1, 2);
+            }
+
+            //change spec mode
+            if (currentGamepad1.touchpad && !previousGamepad1.touchpad) {
+                teleopSpec = !teleopSpec;
+            }
+
+            telemetry.addData("currentSubIndex", currentSubIndex);
+
+            telemetry.addData("subX1 (-8,6)", subX1);
+
+
+
+            //specMode
+            if (teleopSpec) {
+                telemetry.addData("specMode", "\uD83D\uDCA7\uD83D\uDCA7true\uD83D\uDC7A\uD83D\uDC7A");
+            } else {
+                telemetry.addData("specMode", "\uD83D\uDC72\uD83D\uDC72false⭐⭐");
+            }
+
+            telemetry.update();
+        }
 
     }
 
