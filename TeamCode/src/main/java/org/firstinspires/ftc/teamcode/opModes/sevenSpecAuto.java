@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.opModes;
 import static org.firstinspires.ftc.teamcode.opModes.TeleopOpMode.teleopSpec;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.*;
+import static org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem.slideOutExtension;
+import static org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem.slideRetractMin;
+import static org.firstinspires.ftc.teamcode.subSystems.ArmSubsystem.slideWristOffset;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmStow;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
@@ -98,7 +101,7 @@ public class sevenSpecAuto extends AutoBase {
                         new InstantCommand(() -> specMechSubsystem.closeClaw()),
                         new InstantCommand(() -> specMechSubsystem.setArm(specArmUp)),
                         new InstantCommand(() -> armSubsystem.setArm(25)),
-                        new InstantCommand(() -> armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
+                        new InstantCommand(() -> armSubsystem.setSlide(slideRetractMin)),
                         new InstantCommand(() -> secondaryArmSubsystem.setDiffy(-20, 0)),
                         new InstantCommand(() ->intakeSubsystem.setDiffy(0,0)),
                         new InstantCommand(() ->intakeSubsystem.openClaw())
@@ -191,7 +194,7 @@ public class sevenSpecAuto extends AutoBase {
                 new InstantCommand(()->armSubsystem.setSlidePower(1.00)),
                 new WaitCommand(300),
                 new InstantCommand(()->intakeSubsystem.openClaw()),
-                new InstantCommand(()->armSubsystem.setSlide(ArmSubsystem.slideRetractMin)),
+                new InstantCommand(()->armSubsystem.setSlide(slideRetractMin)),
                 new InstantCommand(()->specMechSubsystem.setArm(specArmStow)),
                 new DriveToPointCommand(driveSubsystem, new Pose2d(50, -56, Rotation2d.fromDegrees(-180)), 1, 5)
         ));
@@ -203,48 +206,65 @@ public class sevenSpecAuto extends AutoBase {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
-            if(currentSubIndex==1){
-                if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
-                    subX1 -= 1;
-                    MathUtils.clamp(subX1, -8, 6);
-                }
-
-                if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
-                    subX1 += 1;
-                    subX1 = MathUtils.clamp(subX1, -8, 6);
-                }
-            } else if (currentSubIndex==2) {
-                if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
-                    subX2 -= 1;
-                    MathUtils.clamp(subX2, -8, 6);
-                }
-
-                if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
-                    subX2 += 1;
-                    subX2 = MathUtils.clamp(subX2, -8, 6);
-                }
-            }
-
-            if(currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
-                currentSubIndex+=1;
-                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
-            }
-
-            if(currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
-                currentSubIndex-=1;
-                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
-            }
+//            if(currentSubIndex==1){
+//                if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
+//                    subX1 -= 1;
+//                    MathUtils.clamp(subX1, -8, 6);
+//                }
+//
+//                if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
+//                    subX1 += 1;
+//                    subX1 = MathUtils.clamp(subX1, -8, 6);
+//                }
+//            } else if (currentSubIndex==2) {
+//                if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
+//                    subX2 -= 1;
+//                    MathUtils.clamp(subX2, -8, 6);
+//                }
+//
+//                if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
+//                    subX2 += 1;
+//                    subX2 = MathUtils.clamp(subX2, -8, 6);
+//                }
+//            }
+//
+//            if(currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
+//                currentSubIndex+=1;
+//                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
+//            }
+//
+//            if(currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
+//                currentSubIndex-=1;
+//                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
+//            }
 
             //change spec mode
             if(currentGamepad1.touchpad && !previousGamepad1.touchpad){
                 teleopSpec = !teleopSpec;
             }
 
-            telemetry.addData("currentSubIndex", currentSubIndex);
+            if(currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
+//                currentSubIndex+=1;
+//                currentSubIndex=MathUtils.clamp(currentSubIndex, 1,2);
+                slideOutExtension += 0.1;
+                slideOutExtension += MathUtils.clamp(slideOutExtension, 0, 1.5);
+            }
 
-            telemetry.addData("subX1 (-8,6)", subX1);
+            if(currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
+                slideOutExtension -= 0.1;
+                slideOutExtension += MathUtils.clamp(slideOutExtension, 0, 1.5);
+            }
 
-            telemetry.addData("subX2 (-8,6)", subX2);
+            slideRetractMin = slideWristOffset+0.2 + slideOutExtension;
+
+//            telemetry.addData("currentSubIndex", currentSubIndex);
+//
+//            telemetry.addData("subX1 (-8,6)", subX1);
+//
+//            telemetry.addData("subX2 (-8,6)", subX2);
+
+            telemetry.addData("slideOutExtension", slideOutExtension);
+            telemetry.addData("slideRetractMin", slideRetractMin);
 
 
             //specMode

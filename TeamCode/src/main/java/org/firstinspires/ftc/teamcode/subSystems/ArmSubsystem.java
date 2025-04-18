@@ -74,7 +74,9 @@ public class ArmSubsystem extends SubsystemBase {
     private double slidePower = 1;
     private double slideExtention = 9;
     public static double slideWristOffset = 9  ; //(in)
-    public static final double slideRetractMin = slideWristOffset+0.2;
+
+    public static double slideOutExtension = 0;
+    public static double slideRetractMin = slideWristOffset+0.2 + slideOutExtension;
     public static final double slideRetractMax = 40.5;
     public static double setSlideTarget = slideRetractMin;
     private double slideError = 0;
@@ -367,7 +369,7 @@ public class ArmSubsystem extends SubsystemBase {
         correctedAngle = rawAngle + armAngleOffset;
 
         //calculate slide extension
-        slideExtention = (slideTicks/ticksPerIn + slideWristOffset) + 0.931 * Math.toRadians(correctedAngle);
+        slideExtention = (slideTicks/ticksPerIn + slideWristOffset) + 0.931 * Math.toRadians(correctedAngle) + slideOutExtension;
 
 
         //arm pid

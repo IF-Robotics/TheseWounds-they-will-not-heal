@@ -236,16 +236,16 @@ public class TeleopOpMode extends Robot {
 //        tLeft1.whenActive(new VisionToSampleInterpolate(driveSubsystem, visionSubsystem, armSubsystem, intakeSubsystem, secondaryArmSubsystem, false, ()->{return false;},m_driver::getLeftX, m_driver::getLeftY, m_driver::getRightX));
 //        tLeft1.toggleWhenActive(new TeleDriveHeadingLocked(driveSubsystem, m_driver));
 //        tLeft1.whileActiveContinuous(new holdDTPosCommand(driveSubsystem)); //heading lock
-            tLeft1.whenActive(new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new WaitForArmCommand(armSubsystem, ArmSubsystem.armMinAngle, 5),
-                                new WaitForSlideCommand(armSubsystem, 10, 2),
-                                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem)
-                        ),
-                        new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem),
-                        ()-> armSubsystem.getArmAngle()>7 || armSubsystem.getSlideExtention()>11
-            ))
-                    .whileActiveContinuous(new holdDTPosCommand(driveSubsystem));
+//            tLeft1.whenActive(new ConditionalCommand(
+//                        new SequentialCommandGroup(
+//                                new WaitForArmCommand(armSubsystem, ArmSubsystem.armMinAngle, 5),
+//                                new WaitForSlideCommand(armSubsystem, 10, 2),
+//                                new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem)
+//                        ),
+//                        new LimelightToSample(driveSubsystem, armSubsystem, secondaryArmSubsystem, intakeSubsystem, limelightSubsystem),
+//                        ()-> armSubsystem.getArmAngle()>7 || armSubsystem.getSlideExtention()>11
+//            ))
+//                    .whileActiveContinuous(new holdDTPosCommand(driveSubsystem));
 //        //chambers
 //        square2.whenPressed(new HighChamberCommand(armSubsystem, intakeSubsystem));
 //        square2.whenReleased(new ScoreHighChamberCommand(armSubsystem, intakeSubsystem));
