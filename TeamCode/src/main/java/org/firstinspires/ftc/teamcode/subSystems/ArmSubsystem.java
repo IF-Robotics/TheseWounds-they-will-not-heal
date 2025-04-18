@@ -121,12 +121,12 @@ public class ArmSubsystem extends SubsystemBase {
 
 //TODO: tune the slide gain scheduling
         //Adding each val with a key
-        slideKgLut.add(-999999, 0.05);
-        slideKgLut.add(9, 0.05);
-        slideKgLut.add(20, 0.2);
+        slideKgLut.add(-999999, .1);
+        slideKgLut.add(9, .1);
+        slideKgLut.add(20, 0.28);
         slideKgLut.add(30, .45);
-        slideKgLut.add(40, .6);
-        slideKgLut.add(9999999, .6);
+        slideKgLut.add(40, .73);
+        slideKgLut.add(9999999, .73);
         //generating final equation
 
         slideKgLut.createLUT();
