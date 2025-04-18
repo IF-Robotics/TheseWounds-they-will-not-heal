@@ -26,7 +26,7 @@ public abstract class AutoBase extends Robot{
         manualSlides = false;
 
         new InstantCommand(() -> armSubsystem.setArm(90)).schedule(true);
-        claw.setPosition(clawClose);
+//        claw.setPosition(clawClose);
 
 
         //turn on auto drive

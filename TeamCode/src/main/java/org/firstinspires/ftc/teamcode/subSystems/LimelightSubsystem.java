@@ -271,9 +271,9 @@ public class LimelightSubsystem extends SubsystemBase {
         double lowestX = Double.MAX_VALUE;
         for (Pose2d pose : poses){
             double score = Math.abs(pose.getX()) + pose.getY()-ArmSubsystem.slideRetractMin;
-            if(Math.abs(pose.getX())>SecondaryArmSubsystem.secondaryArmLength-0.5){
-                score+=99999;
-            }
+//            if(Math.abs(pose.getX())>SecondaryArmSubsystem.secondaryArmLength-0.5){
+//                score+=99999;
+//            }
             if(pose.getY()<11.5){
                 score+=999;
             }

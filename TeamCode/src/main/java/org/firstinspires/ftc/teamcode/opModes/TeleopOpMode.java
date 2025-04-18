@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.opModes;
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 import static org.firstinspires.ftc.teamcode.other.Globals.*;
 import static org.firstinspires.ftc.teamcode.other.PosGlobals.wallPickUp;
+import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmStow;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmUp;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specArmWallIntake;
 import static org.firstinspires.ftc.teamcode.subSystems.SpecMechSubsystem.specClimb;
@@ -97,6 +98,7 @@ public class TeleopOpMode extends Robot {
 //        new ArmCoordinatesCommand(armSubsystem, 12, 7).schedule(true);
         new InstantCommand(() -> secondaryArmSubsystem.setDiffyYaw(0)).schedule(true);
         new InstantCommand(() -> specMechSubsystem.openClaw()).schedule(true);
+        new InstantCommand(()->specMechSubsystem.setArm(specArmStow)).schedule(true);
 
 
     }

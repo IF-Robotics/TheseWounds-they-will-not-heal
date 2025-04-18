@@ -73,7 +73,7 @@ public class sevenSpecAuto extends AutoBase {
     public void initialize() {
         super.initialize();
 
-        intakeSubsystem.setDiffy(-20,0);
+//        intakeSubsystem.setDiffy(-20,0);
         secondaryArmSubsystem.setDiffy(110, 0);
 
         specMechSubsystem.closeClaw();

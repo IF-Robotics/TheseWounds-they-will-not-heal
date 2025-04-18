@@ -43,8 +43,6 @@ public class SpecMechSubsystem extends SubsystemBase {
         this.specArm1 = specArm1;
         this.specArm2 = specArm2;
         this.telemetry = telemetry;
-
-        setArm(specArmStow);
     }
 
     public void openClaw (){
