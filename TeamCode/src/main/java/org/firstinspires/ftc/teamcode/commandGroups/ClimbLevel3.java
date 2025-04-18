@@ -29,7 +29,7 @@ public class ClimbLevel3 extends SequentialCommandGroup {
                 new InstantCommand(() -> armSubsystem.setSlide(34.5)),
 
                 //wait
-                new WaitCommand(500),
+                new WaitCommand(100),
 
                 //engage the pto
                 new InstantCommand(()->driveSubsystem.engagePto(true)),
@@ -41,11 +41,10 @@ public class ClimbLevel3 extends SequentialCommandGroup {
                 }),
 
                 new InstantCommand(()->armSubsystem.manualArm(0,0)),
-                new WaitCommand(500),
+                new WaitCommand(100),
 
                 new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<32.5),
-//                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.8,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<12),
-                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.2,0), driveSubsystem).withTimeout(800),
+//                new RunCommand(()->driveSubsystem.driveRobotCentric(0, -0.2,0), driveSubsystem).withTimeout(800),
                 new RunCommand(()->driveSubsystem.driveRobotCentric(0, -1.0,0), driveSubsystem).interruptOn(()->armSubsystem.getSlideExtention()<12),
 
 

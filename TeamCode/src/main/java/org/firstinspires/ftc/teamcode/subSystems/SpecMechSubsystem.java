@@ -36,7 +36,7 @@ public class SpecMechSubsystem extends SubsystemBase {
     public static double specArmUp = 0.05, specArmWallIntake = 1, specArmStow = specArmWallIntake, specAutoStart=0.8, specClimb = 0.35;
 
     //toggle
-    private boolean armUp = false;
+    private boolean armUp = true;
 
     public SpecMechSubsystem(Servo specClaw, Servo specArm1, Servo specArm2,Telemetry telemetry) {
         this.specClaw = specClaw;

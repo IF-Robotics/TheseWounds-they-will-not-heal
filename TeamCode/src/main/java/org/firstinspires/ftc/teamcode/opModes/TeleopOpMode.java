@@ -96,6 +96,8 @@ public class TeleopOpMode extends Robot {
 
 //        new ArmCoordinatesCommand(armSubsystem, 12, 7).schedule(true);
         new InstantCommand(() -> secondaryArmSubsystem.setDiffyYaw(0)).schedule(true);
+        new InstantCommand(() -> specMechSubsystem.openClaw()).schedule(true);
+
 
     }
 
@@ -300,15 +302,11 @@ public class TeleopOpMode extends Robot {
                 new ConditionalCommand(
                         new SequentialCommandGroup(
                                 //wallIntake
-                                new InstantCommand(() -> specMechSubsystem.openClaw()),
-                                new WaitCommand(200),
-                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
+                                new InstantCommand(() -> specMechSubsystem.openClaw())
                         ),
                         new SequentialCommandGroup(
                                 //ramSpec
                                 new InstantCommand(() -> specMechSubsystem.closeClaw())
-//                                new WaitCommand(200),
-//                                new InstantCommand(() -> specMechSubsystem.setArm(specArmUp))
                         ),
                         () -> {
                             specMechSubsystem.toggle();
@@ -318,13 +316,8 @@ public class TeleopOpMode extends Robot {
         )
         .whenReleased(
                 new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                //wallIntake
-//                                new InstantCommand(() -> specMechSubsystem.openClaw()),
-//                                new WaitCommand(200),
-                                new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake))
-                        ),
-                        new InstantCommand(()->{}),
+                        new InstantCommand(() -> specMechSubsystem.setArm(specArmWallIntake)),
+                        new InstantCommand(() -> specMechSubsystem.setArm(specArmUp)),
                         () -> {
                             return specMechSubsystem.active();
                         }
